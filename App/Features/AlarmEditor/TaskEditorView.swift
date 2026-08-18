@@ -7,7 +7,9 @@ import TembelCore
 /// gezerken önceki seçimleri kaybolmaz.
 struct TaskEditorView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(PremiumModel.self) private var premium
 
+    @State private var isPresentingPaywall = false
     @State private var kind: TaskKind
     @State private var shakeCount: Int
     @State private var difficulty: MathDifficulty
@@ -85,6 +87,9 @@ struct TaskEditorView: View {
                     .disabled(!isValid)
                 }
             }
+            .sheet(isPresented: $isPresentingPaywall) {
+                PaywallSheet(reason: AppStrings.Premium.photoLockedTitle)
+            }
         }
     }
 
@@ -93,26 +98,43 @@ struct TaskEditorView: View {
     private var typeSelector: some View {
         VStack(spacing: Theme.Spacing.sm) {
             ForEach(TaskKind.allCases) { candidate in
-                let isSelected = candidate == kind
+                let isLocked = !premium.gate.isAvailable(candidate)
+                let isSelected = candidate == kind && !isLocked
+
                 Button {
-                    withAnimation(.snappy(duration: 0.18)) { kind = candidate }
+                    if isLocked {
+                        isPresentingPaywall = true
+                    } else {
+                        withAnimation(.snappy(duration: 0.18)) { kind = candidate }
+                    }
                 } label: {
                     HStack(spacing: Theme.Spacing.sm + 6) {
                         TaskIconBox(
                             kind: candidate,
                             size: Theme.Size.iconBoxLarge,
-                            isProminent: isSelected
+                            tint: isSelected ? Theme.Palette.accent : Theme.Palette.textSecondary,
+                            background: isSelected
+                                ? Theme.Palette.accent.opacity(0.16)
+                                : Theme.Palette.fill
                         )
+
                         VStack(alignment: .leading, spacing: 3) {
-                            Text(candidate.title)
-                                .font(Theme.Typography.bodyEmphasized)
-                                .foregroundStyle(Theme.Palette.textPrimary)
+                            HStack(spacing: Theme.Spacing.sm) {
+                                Text(candidate.title)
+                                    .font(Theme.Typography.bodyEmphasized)
+                                    .foregroundStyle(Theme.Palette.textPrimary)
+                                if isLocked {
+                                    premiumBadge
+                                }
+                            }
                             Text(candidate.summary)
                                 .font(Theme.Typography.footnote)
                                 .foregroundStyle(Theme.Palette.textSecondary)
                                 .multilineTextAlignment(.leading)
                         }
+
                         Spacer(minLength: Theme.Spacing.sm)
+
                         if isSelected {
                             Image(systemName: "checkmark.circle.fill")
                                 .font(.system(size: 22))
@@ -131,11 +153,25 @@ struct TaskEditorView: View {
                                 lineWidth: 1
                             )
                     )
+                    .opacity(isLocked ? 0.62 : 1)
                 }
                 .buttonStyle(.plain)
                 .accessibilityAddTraits(isSelected ? [.isSelected] : [])
             }
         }
+    }
+
+    private var premiumBadge: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "lock.fill")
+                .font(.system(size: 8, weight: .bold))
+            Text(AppStrings.Editor.premiumBadge)
+                .font(Theme.Typography.chipSmall)
+        }
+        .foregroundStyle(Theme.Palette.accent)
+        .padding(.horizontal, 7)
+        .padding(.vertical, 3)
+        .background(Capsule().fill(Theme.Palette.accentFill))
     }
 
     // MARK: - Ayar
@@ -309,6 +345,8 @@ struct TaskEditorView: View {
     /// Fotoğraf görevi boş açıklamayla eklenirse alarm çaldığında kullanıcı ne
     /// yapacağını bilemez — bu yüzden ekleme engellenir.
     private var isValid: Bool {
+        // Kilitli bir tür seçili kalmışsa eklemeye izin verme.
+        guard premium.gate.isAvailable(kind) else { return false }
         if case .photo(let text) = configuration {
             return !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         }
@@ -316,12 +354,14 @@ struct TaskEditorView: View {
     }
 }
 
-#Preview("Ekle") {
+#Preview("Ekle — ücretsiz") {
     TaskEditorView(configuration: .makeDefault(for: .shake), isNew: true) { _ in }
+        .environment(PremiumModel.preview(isPremium: false))
         .preferredColorScheme(.dark)
 }
 
-#Preview("Fotoğraf") {
+#Preview("Fotoğraf — premium") {
     TaskEditorView(configuration: .photo(prompt: "Kahve makinesi"), isNew: false) { _ in }
+        .environment(PremiumModel.preview(isPremium: true))
         .preferredColorScheme(.dark)
 }

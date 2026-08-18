@@ -92,9 +92,58 @@ extension AlarmSound {
     }
 }
 
+extension PremiumFeature {
+    /// Ödeme duvarındaki gösterim sırası — en güçlü gerekçe önce.
+    static var displayOrder: [PremiumFeature] {
+        [.unlimitedAlarms, .photoTask, .moreTasksPerAlarm, .allSounds, .customFollowUpChain]
+    }
+
+    var title: String {
+        switch self {
+        case .unlimitedAlarms: AppStrings.Premium.featureUnlimitedTitle
+        case .photoTask: AppStrings.Premium.featurePhotoTitle
+        case .moreTasksPerAlarm: AppStrings.Premium.featureTasksTitle
+        case .allSounds: AppStrings.Premium.featureSoundsTitle
+        case .customFollowUpChain: AppStrings.Premium.featureChainTitle
+        }
+    }
+
+    var detail: String {
+        switch self {
+        case .unlimitedAlarms: AppStrings.Premium.featureUnlimitedDetail
+        case .photoTask: AppStrings.Premium.featurePhotoDetail
+        case .moreTasksPerAlarm: AppStrings.Premium.featureTasksDetail
+        case .allSounds: AppStrings.Premium.featureSoundsDetail
+        case .customFollowUpChain: AppStrings.Premium.featureChainDetail
+        }
+    }
+
+    var symbolName: String {
+        switch self {
+        case .unlimitedAlarms: "infinity"
+        case .photoTask: "camera.fill"
+        case .moreTasksPerAlarm: "square.stack.3d.up.fill"
+        case .allSounds: "speaker.wave.3.fill"
+        case .customFollowUpChain: "link"
+        }
+    }
+}
+
 extension Alarm {
     /// Başlık boşsa listede yerine gösterilecek metin.
     var displayTitle: String {
         title.isEmpty ? AppStrings.Home.untitledAlarm : title
+    }
+
+    /// Tekrar günlerinin okunabilir özeti.
+    ///
+    /// Yedi gün rozetini her yerde göstermek yerine yaygın seçimler
+    /// adlandırılıyor — "Hafta içi", yedi kutucuktan çok daha hızlı okunur.
+    var repeatSummary: String {
+        if repeatDays.isEmpty { return AppStrings.Home.noRepeat }
+        if repeatDays == .everyday { return AppStrings.Home.everyday }
+        if repeatDays == .weekdays { return AppStrings.Home.weekdays }
+        if repeatDays == .weekend { return AppStrings.Home.weekend }
+        return orderedRepeatDays.map(\.shortLabel).joined(separator: ", ")
     }
 }

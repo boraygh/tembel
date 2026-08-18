@@ -2,30 +2,31 @@
   "artboards": [
     { "file": "HomeEmpty.dc.html", "x": 0, "y": 0, "w": 393, "h": 852, "title": "Ana Sayfa — Boş" },
     { "file": "Home.dc.html", "x": 473, "y": 0, "w": 393, "h": 852, "title": "Ana Sayfa — Dolu" },
-    { "file": "Main.dc.html", "x": 946, "y": 0, "w": 393, "h": 1180, "title": "Alarm Düzenleyici" },
-    { "file": "TaskPicker.dc.html", "x": 1419, "y": 0, "w": 393, "h": 640, "title": "Görev Ekle" }
+    { "file": "Main.dc.html", "x": 946, "y": 0, "w": 393, "h": 1120, "title": "Alarm Düzenleyici" },
+    { "file": "TaskPicker.dc.html", "x": 1419, "y": 0, "w": 393, "h": 660, "title": "Görev Ekle" },
+    { "file": "Premium.dc.html", "x": 1892, "y": 0, "w": 393, "h": 852, "title": "Premium" }
   ],
   "annotations": [
     {
-      "id": "note-scope",
+      "id": "note-revision",
       "x": 0,
-      "y": -150,
-      "w": 500,
-      "text": "Tembel — Phase 3 arayüz taslağı\n\nRenkler ve boşluklar App/DesignSystem/Theme.swift'ten birebir alındı:\n#0B0B0F zemin · #16161C kart · #212129 yükseltilmiş · #FF4D2E vurgu · 4/8/16/24/32 boşluk · 20/14 köşe.\n\nYukarıdaki 'accent' kolu ile vurgu rengini deneyebilirsin — dördü de tüm ekranlara birden uygulanır."
+      "y": -170,
+      "w": 470,
+      "text": "Tembel — revize arayüz\n\nSadeleştirme: 7 gün rozeti yerine 'Hafta içi' yazısı, kart içi ayırıcılar kaldırıldı, kenarlıklar yerine yüzey tonu, daha geniş boşluk, daha büyük dokunma alanı.\n\nRenkler App/DesignSystem/Theme.swift ile aynı: #0B0B0F zemin · #15151A kart · #FF4D2E vurgu.\n\nÜstteki 'accent' kolu ile vurgu rengini tüm ekranlarda birden deneyebilirsin."
     },
     {
-      "id": "note-editor",
-      "x": 946,
-      "y": -150,
+      "id": "note-premium",
+      "x": 1892,
+      "y": -170,
       "w": 393,
-      "text": "Bu artboard telefonda kaydırılan tam içeriği gösteriyor (852px değil, 1180px). Gerçek ekranda 'Ses / Erteleme / Test et' bölümü kaydırma ile gelir.\n\n'taskCount' kolu 0-5 arası görevle tasarımın nasıl durduğunu gösterir."
+      "text": "Premium sekmesi — Apple üzerinden ödeme (StoreKit 2).\n\nFİYATLAR [FİYAT] olarak bırakıldı: gerçek fiyatları App Store Connect'te sen belirlersin, uygulama onları StoreKit'ten okuyup yazar. Buraya örnek rakam yazmak yanıltıcı olurdu.\n\n'selectedPlan' ve 'isPremium' kollarıyla farklı durumları görebilirsin."
     },
     {
-      "id": "note-statusbar",
+      "id": "note-paywall-policy",
       "x": 1419,
-      "y": -150,
+      "y": -170,
       "w": 393,
-      "text": "Sahte iOS durum çubuğu ve klavye çizilmedi — gerçek cihazda sistem onları üste kendisi bindirir. Üstteki 68px boşluk safe area içindir."
+      "text": "Ödeme duvarı politikası\n\nAlarmın çalması, takip alarm zinciri ve görevlerin zorunlu olması HER ZAMAN ücretsiz. Ücretsiz kullanıcının 'alarm kurdum' sanıp uyanamaması kabul edilemez.\n\nPremium; adet (sınırsız alarm, 5 görev), çeşitlilik (fotoğraf görevi, sesler) ve konfor (zincir ayarı) satar."
     }
   ],
   "launch": { "view": "canvas" }

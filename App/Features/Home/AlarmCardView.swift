@@ -2,6 +2,10 @@ import SwiftUI
 import TembelCore
 
 /// Ana sayfadaki tek alarm kartı.
+///
+/// Yedi gün rozeti yerine tek satır özet ("Hafta içi") kullanılıyor: liste
+/// ekranında okunan şey saat ve başlık, günlerin tek tek hangileri olduğu
+/// değil. Ayrıntı düzenleyicide zaten var.
 struct AlarmCardView: View {
     let alarm: Alarm
     let onToggle: (Bool) -> Void
@@ -9,17 +13,19 @@ struct AlarmCardView: View {
     let onDelete: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.sm + 4) {
-            header
-            WeekdayIndicator(selection: alarm.repeatDays, isDimmed: !alarm.isEnabled)
-            Rectangle()
-                .fill(Theme.Palette.separator)
-                .frame(height: 1)
-            footer
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm + 6) {
+            timeRow
+            subtitleRow
+            if alarm.requiresTasks {
+                taskRow
+            }
         }
-        .padding(Theme.Spacing.md)
-        .cardBackground()
-        .opacity(alarm.isEnabled ? 1 : 0.42)
+        .padding(Theme.Spacing.md + 4)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.Radius.cardLarge, style: .continuous)
+                .fill(Theme.Palette.surface)
+        )
+        .opacity(alarm.isEnabled ? 1 : 0.38)
         .contentShape(Rectangle())
         .onTapGesture(perform: onEdit)
         .contextMenu {
@@ -34,60 +40,66 @@ struct AlarmCardView: View {
         .accessibilityLabel("\(alarm.time.displayText) \(alarm.displayTitle)")
     }
 
-    private var header: some View {
-        HStack(alignment: .top, spacing: Theme.Spacing.sm + 4) {
-            VStack(alignment: .leading, spacing: 1) {
-                Text(alarm.time.displayText)
-                    .font(Theme.Typography.cardTime)
-                    .tracking(Theme.Tracking.cardTime)
-                    .monospacedDigit()
-                    .foregroundStyle(Theme.Palette.textPrimary)
-                Text(alarm.displayTitle)
-                    .font(Theme.Typography.callout)
-                    .foregroundStyle(Theme.Palette.textSecondary)
-                    .lineLimit(1)
-            }
-            Spacer(minLength: 0)
-            Toggle(
-                "",
-                isOn: Binding(get: { alarm.isEnabled }, set: onToggle)
-            )
-            .labelsHidden()
-            .tint(Theme.Palette.accent)
-            .accessibilityLabel(alarm.displayTitle)
+    private var timeRow: some View {
+        HStack(alignment: .center) {
+            Text(alarm.time.displayText)
+                .font(Theme.Typography.cardTime)
+                .tracking(Theme.Tracking.cardTime)
+                .monospacedDigit()
+                .foregroundStyle(Theme.Palette.textPrimary)
+
+            Spacer(minLength: Theme.Spacing.sm)
+
+            Toggle("", isOn: Binding(get: { alarm.isEnabled }, set: onToggle))
+                .labelsHidden()
+                .tint(Theme.Palette.accent)
+                .accessibilityLabel(alarm.displayTitle)
         }
     }
 
-    private var footer: some View {
-        HStack(spacing: Theme.Spacing.sm) {
-            HStack(spacing: 6) {
-                ForEach(alarm.tasks) { task in
-                    TaskIconBox(kind: task.kind, size: 26)
-                }
+    private var subtitleRow: some View {
+        HStack(spacing: Theme.Spacing.sm + 2) {
+            Text(alarm.displayTitle)
+                .font(Theme.Typography.callout)
+                .foregroundStyle(Theme.Palette.textPrimary.opacity(0.92))
+                .lineLimit(1)
+
+            Circle()
+                .fill(Theme.Palette.textQuaternary)
+                .frame(width: 3, height: 3)
+
+            Text(alarm.repeatSummary)
+                .font(Theme.Typography.subheadline)
+                .foregroundStyle(Theme.Palette.textSecondary)
+                .lineLimit(1)
+
+            Spacer(minLength: 0)
+        }
+    }
+
+    private var taskRow: some View {
+        HStack(spacing: 7) {
+            ForEach(alarm.tasks) { task in
+                TaskIconBox(kind: task.kind, size: 28)
             }
-            Text(taskSummary)
-                .font(Theme.Typography.footnoteEmphasized)
+            Text(AppStrings.Home.taskCount(alarm.tasks.count))
+                .font(Theme.Typography.footnote)
                 .foregroundStyle(Theme.Palette.textTertiary)
+                .padding(.leading, 2)
             Spacer(minLength: 0)
         }
-    }
-
-    private var taskSummary: String {
-        alarm.repeatDays.isEmpty
-            ? "\(AppStrings.Home.taskCount(alarm.tasks.count)) · \(AppStrings.Home.noRepeat)"
-            : AppStrings.Home.taskCount(alarm.tasks.count)
     }
 }
 
 #Preview {
     ZStack {
         Theme.Palette.background.ignoresSafeArea()
-        VStack(spacing: 10) {
+        VStack(spacing: 12) {
             ForEach(Alarm.samples) { alarm in
                 AlarmCardView(alarm: alarm, onToggle: { _ in }, onEdit: {}, onDelete: {})
             }
         }
-        .padding(Theme.Spacing.md)
+        .padding(Theme.Spacing.lg)
     }
     .preferredColorScheme(.dark)
 }

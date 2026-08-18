@@ -88,9 +88,12 @@ enum Theme {
     }
 
     enum Radius {
+        /// Liste kartları — geniş yarıçap yumuşak, "sert alarm" hissini
+        /// dengeliyor.
+        static let cardLarge: CGFloat = 24
         static let card: CGFloat = 20
-        static let control: CGFloat = 14
         static let task: CGFloat = 18
+        static let control: CGFloat = 16
         static let iconBox: CGFloat = 12
     }
 

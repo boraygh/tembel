@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #FF4D2E; } a:hover { color: #ff6a50; }
+  </style>
+</helmet>
+
+<div style="width: 393px; height: 852px; background: #0B0B0F; font-family: Archivo, system-ui, sans-serif; color: #FFFFFF; display: flex; flex-direction: column; overflow: hidden;">
+
+  <div style="flex-grow: 1; display: flex; flex-direction: column; padding: 68px 20px 0 20px;">
+
+    <!-- Hero -->
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding-bottom: 26px;">
+      <div style="position: relative; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+        <div style="position: absolute; inset: -12px; border-radius: 50%; background: {{glow}}; filter: blur(20px);"></div>
+        <div style="position: relative; width: 64px; height: 64px; border-radius: 20px; background: {{accent}}; display: flex; align-items: center; justify-content: center;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0B0B0F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 14.6 9l6 .9-4.3 4.2 1 6-5.3-2.8L6.7 20l1-6L3.4 9.9l6-.9Z"></path></svg>
+        </div>
+      </div>
+      <div style="font-size: 28px; font-weight: 800; letter-spacing: -0.03em;">Tembel Premium</div>
+      <div style="font-size: 15px; font-weight: 450; line-height: 1.45; color: rgba(255,255,255,0.50); text-align: center; max-width: 300px; text-wrap: pretty;">Uyanmayı daha da zorlaştır. Alarmın çalması ve geri gelmesi her zaman ücretsiz.</div>
+    </div>
+
+    <!-- Özellikler -->
+    <div style="display: flex; flex-direction: column; gap: 2px; padding-bottom: 24px;">
+      <sc-for list="{{features}}" as="feature" hint-placeholder-count="5">
+        <div style="display: flex; align-items: center; gap: 14px; padding: 11px 0;">
+          <div style="width: 32px; height: 32px; border-radius: 10px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <sc-if value="{{feature.isInfinite}}" hint-placeholder-val="{{true}}">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 15.5a3.5 3.5 0 1 1 0-7c2.5 0 3.5 3.5 5.5 3.5s3-3.5 5.5-3.5a3.5 3.5 0 1 1 0 7c-2.5 0-3.5-3.5-5.5-3.5s-3 3.5-5.5 3.5Z"></path></svg>
+            </sc-if>
+            <sc-if value="{{feature.isPhoto}}" hint-placeholder-val="{{true}}">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1.7l1.2-2h6.2l1.2 2h1.7A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5Z"></path><circle cx="12" cy="12.5" r="3"></circle></svg>
+            </sc-if>
+            <sc-if value="{{feature.isStack}}" hint-placeholder-val="{{true}}">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 7.5 12 12l9-4.5Z"></path><path d="m3 12.5 9 4.5 9-4.5"></path><path d="m3 17 9 4.5 9-4.5"></path></svg>
+            </sc-if>
+            <sc-if value="{{feature.isSound}}" hint-placeholder-val="{{true}}">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4Z"></path><path d="M16 9a4 4 0 0 1 0 6"></path><path d="M19 6.5a8 8 0 0 1 0 11"></path></svg>
+            </sc-if>
+            <sc-if value="{{feature.isChain}}" hint-placeholder-val="{{true}}">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 14.5 14.5 9.5"></path><path d="M11 6.5 12.8 4.7a4 4 0 0 1 5.7 5.7l-1.8 1.8"></path><path d="M13 17.5l-1.8 1.8a4 4 0 0 1-5.7-5.7l1.8-1.8"></path></svg>
+            </sc-if>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 1px; min-width: 0;">
+            <div style="font-size: 15px; font-weight: 650;">{{feature.title}}</div>
+            <div style="font-size: 13px; font-weight: 450; color: rgba(255,255,255,0.42);">{{feature.detail}}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- Planlar -->
+    <div style="display: flex; gap: 8px; padding-bottom: 16px;">
+      <sc-for list="{{plans}}" as="plan" hint-placeholder-count="3">
+        <div style="flex-grow: 1; flex-basis: 0; position: relative; border-radius: 18px; padding: 16px 8px 14px 8px; display: flex; flex-direction: column; align-items: center; gap: 5px; {{plan.cardStyle}}">
+          <sc-if value="{{plan.hasBadge}}" hint-placeholder-val="{{true}}">
+            <div style="position: absolute; top: -9px; left: 50%; transform: translateX(-50%); white-space: nowrap; padding: 3px 9px; border-radius: 999px; background: {{accent}}; color: #0B0B0F; font-size: 10px; font-weight: 800; letter-spacing: 0.03em;">{{plan.badge}}</div>
+          </sc-if>
+          <div style="font-size: 12px; font-weight: 650; color: {{plan.periodColor}};">{{plan.period}}</div>
+          <div style="font-size: 19px; font-weight: 800; letter-spacing: -0.02em;">{{plan.price}}</div>
+          <div style="font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.34); text-align: center;">{{plan.note}}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- Eylem -->
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 14px;">
+      <div style="width: 100%; height: 54px; border-radius: 17px; background: {{accent}}; display: flex; align-items: center; justify-content: center;">
+        <span style="font-size: 16px; font-weight: 800; color: #0B0B0F;">Premium'a geç</span>
+      </div>
+      <div style="font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.34); text-align: center; line-height: 1.5;">
+        İstediğin zaman iptal edebilirsin.<br>
+        <span style="color: rgba(255,255,255,0.55);">Satın alımları geri yükle</span>
+      </div>
+    </div>
+
+    <div style="flex-grow: 1;"></div>
+
+    <div style="display: flex; justify-content: center; gap: 16px; padding-bottom: 12px;">
+      <span style="font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.22);">Kullanım Koşulları</span>
+      <span style="font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.22);">Gizlilik</span>
+    </div>
+  </div>
+
+  <!-- Sekme çubuğu -->
+  <div style="display: flex; border-top: 1px solid rgba(255,255,255,0.06); background: #0D0D12; padding: 12px 0 30px 0;">
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 5px;">
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.30)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9.5V13l2.5 1.5"></path><path d="M5 3 2.5 5.5"></path><path d="m19 3 2.5 2.5"></path></svg>
+      <span style="font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.30);">Alarmlar</span>
+    </div>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 5px;">
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 14.6 9l6 .9-4.3 4.2 1 6-5.3-2.8L6.7 20l1-6L3.4 9.9l6-.9Z"></path></svg>
+      <span style="font-size: 10px; font-weight: 700; color: {{accent}};">Premium</span>
+    </div>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 5px;">
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.30)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"></path></svg>
+      <span style="font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.30);">Ayarlar</span>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{
+  "accent": { "editor": "color", "default": "#FF4D2E", "options": ["#FF4D2E", "#FFB300", "#4ADE80", "#7C5CFF"] },
+  "selectedPlan": { "editor": "enum", "default": "yearly", "options": ["monthly", "yearly", "lifetime"] }
+}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#FF4D2E';
+    const chosen = this.props.selectedPlan ?? 'yearly';
+
+    const features = [
+      { title: 'Sınırsız alarm', detail: 'Ücretsizde iki alarmla sınırlısın', isInfinite: true, isPhoto: false, isStack: false, isSound: false, isChain: false },
+      { title: 'Fotoğraf görevi', detail: 'Yatakta yatarak çekemeyeceğin bir şey seç', isInfinite: false, isPhoto: true, isStack: false, isSound: false, isChain: false },
+      { title: 'Alarm başına 5 görev', detail: 'Ücretsizde 2 görev ekleyebilirsin', isInfinite: false, isPhoto: false, isStack: true, isSound: false, isChain: false },
+      { title: 'Tüm alarm sesleri', detail: 'Siren, acil durum, zil ve diğerleri', isInfinite: false, isPhoto: false, isStack: false, isSound: true, isChain: false },
+      { title: 'Zincir ayarı', detail: 'Takip alarmlarının sıklığını sen belirle', isInfinite: false, isPhoto: false, isStack: false, isSound: false, isChain: true }
+    ];
+
+    const definitions = [
+      { key: 'monthly', period: 'Aylık', price: '[FİYAT]', note: 'her ay', badge: '', hasBadge: false },
+      { key: 'yearly', period: 'Yıllık', price: '[FİYAT]', note: 'ayda [FİYAT]', badge: 'EN İYİ', hasBadge: true },
+      { key: 'lifetime', period: 'Ömür boyu', price: '[FİYAT]', note: 'tek seferlik', badge: '', hasBadge: false }
+    ];
+
+    const plans = definitions.map((definition) => {
+      const selected = definition.key === chosen;
+      return {
+        ...definition,
+        cardStyle: selected
+          ? 'background: ' + accent + '14; border: 1.5px solid ' + accent + ';'
+          : 'background: #15151A; border: 1.5px solid transparent;',
+        periodColor: selected ? accent : 'rgba(255,255,255,0.45)'
+      };
+    });
+
+    return {
+      accent,
+      glow: 'radial-gradient(circle, ' + accent + '55 0%, transparent 70%)',
+      features,
+      plans
+    };
+  }
+}
+</script>
+</body>
+</html>

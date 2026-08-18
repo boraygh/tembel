@@ -113,7 +113,63 @@ Simulator'ın **yalan söylediği** konular — bunlar iPhone'da test edilmeden
 - [ ] Uygulama Face ID ile kilitliyse alarm sessizce düşüyor mu
 - [ ] Landscape'te alarm çalmama hatası bizde tekrar ediyor mu
 
-## 7. App Store öncesi
+## 7. Premium (StoreKit 2)
+
+Backend yok. Apple'ın imzaladığı işlemler cihazda doğrulanıyor; kullanıcı
+hesabı, sunucu veya abonelik veritabanı gerekmiyor. Haklar Apple ID'ye bağlı
+olduğu için kullanıcının diğer cihazlarında da geçerli oluyor.
+
+### Ürün kimlikleri
+
+`App/Services/PremiumProduct.swift` içinde sabit:
+
+| Kimlik | Tür |
+|---|---|
+| `com.boray.tembel.premium.monthly` | Otomatik yenilenen abonelik |
+| `com.boray.tembel.premium.yearly` | Otomatik yenilenen abonelik |
+| `com.boray.tembel.premium.lifetime` | Non-consumable (tek seferlik) |
+
+**Fiyatlar kodda yok** — App Store Connect'te belirlenir, uygulama StoreKit'ten
+okuyup gösterir. Ülkeye göre değişen ve senin sonradan değiştirebileceğin bir
+bilgiyi koda gömmek yanlış olurdu.
+
+Aylık ve yıllık aynı **abonelik grubunda** olmalı; aksi hâlde kullanıcı ikisine
+birden abone olabilir.
+
+### Mac gelir gelmez: gerçek satın alma olmadan test
+
+App Store Connect'e hiç dokunmadan denenebilir:
+
+1. Xcode → File → New → File → **StoreKit Configuration File**
+2. Üç ürünü yukarıdaki kimliklerle ekle, fiyat ata
+3. Scheme → Edit Scheme → Run → Options → **StoreKit Configuration** olarak seç
+
+Bu dosyayı repoya elle yazmadım: biçimi Xcode'a ait ve elle üretilmiş bozuk bir
+dosya, çalışmadığında nedenini bulmayı zorlaştırır. Xcode üç tıkta üretiyor.
+
+### App Store'a göndermeden önce zorunlu
+
+- [ ] **Gizlilik politikası URL'si** — `App/Features/Premium/LegalLinks.swift`
+      içinde `privacyPolicy` şu an `nil`. Abonelik satan bir ekranda bu bağlantı
+      zorunlu; eksikse uygulama reddedilir.
+- [ ] Kullanım koşulları — Apple'ın standart EULA adresi kodda hazır, kendi
+      sözleşmen varsa değiştir.
+- [ ] "Satın alımları geri yükle" düğmesi — kodda var, çalıştığını doğrula.
+- [ ] Sandbox hesabıyla gerçek satın alma, iptal ve geri yükleme akışı.
+
+### Ödeme duvarı politikası
+
+`Core/Sources/TembelCore/Premium/Entitlement.swift` başındaki nota dikkat:
+alarmın çalması, takip alarm zinciri ve görevlerin zorunlu olması **hiçbir zaman
+satılmaz**. Ücretsiz kullanıcının "alarm kurdum" sanıp uyanamaması kabul
+edilemez. `EntitlementTests` bunu bir test olarak sabitliyor.
+
+Ücretsiz sınırlar: 2 alarm, alarm başına 2 görev, salla + matematik görevleri,
+varsayılan ses.
+
+---
+
+## 8. App Store öncesi
 
 - [ ] Demo Mode gerçekten Release'te görünmüyor mu (`#if DEBUG` doğrula)
 - [ ] `PrivacyInfo.xcprivacy` — veri toplamıyoruz, "no data collected"

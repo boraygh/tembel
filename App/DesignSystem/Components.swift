@@ -31,16 +31,17 @@ struct SectionLabel: View {
 struct TaskIconBox: View {
     let kind: TaskKind
     var size: CGFloat = Theme.Size.iconBox
-    var isProminent = true
+    var tint: Color = Theme.Palette.accent
+    var background: Color = Theme.Palette.fill
 
     var body: some View {
-        RoundedRectangle(cornerRadius: Theme.Radius.iconBox, style: .continuous)
-            .fill(isProminent ? Theme.Palette.surfaceElevated : Theme.Palette.fill)
+        RoundedRectangle(cornerRadius: size * 0.3, style: .continuous)
+            .fill(background)
             .frame(width: size, height: size)
             .overlay {
                 Image(systemName: kind.symbolName)
                     .font(.system(size: size * 0.45, weight: .semibold))
-                    .foregroundStyle(isProminent ? Theme.Palette.accent : Theme.Palette.textSecondary)
+                    .foregroundStyle(tint)
             }
     }
 }
@@ -63,8 +64,10 @@ struct WeekdaySelector: View {
                         .frame(height: Theme.Size.dayChip)
                         // Capsule, Circle değil: genişlik ekrana göre değişir,
                         // Circle bu durumda elipse dönüşür.
+                        // Seçilmeyen günler zeminsiz: yedi dolu kutucuk
+                        // gereksiz görsel gürültü yaratıyordu.
                         .background(
-                            Capsule().fill(isOn ? Theme.Palette.accent : Theme.Palette.surface)
+                            Capsule().fill(isOn ? Theme.Palette.accent : Color.clear)
                         )
                 }
                 .buttonStyle(.plain)

@@ -6,6 +6,7 @@ struct TembelApp: App {
 
     @State private var alarms = AlarmListModel(store: TembelApp.makeAlarmStore())
     @State private var session = AlarmSessionModel(store: TembelApp.makeSessionStore())
+    @State private var premium = PremiumModel()
 
     /// Gerçek sensör. Demo Mode kendi sahte kaynağını kullanır.
     private let motionService: any MotionServicing = CoreMotionService()
@@ -15,7 +16,13 @@ struct TembelApp: App {
             RootView(motionService: motionService)
                 .environment(alarms)
                 .environment(session)
+                .environment(premium)
                 .preferredColorScheme(.dark)
+                .task {
+                    // Ürünleri yükler, cihazdaki hakları okur ve dışarıdan
+                    // gelen değişiklikleri (iade, aile paylaşımı) dinler.
+                    await premium.start()
+                }
         }
     }
 

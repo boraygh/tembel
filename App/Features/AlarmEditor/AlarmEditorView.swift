@@ -7,10 +7,12 @@ import TembelCore
 /// değişiklik listeye yansımaz. "Vazgeç" gerçekten vazgeçer.
 struct AlarmEditorView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(PremiumModel.self) private var premium
 
     @State private var draft: Alarm
     @State private var isTimePickerExpanded = true
     @State private var taskEditorContext: TaskEditorContext?
+    @State private var isPresentingPaywall = false
 
     private let isNewAlarm: Bool
     private let onSave: (Alarm) -> Void
@@ -52,6 +54,9 @@ struct AlarmEditorView: View {
                     apply(updated, for: context)
                 }
             }
+            .sheet(isPresented: $isPresentingPaywall) {
+                PaywallSheet(reason: AppStrings.Premium.taskLimitTitle)
+            }
         }
     }
 
@@ -63,10 +68,15 @@ struct AlarmEditorView: View {
             repeatRow
             titleRow
 
-            row { SectionLabel(AppStrings.Editor.tasksSection, trailing: AppStrings.Home.taskCount(draft.tasks.count)) }
+            row {
+                SectionLabel(
+                    AppStrings.Editor.tasksSection,
+                    trailing: "\(draft.tasks.count) / \(premium.gate.taskLimitPerAlarm)"
+                )
+            }
 
             ForEach(draft.tasks) { task in
-                TaskRowView(task: task, index: index(of: task))
+                TaskRowView(task: task)
                     .contentShape(Rectangle())
                     .onTapGesture { taskEditorContext = .edit(task) }
                     .listRowStyling()
@@ -78,15 +88,7 @@ struct AlarmEditorView: View {
                 draft.tasks.remove(atOffsets: offsets)
             }
 
-            if draft.tasks.count < Alarm.maxTaskCount {
-                row { addTaskButton }
-            } else {
-                row {
-                    Text(AppStrings.Editor.taskLimitReached)
-                        .font(Theme.Typography.caption)
-                        .foregroundStyle(Theme.Palette.textTertiary)
-                }
-            }
+            row { addTaskArea }
 
             row { SectionLabel(AppStrings.Editor.alarmSection).padding(.top, Theme.Spacing.sm) }
             row { alarmSettingsCard }
@@ -164,25 +166,53 @@ struct AlarmEditorView: View {
         }
     }
 
-    private var addTaskButton: some View {
-        Button {
-            taskEditorContext = .add
-        } label: {
+    /// Görev ekleme alanı.
+    ///
+    /// Üç durum var: ekleyebilir, ücretsiz sınıra takıldı (premium önerilir),
+    /// modelin üst sınırına ulaştı (premiumda da eklenemez).
+    @ViewBuilder
+    private var addTaskArea: some View {
+        if premium.gate.canAddTask(currentCount: draft.tasks.count) {
+            taskActionButton(
+                title: AppStrings.Editor.addTask,
+                systemImage: "plus"
+            ) {
+                taskEditorContext = .add
+            }
+        } else if draft.tasks.count < Alarm.maxTaskCount {
+            taskActionButton(
+                title: AppStrings.Editor.addTaskPremium,
+                systemImage: "star.fill"
+            ) {
+                isPresentingPaywall = true
+            }
+        } else {
+            Text(AppStrings.Editor.taskLimitReached)
+                .font(Theme.Typography.caption)
+                .foregroundStyle(Theme.Palette.textTertiary)
+                .frame(maxWidth: .infinity)
+                .frame(height: 52)
+        }
+    }
+
+    private func taskActionButton(
+        title: String,
+        systemImage: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
             HStack(spacing: Theme.Spacing.sm) {
-                Image(systemName: "plus")
-                    .font(.system(size: 15, weight: .bold))
-                Text(AppStrings.Editor.addTask)
+                Image(systemName: systemImage)
+                    .font(.system(size: 14, weight: .bold))
+                Text(title)
                     .font(Theme.Typography.callout)
             }
             .foregroundStyle(Theme.Palette.accent)
             .frame(maxWidth: .infinity)
-            .frame(height: 52)
+            .frame(height: 54)
             .background(
                 RoundedRectangle(cornerRadius: Theme.Radius.task, style: .continuous)
-                    .strokeBorder(
-                        Theme.Palette.textQuaternary,
-                        style: StrokeStyle(lineWidth: 1, dash: [5, 4])
-                    )
+                    .fill(Theme.Palette.accentFill)
             )
         }
         .buttonStyle(.plain)
@@ -301,13 +331,7 @@ struct AlarmEditorView: View {
         content().listRowStyling()
     }
 
-    private var repeatSummary: String? {
-        if draft.repeatDays == .everyday { return "Her gün" }
-        if draft.repeatDays == .weekdays { return "Hafta içi" }
-        if draft.repeatDays == .weekend { return "Hafta sonu" }
-        if draft.repeatDays.isEmpty { return AppStrings.Home.noRepeat }
-        return nil
-    }
+    private var repeatSummary: String { draft.repeatSummary }
 
     private var snoozeCaption: String {
         draft.snooze.isEnabled
@@ -318,9 +342,6 @@ struct AlarmEditorView: View {
             : AppStrings.Editor.snoozeOffCaption
     }
 
-    private func index(of task: AlarmTask) -> Int {
-        (draft.tasks.firstIndex(where: { $0.id == task.id }) ?? 0) + 1
-    }
 
     /// `TimeOfDay` ile `DatePicker`'ın beklediği `Date` arasında köprü.
     private var timeBinding: Binding<Date> {
@@ -362,19 +383,10 @@ struct AlarmEditorView: View {
 
 private struct TaskRowView: View {
     let task: AlarmTask
-    let index: Int
 
     var body: some View {
-        HStack(spacing: Theme.Spacing.sm + 4) {
-            VStack(spacing: 3) {
-                ForEach(0..<3, id: \.self) { _ in
-                    Capsule()
-                        .fill(Theme.Palette.textQuaternary)
-                        .frame(width: 16, height: 2)
-                }
-            }
-
-            TaskIconBox(kind: task.kind)
+        HStack(spacing: Theme.Spacing.sm + 6) {
+            TaskIconBox(kind: task.kind, size: 38)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(task.kind.title)
@@ -388,13 +400,18 @@ private struct TaskRowView: View {
 
             Spacer(minLength: Theme.Spacing.sm)
 
-            Text("\(index)")
-                .font(Theme.Typography.chipSmall)
-                .foregroundStyle(Theme.Palette.textTertiary)
-                .frame(width: 26, height: 26)
-                .background(Circle().fill(Theme.Palette.fill))
+            // Sürükleme ipucu — sıra numarası yerine. Sıra zaten konumdan
+            // okunuyor, rozet gereksiz gürültüydü.
+            VStack(spacing: 3.5) {
+                ForEach(0..<3, id: \.self) { _ in
+                    Capsule()
+                        .fill(Theme.Palette.textQuaternary)
+                        .frame(width: 15, height: 1.5)
+                }
+            }
         }
-        .padding(Theme.Spacing.sm + 6)
+        .padding(.horizontal, Theme.Spacing.md)
+        .padding(.vertical, Theme.Spacing.sm + 6)
         .background(
             RoundedRectangle(cornerRadius: Theme.Radius.task, style: .continuous)
                 .fill(Theme.Palette.surface)
@@ -442,10 +459,12 @@ private extension View {
 
 #Preview("Yeni") {
     AlarmEditorView(alarm: Alarm(time: TimeOfDay(hour: 7, minute: 0))) { _ in }
+        .environment(PremiumModel.preview(isPremium: false))
         .preferredColorScheme(.dark)
 }
 
-#Preview("Düzenleme") {
+#Preview("Düzenleme — premium") {
     AlarmEditorView(alarm: Alarm.samples[0], isNew: false) { _ in }
+        .environment(PremiumModel.preview(isPremium: true))
         .preferredColorScheme(.dark)
 }

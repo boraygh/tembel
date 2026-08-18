@@ -24,9 +24,13 @@ enum AppStrings {
         static let emptyAction = "İlk alarmını kur"
         static let untitledAlarm = "Alarm"
         static let noRepeat = "Tekrar yok"
+        static let everyday = "Her gün"
+        static let weekdays = "Hafta içi"
+        static let weekend = "Hafta sonu"
         static let delete = "Sil"
         static let edit = "Düzenle"
         static let nextAlarmPrefix = "Sonraki alarm "
+        static let limitHint = "Ücretsiz sürümde iki alarm kurabilirsin. Sınırsız için Premium."
         static let noEnabledAlarm = "Açık alarm yok"
 
         static func taskCount(_ count: Int) -> String {
@@ -44,7 +48,9 @@ enum AppStrings {
         static let tasksSection = "Görevler"
         static let alarmSection = "Alarm"
         static let addTask = "Görev ekle"
+        static let addTaskPremium = "Daha fazla görev için Premium"
         static let taskLimitReached = "En fazla 5 görev eklenebilir."
+        static let premiumBadge = "PREMIUM"
         static let sound = "Ses"
         static let soundDefaultValue = "Varsayılan"
         static let soundNote =
@@ -123,6 +129,57 @@ enum AppStrings {
         static let permissionHelp =
             "Ayarlar → Tembel → Kamera bölümünden izin vermen gerekiyor."
         static let privacyNote = "Fotoğraf cihazından çıkmaz ve görev bitince silinir."
+    }
+
+    enum Premium {
+        static let tab = "Premium"
+        static let title = "Tembel Premium"
+        static let tagline =
+            "Uyanmayı daha da zorlaştır. Alarmın çalması ve geri gelmesi her zaman ücretsiz."
+        static let subscribe = "Premium'a geç"
+        static let restore = "Satın alımları geri yükle"
+        static let cancelAnytime = "İstediğin zaman iptal edebilirsin."
+        static let terms = "Kullanım Koşulları"
+        static let privacy = "Gizlilik"
+        static let recommended = "EN İYİ"
+
+        // Aktif üyelik
+        static let activeTitle = "Premium üyesin"
+        static let activeLifetime = "Ömür boyu erişimin var."
+        static let manage = "Aboneliği yönet"
+        static let unlockedSection = "Açık özellikler"
+
+        static func activeUntil(_ date: String) -> String {
+            "\(date) tarihine kadar geçerli."
+        }
+
+        static func perMonth(_ price: String) -> String { "ayda \(price)" }
+
+        // Özellik listesi
+        static let featureUnlimitedTitle = "Sınırsız alarm"
+        static let featureUnlimitedDetail = "Ücretsizde iki alarmla sınırlısın"
+        static let featurePhotoTitle = "Fotoğraf görevi"
+        static let featurePhotoDetail = "Yatakta yatarak çekemeyeceğin bir şey seç"
+        static let featureTasksTitle = "Alarm başına 5 görev"
+        static let featureTasksDetail = "Ücretsizde 2 görev ekleyebilirsin"
+        static let featureSoundsTitle = "Tüm alarm sesleri"
+        static let featureSoundsDetail = "Siren, acil durum, zil ve diğerleri"
+        static let featureChainTitle = "Zincir ayarı"
+        static let featureChainDetail = "Takip alarmlarının sıklığını sen belirle"
+
+        // Sınıra takılma
+        static let alarmLimitTitle = "Alarm sınırına ulaştın"
+        static let taskLimitTitle = "Görev sınırına ulaştın"
+        static let photoLockedTitle = "Fotoğraf görevi premium"
+
+        // Hatalar
+        static let loadFailed = "Satın alma seçenekleri yüklenemedi."
+        static let productUnavailable = "Bu seçenek şu an kullanılamıyor."
+        static let purchaseFailed = "Satın alma tamamlanamadı."
+        static let verificationFailed = "Satın alma doğrulanamadı."
+        static let purchasePending = "Satın alma onay bekliyor."
+        static let restoreFailed = "Geri yükleme başarısız oldu."
+        static let nothingToRestore = "Geri yüklenecek satın alma bulunamadı."
     }
 
     enum Demo {

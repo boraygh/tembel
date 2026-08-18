@@ -4,10 +4,11 @@ import TembelCore
 /// Ana sayfa — kurulu alarmların listesi.
 struct HomeView: View {
     @Environment(AlarmListModel.self) private var model
+    @Environment(PremiumModel.self) private var premium
 
-    /// Düzenleyicide açık olan alarm. `nil` ise düzenleyici kapalı.
     @State private var editedAlarm: Alarm?
     @State private var alarmPendingDeletion: Alarm?
+    @State private var isPresentingPaywall = false
 
     var body: some View {
         NavigationStack {
@@ -36,6 +37,9 @@ struct HomeView: View {
                     model.save(saved)
                 }
             }
+            .sheet(isPresented: $isPresentingPaywall) {
+                PaywallSheet(reason: AppStrings.Premium.alarmLimitTitle)
+            }
             .confirmationDialog(
                 AppStrings.Home.delete,
                 isPresented: Binding(
@@ -62,34 +66,33 @@ struct HomeView: View {
     // MARK: - Bölümler
 
     private var header: some View {
-        HStack(alignment: .bottom) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(AppStrings.Brand.name.uppercased())
-                    .font(Theme.Typography.sectionLabel)
-                    .tracking(Theme.Tracking.brand)
-                    .foregroundStyle(Theme.Palette.accent)
-                Text(AppStrings.Home.title)
-                    .font(Theme.Typography.largeTitle)
-                    .tracking(Theme.Tracking.largeTitle)
-                    .foregroundStyle(Theme.Palette.textPrimary)
-            }
+        HStack {
+            Text(AppStrings.Home.title)
+                .font(Theme.Typography.largeTitle)
+                .tracking(Theme.Tracking.largeTitle)
+                .foregroundStyle(Theme.Palette.textPrimary)
+
             Spacer(minLength: Theme.Spacing.md)
-            RoundAccentButton(
-                systemImage: "plus",
-                accessibilityLabel: AppStrings.Home.addAlarm
-            ) {
-                editedAlarm = Alarm(time: defaultTime)
+
+            Button(action: addAlarm) {
+                Circle()
+                    .fill(Theme.Palette.fill)
+                    .frame(width: Theme.Size.roundButton, height: Theme.Size.roundButton)
+                    .overlay {
+                        Image(systemName: "plus")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundStyle(Theme.Palette.accent)
+                    }
             }
+            .buttonStyle(.plain)
+            .accessibilityLabel(AppStrings.Home.addAlarm)
         }
-        .padding(.horizontal, Theme.Spacing.md)
+        .padding(.horizontal, Theme.Spacing.lg)
         .padding(.top, Theme.Spacing.sm)
-        .padding(.bottom, Theme.Spacing.lg)
+        .padding(.bottom, Theme.Spacing.sm + 2)
     }
 
-    /// "Sonraki alarm 8 saat 42 dakika sonra" satırı.
-    ///
-    /// Dakikada bir yenilenir; geri sayımın ekranda donup kalmaması için
-    /// `TimelineView` kullanılıyor.
+    /// "Sonraki alarm 8 sa 42 dk sonra" satırı. Dakikada bir yenilenir.
     private var nextAlarmSummary: some View {
         TimelineView(.periodic(from: .now, by: 60)) { context in
             let next = AlarmScheduler.nextAlarm(among: model.alarms, after: context.date)
@@ -97,32 +100,28 @@ struct HomeView: View {
                 RelativeTimeText.timeRemaining(until: $0.date, from: context.date)
             }
 
-            HStack(spacing: Theme.Spacing.sm) {
-                Circle()
-                    .fill(remaining == nil ? Theme.Palette.textQuaternary : Theme.Palette.accent)
-                    .frame(width: 6, height: 6)
-
+            HStack(spacing: 0) {
                 Group {
                     if let remaining {
                         Text(AppStrings.Home.nextAlarmPrefix)
-                            + Text(remaining).foregroundStyle(Theme.Palette.textPrimary)
+                            + Text(remaining).foregroundStyle(Theme.Palette.textPrimary.opacity(0.85))
                     } else {
                         Text(AppStrings.Home.noEnabledAlarm)
                     }
                 }
-                .font(Theme.Typography.footnote)
+                .font(Theme.Typography.subheadline)
                 .foregroundStyle(Theme.Palette.textSecondary)
 
                 Spacer(minLength: 0)
             }
-            .padding(.horizontal, Theme.Spacing.md)
-            .padding(.bottom, Theme.Spacing.md + 4)
+            .padding(.horizontal, Theme.Spacing.lg)
+            .padding(.bottom, Theme.Spacing.lg)
         }
     }
 
     private var alarmList: some View {
         ScrollView {
-            LazyVStack(spacing: 10) {
+            LazyVStack(spacing: 12) {
                 ForEach(model.alarms) { alarm in
                     AlarmCardView(
                         alarm: alarm,
@@ -131,30 +130,60 @@ struct HomeView: View {
                         onDelete: { alarmPendingDeletion = alarm }
                     )
                 }
+
+                if !premium.gate.canAddAlarm(currentCount: model.alarms.count) {
+                    limitHint
+                }
             }
-            .padding(.horizontal, Theme.Spacing.md)
+            .padding(.horizontal, Theme.Spacing.lg)
             .padding(.bottom, Theme.Spacing.xl)
         }
+        .scrollIndicators(.hidden)
+    }
+
+    /// Ücretsiz sınıra ulaşıldığında listenin sonundaki yumuşak hatırlatma.
+    ///
+    /// Modal açmak yerine yerinde durur: kullanıcı sınırı fark etsin ama
+    /// akışı kesilmesin.
+    private var limitHint: some View {
+        Button {
+            isPresentingPaywall = true
+        } label: {
+            HStack(spacing: Theme.Spacing.sm + 4) {
+                Image(systemName: "star.fill")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(Theme.Palette.accent)
+                Text(AppStrings.Home.limitHint)
+                    .font(Theme.Typography.footnote)
+                    .foregroundStyle(Theme.Palette.textSecondary)
+                    .multilineTextAlignment(.leading)
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(Theme.Palette.textQuaternary)
+            }
+            .padding(Theme.Spacing.md)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.Radius.task, style: .continuous)
+                    .fill(Theme.Palette.accentFill)
+            )
+        }
+        .buttonStyle(.plain)
+        .padding(.top, Theme.Spacing.xs)
     }
 
     private var emptyState: some View {
-        VStack(spacing: Theme.Spacing.lg) {
+        VStack(spacing: Theme.Spacing.lg + 4) {
             Spacer()
 
             ZStack {
                 Circle()
                     .fill(Theme.Palette.accent.opacity(0.18))
-                    .frame(width: 132, height: 132)
-                    .blur(radius: 28)
-                Circle()
-                    .fill(Theme.Palette.surface)
-                    .frame(width: 108, height: 108)
-                    .overlay(Circle().strokeBorder(Theme.Palette.separator, lineWidth: 1))
-                    .overlay {
-                        Image(systemName: "alarm")
-                            .font(.system(size: 44, weight: .light))
-                            .foregroundStyle(Theme.Palette.accent)
-                    }
+                    .frame(width: 120, height: 120)
+                    .blur(radius: 26)
+                Image(systemName: "alarm")
+                    .font(.system(size: 64, weight: .ultraLight))
+                    .foregroundStyle(Theme.Palette.accent)
             }
 
             VStack(spacing: 10) {
@@ -168,18 +197,15 @@ struct HomeView: View {
                     .multilineTextAlignment(.center)
             }
 
-            PrimaryButton(
-                title: AppStrings.Home.emptyAction,
-                systemImage: "plus"
-            ) {
-                editedAlarm = Alarm(time: defaultTime)
+            PrimaryButton(title: AppStrings.Home.emptyAction, systemImage: "plus") {
+                addAlarm()
             }
             .fixedSize(horizontal: true, vertical: false)
 
             Spacer()
             Spacer()
         }
-        .padding(.horizontal, Theme.Spacing.xl + 8)
+        .padding(.horizontal, Theme.Spacing.xl + 12)
     }
 
     private func errorBanner(_ message: String) -> some View {
@@ -192,25 +218,42 @@ struct HomeView: View {
             Spacer(minLength: 0)
         }
         .padding(Theme.Spacing.sm + 4)
-        .cardBackground(cornerRadius: Theme.Radius.control)
-        .padding(.horizontal, Theme.Spacing.md)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.Radius.control, style: .continuous)
+                .fill(Theme.Palette.surface)
+        )
+        .padding(.horizontal, Theme.Spacing.lg)
         .padding(.bottom, Theme.Spacing.md)
     }
 
-    /// Yeni alarmın açılış saati — sabah 7:00, en sık kurulan saat.
-    private var defaultTime: TimeOfDay {
-        TimeOfDay(hour: 7, minute: 0)
+    // MARK: - Eylemler
+
+    private func addAlarm() {
+        guard premium.gate.canAddAlarm(currentCount: model.alarms.count) else {
+            isPresentingPaywall = true
+            return
+        }
+        editedAlarm = Alarm(time: TimeOfDay(hour: 7, minute: 0))
     }
 }
 
 #Preview("Dolu") {
     HomeView()
         .environment(AlarmListModel.preview())
+        .environment(PremiumModel.preview(isPremium: true))
+        .preferredColorScheme(.dark)
+}
+
+#Preview("Ücretsiz sınır") {
+    HomeView()
+        .environment(AlarmListModel.preview(alarms: Array(Alarm.samples.prefix(2))))
+        .environment(PremiumModel.preview(isPremium: false))
         .preferredColorScheme(.dark)
 }
 
 #Preview("Boş") {
     HomeView()
         .environment(AlarmListModel.preview(alarms: []))
+        .environment(PremiumModel.preview(isPremium: false))
         .preferredColorScheme(.dark)
 }

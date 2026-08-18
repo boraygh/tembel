@@ -13,6 +13,9 @@ struct RootView: View {
             Tab(AppStrings.Tabs.alarms, systemImage: "alarm.fill") {
                 HomeView()
             }
+            Tab(AppStrings.Premium.tab, systemImage: "star.fill") {
+                PremiumView()
+            }
             Tab(AppStrings.Tabs.settings, systemImage: "gearshape.fill") {
                 SettingsView()
             }
@@ -36,5 +39,6 @@ struct RootView: View {
     RootView(motionService: PreviewMotionService())
         .environment(AlarmListModel.preview())
         .environment(AlarmSessionModel.preview())
+        .environment(PremiumModel.preview())
         .preferredColorScheme(.dark)
 }
