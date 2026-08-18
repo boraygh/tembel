@@ -3,7 +3,7 @@ import SwiftUI
 /// Ayarlar sekmesi.
 ///
 /// Phase 1'de yalnızca sürüm bilgisi. İzin durumu kontrolleri (AlarmKit,
-/// kamera, motion) ve Demo Mode Phase 13'te buraya eklenecek.
+/// kamera, motion) ve Demo Mode sonraki fazlarda buraya eklenecek.
 struct SettingsView: View {
     private var versionText: String {
         let info = Bundle.main.infoDictionary
@@ -14,14 +14,25 @@ struct SettingsView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                Section("Hakkında") {
-                    LabeledContent("Sürüm", value: versionText)
+            ZStack {
+                Theme.Palette.background.ignoresSafeArea()
+
+                List {
+                    Section {
+                        LabeledContent(AppStrings.Settings.version, value: versionText)
+                            .font(Theme.Typography.body)
+                            .foregroundStyle(Theme.Palette.textPrimary)
+                            .listRowBackground(Theme.Palette.surface)
+                    } header: {
+                        Text(AppStrings.Settings.aboutSection.uppercased())
+                            .font(Theme.Typography.sectionLabel)
+                            .tracking(Theme.Tracking.sectionLabel)
+                            .foregroundStyle(Theme.Palette.textTertiary)
+                    }
                 }
+                .scrollContentBackground(.hidden)
             }
-            .scrollContentBackground(.hidden)
-            .background(Theme.Palette.background)
-            .navigationTitle("Ayarlar")
+            .navigationTitle(AppStrings.Settings.title)
         }
     }
 }

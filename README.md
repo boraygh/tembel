@@ -102,8 +102,8 @@ Gerçek cihaz test listesi: [`docs/ios-alarm-constraints.md`](docs/ios-alarm-con
 |---|---|---|
 | 0 | Ortam + iOS kısıt analizi | ✅ |
 | 1 | Proje iskeleti + navigation | ✅ |
-| 2 | Alarm modeli + persistence | ⏳ |
-| 3 | Alarm oluşturma ekranı | ⏳ |
+| 2 | Alarm modeli + persistence | ✅ |
+| 3 | Alarm oluşturma ekranı | ✅ (Mac'te derlenmeyi bekliyor) |
 | 4 | AlarmKit zamanlama + follow-up zinciri | ⏳ |
 | 5 | Alarm çalma ekranı + Live Activity | ⏳ |
 | 6–8 | Math / Shake / Photo görevleri | ⏳ |

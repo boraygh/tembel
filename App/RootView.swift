@@ -3,10 +3,10 @@ import SwiftUI
 struct RootView: View {
     var body: some View {
         TabView {
-            Tab("Alarmlar", systemImage: "alarm.fill") {
+            Tab(AppStrings.Tabs.alarms, systemImage: "alarm.fill") {
                 HomeView()
             }
-            Tab("Ayarlar", systemImage: "gearshape.fill") {
+            Tab(AppStrings.Tabs.settings, systemImage: "gearshape.fill") {
                 SettingsView()
             }
         }
@@ -16,5 +16,6 @@ struct RootView: View {
 
 #Preview {
     RootView()
+        .environment(AlarmListModel.preview())
         .preferredColorScheme(.dark)
 }

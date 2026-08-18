@@ -32,6 +32,9 @@ targets:
     platform: iOS
     sources:
       - path: App
+        excludes:
+          # Dokümantasyon uygulama paketine girmesin.
+          - "**/*.md"
     dependencies:
       - package: TembelCore
         product: TembelCore
@@ -49,6 +52,13 @@ targets:
         CFBundleDisplayName: Tembel
         UILaunchScreen: {}
         UIUserInterfaceStyle: Dark
+        # Archivo (SIL OFL 1.1) — bkz. App/Resources/Fonts/LICENSE.md
+        UIAppFonts:
+          - Archivo-Regular.ttf
+          - Archivo-Medium.ttf
+          - Archivo-SemiBold.ttf
+          - Archivo-Bold.ttf
+          - Archivo-ExtraBold.ttf
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         # AlarmKit alert UI'ı Live Activity üzerinden sunulur.
