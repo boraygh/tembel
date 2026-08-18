@@ -103,10 +103,18 @@ Gerçek cihaz test listesi: [`docs/ios-alarm-constraints.md`](docs/ios-alarm-con
 | 0 | Ortam + iOS kısıt analizi | ✅ |
 | 1 | Proje iskeleti + navigation | ✅ |
 | 2 | Alarm modeli + persistence | ✅ |
-| 3 | Alarm oluşturma ekranı | ✅ (Mac'te derlenmeyi bekliyor) |
-| 4 | AlarmKit zamanlama + follow-up zinciri | ⏳ |
-| 5 | Alarm çalma ekranı + Live Activity | ⏳ |
-| 6–8 | Math / Shake / Photo görevleri | ⏳ |
-| 9–10 | Ses + görev motoru | ⏳ |
-| 11 | Gerçek cihaz testi | ⏳ |
-| 12–14 | UI cilası, edge case'ler, App Store | ⏳ |
+| 3 | Alarm oluşturma ekranı | ✅ |
+| 4 | Zamanlama hesabı + follow-up zinciri | ✅ çekirdek · ⏸️ AlarmKit bağlantısı Mac bekliyor |
+| 5 | Alarm çalma ekranı | ✅ ekran · ⏸️ tetikleme Mac bekliyor |
+| 6 | Matematik görevi | ✅ |
+| 7 | Sallama görevi | ✅ algoritma · ⏸️ eşik ayarı gerçek cihaz bekliyor |
+| 8 | Fotoğraf görevi | ✅ akış · ⏸️ kamera gerçek cihaz bekliyor |
+| 9 | Alarm sesi | ⏸️ Mac |
+| 10 | Görev motoru | ✅ |
+| 11 | Gerçek cihaz testi | ⏸️ iPhone |
+| 12–14 | UI cilası, edge case'ler, App Store | ⏸️ Mac |
+
+`App/` altındaki SwiftUI kodu henüz hiçbir yerde **derlenmedi** — Mac
+gerektiriyor. `Core/` her push'ta Linux üzerinde derlenip test ediliyor.
+
+Mac edinildiğinde izlenecek sıra: [`docs/mac-baslangic.md`](docs/mac-baslangic.md)
