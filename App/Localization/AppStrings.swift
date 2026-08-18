@@ -26,6 +26,8 @@ enum AppStrings {
         static let noRepeat = "Tekrar yok"
         static let delete = "Sil"
         static let edit = "Düzenle"
+        static let nextAlarmPrefix = "Sonraki alarm "
+        static let noEnabledAlarm = "Açık alarm yok"
 
         static func taskCount(_ count: Int) -> String {
             count == 0 ? "Görev yok" : "\(count) görev"

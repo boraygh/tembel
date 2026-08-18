@@ -22,6 +22,7 @@ struct HomeView: View {
                     if model.alarms.isEmpty {
                         emptyState
                     } else {
+                        nextAlarmSummary
                         alarmList
                     }
                 }
@@ -83,6 +84,40 @@ struct HomeView: View {
         .padding(.horizontal, Theme.Spacing.md)
         .padding(.top, Theme.Spacing.sm)
         .padding(.bottom, Theme.Spacing.lg)
+    }
+
+    /// "Sonraki alarm 8 saat 42 dakika sonra" satırı.
+    ///
+    /// Dakikada bir yenilenir; geri sayımın ekranda donup kalmaması için
+    /// `TimelineView` kullanılıyor.
+    private var nextAlarmSummary: some View {
+        TimelineView(.periodic(from: .now, by: 60)) { context in
+            let next = AlarmScheduler.nextAlarm(among: model.alarms, after: context.date)
+            let remaining = next.flatMap {
+                RelativeTimeText.timeRemaining(until: $0.date, from: context.date)
+            }
+
+            HStack(spacing: Theme.Spacing.sm) {
+                Circle()
+                    .fill(remaining == nil ? Theme.Palette.textQuaternary : Theme.Palette.accent)
+                    .frame(width: 6, height: 6)
+
+                Group {
+                    if let remaining {
+                        Text(AppStrings.Home.nextAlarmPrefix)
+                            + Text(remaining).foregroundStyle(Theme.Palette.textPrimary)
+                    } else {
+                        Text(AppStrings.Home.noEnabledAlarm)
+                    }
+                }
+                .font(Theme.Typography.footnote)
+                .foregroundStyle(Theme.Palette.textSecondary)
+
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, Theme.Spacing.md)
+            .padding(.bottom, Theme.Spacing.md + 4)
+        }
     }
 
     private var alarmList: some View {
