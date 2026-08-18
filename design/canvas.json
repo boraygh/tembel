@@ -1,0 +1,32 @@
+{
+  "artboards": [
+    { "file": "HomeEmpty.dc.html", "x": 0, "y": 0, "w": 393, "h": 852, "title": "Ana Sayfa — Boş" },
+    { "file": "Home.dc.html", "x": 473, "y": 0, "w": 393, "h": 852, "title": "Ana Sayfa — Dolu" },
+    { "file": "Main.dc.html", "x": 946, "y": 0, "w": 393, "h": 1180, "title": "Alarm Düzenleyici" },
+    { "file": "TaskPicker.dc.html", "x": 1419, "y": 0, "w": 393, "h": 640, "title": "Görev Ekle" }
+  ],
+  "annotations": [
+    {
+      "id": "note-scope",
+      "x": 0,
+      "y": -150,
+      "w": 500,
+      "text": "Tembel — Phase 3 arayüz taslağı\n\nRenkler ve boşluklar App/DesignSystem/Theme.swift'ten birebir alındı:\n#0B0B0F zemin · #16161C kart · #212129 yükseltilmiş · #FF4D2E vurgu · 4/8/16/24/32 boşluk · 20/14 köşe.\n\nYukarıdaki 'accent' kolu ile vurgu rengini deneyebilirsin — dördü de tüm ekranlara birden uygulanır."
+    },
+    {
+      "id": "note-editor",
+      "x": 946,
+      "y": -150,
+      "w": 393,
+      "text": "Bu artboard telefonda kaydırılan tam içeriği gösteriyor (852px değil, 1180px). Gerçek ekranda 'Ses / Erteleme / Test et' bölümü kaydırma ile gelir.\n\n'taskCount' kolu 0-5 arası görevle tasarımın nasıl durduğunu gösterir."
+    },
+    {
+      "id": "note-statusbar",
+      "x": 1419,
+      "y": -150,
+      "w": 393,
+      "text": "Sahte iOS durum çubuğu ve klavye çizilmedi — gerçek cihazda sistem onları üste kendisi bindirir. Üstteki 68px boşluk safe area içindir."
+    }
+  ],
+  "launch": { "view": "canvas" }
+}

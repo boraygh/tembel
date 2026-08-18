@@ -27,3 +27,6 @@ desktop.ini
 .vscode/
 !.vscode/extensions.json
 .idea/
+
+# Design canvas cikti dosyasi - kaynak .dc.html dosyalarindan uretilir
+design/tembel-arayuz.html
