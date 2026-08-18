@@ -23,6 +23,13 @@ public struct AlarmSession: Codable, Sendable, Equatable, Identifiable {
     public let alarmID: UUID
     public let startedAt: Date
 
+    /// Alarm çaldığı andaki başlığı ve saati.
+    ///
+    /// Kopyalanmalarının nedeni: kullanıcı alarm çalarken alarmı silebilir.
+    /// Oturum, kaynağı ortadan kalksa bile ekranda ne göstereceğini bilmeli.
+    public let alarmTitle: String
+    public let alarmTime: TimeOfDay
+
     /// Alarm çaldığı andaki görev listesi ve sırası.
     public let tasks: [AlarmTask]
     /// Alarm çaldığı andaki erteleme ayarı.
@@ -39,6 +46,8 @@ public struct AlarmSession: Codable, Sendable, Equatable, Identifiable {
         self.id = id
         self.alarmID = alarm.id
         self.startedAt = startedAt.truncatedToSeconds()
+        self.alarmTitle = alarm.title
+        self.alarmTime = alarm.time
         self.tasks = alarm.tasks
         self.snooze = alarm.snooze
         self.completedTaskIDs = []

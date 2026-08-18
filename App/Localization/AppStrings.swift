@@ -80,6 +80,59 @@ enum AppStrings {
             "Alarm çaldığında bu metni göreceksin. Yataktan kalkmanı gerektiren bir şey seç."
     }
 
+    enum Ringing {
+        static let wakeUp = "KALK"
+        static let completedTitle = "Alarm tamamlandı"
+        static let completedMessage = "Günaydın. Artık uyanıksın."
+        static let dismiss = "Kapat"
+        static let snooze = "Ertele"
+        static let noSnoozeLeft = "Erteleme hakkın bitti"
+
+        static func taskProgress(current: Int, total: Int) -> String {
+            "GÖREV \(current) / \(total)"
+        }
+
+        static func snoozeRemaining(_ count: Int) -> String {
+            "\(count) hak kaldı"
+        }
+    }
+
+    enum ShakeTask {
+        static let instruction = "Telefonu salla"
+        static let unavailable = "Bu cihazda hareket sensörü yok"
+        static let unavailableHelp =
+            "Sallama görevi gerçek iPhone gerektirir. Simulator'da ivmeölçer bulunmaz."
+        static let simulatorTap = "Simulator: saymak için dokun"
+
+        static func progress(_ done: Int, _ target: Int) -> String { "\(done) / \(target)" }
+    }
+
+    enum MathTask {
+        static let wrongAnswer = "Yanlış"
+
+        static func questionProgress(current: Int, total: Int) -> String {
+            total == 1 ? "" : "\(current) / \(total)"
+        }
+    }
+
+    enum PhotoTask {
+        static let openCamera = "Kamerayı aç"
+        static let retake = "Tekrar çek"
+        static let confirm = "Bu doğru fotoğraf"
+        static let permissionDenied = "Kamera izni kapalı"
+        static let permissionHelp =
+            "Ayarlar → Tembel → Kamera bölümünden izin vermen gerekiyor."
+        static let privacyNote = "Fotoğraf cihazından çıkmaz ve görev bitince silinir."
+    }
+
+    enum Demo {
+        static let section = "Geliştirme"
+        static let title = "Demo Mode"
+        static let help =
+            "Alarm beklemeden görev akışını baştan sona dener. Sallama görevi sahte sensör verisiyle kendiliğinden ilerler."
+        static let start = "Demo alarmı başlat"
+    }
+
     enum Settings {
         static let title = "Ayarlar"
         static let aboutSection = "Hakkında"

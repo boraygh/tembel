@@ -61,9 +61,13 @@ struct AlarmSessionTests {
 
         source.tasks.removeAll()
         source.title = "Değişti"
+        source.time = TimeOfDay(hour: 23, minute: 59)
 
         #expect(subject.tasks.count == 2)
         #expect(subject.alarmID == source.id)
+        // Alarm çalarken silinse bile ekranda gösterilecek bilgi durmalı.
+        #expect(subject.alarmTitle == "Test")
+        #expect(subject.alarmTime == TimeOfDay(hour: 7, minute: 30))
     }
 
     // MARK: - Görev ilerlemesi
