@@ -1,0 +1,29 @@
+# --- Xcode / XcodeGen ---
+# .xcodeproj üretilen bir dosyadır, repoda tutulmaz. `xcodegen generate` ile
+# yeniden oluştur.
+*.xcodeproj/
+*.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+
+# XcodeGen tarafından project.yml'den üretilir.
+App/Info.plist
+
+xcuserdata/
+DerivedData/
+*.xcuserstate
+*.xcscmblueprint
+
+# --- Swift Package Manager ---
+.build/
+.swiftpm/
+Package.resolved
+
+# --- macOS / Windows ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Editör ---
+.vscode/
+!.vscode/extensions.json
+.idea/

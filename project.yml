@@ -1,0 +1,76 @@
+# XcodeGen proje tanımı.
+#
+# Xcode projesi bu repoda tutulmaz — .xcodeproj dosyaları merge conflict
+# makinesidir. Bunun yerine Mac'te tek komutla üretilir:
+#
+#   brew install xcodegen
+#   xcodegen generate
+#   open Tembel.xcodeproj
+
+name: Tembel
+
+options:
+  bundleIdPrefix: com.boray
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+  developmentLanguage: tr
+  groupSortPosition: top
+
+packages:
+  TembelCore:
+    path: Core
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+
+targets:
+  Tembel:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+    dependencies:
+      - package: TembelCore
+        product: TembelCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.boray.tembel
+        PRODUCT_NAME: Tembel
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        TARGETED_DEVICE_FAMILY: "1"
+        GENERATE_INFOPLIST_FILE: NO
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: Tembel
+        UILaunchScreen: {}
+        UIUserInterfaceStyle: Dark
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        # AlarmKit alert UI'ı Live Activity üzerinden sunulur.
+        NSSupportsLiveActivities: true
+        # İzin metinleri App Store incelemesinde okunur; neden istendiğini
+        # açıkça yazmak reddedilme riskini düşürür.
+        NSAlarmKitUsageDescription: >-
+          Kurduğun alarmların sessiz modda ve Odak açıkken bile çalabilmesi için
+          gerekli. Alarmlar yalnızca senin belirlediğin saatlerde çalar.
+        NSCameraUsageDescription: >-
+          Fotoğraf görevini tamamlayabilmen için kamera gerekiyor. Çektiğin
+          fotoğraflar cihazından çıkmaz ve görev bitince silinir.
+        NSMotionUsageDescription: >-
+          Sallama görevinde telefonu kaç kez salladığını sayabilmek için hareket
+          sensörü gerekiyor.
+
+schemes:
+  Tembel:
+    build:
+      targets:
+        Tembel: all
+    run:
+      config: Debug
+    archive:
+      config: Release
