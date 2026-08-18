@@ -66,9 +66,13 @@ struct WeekdaySelector: View {
                         // Circle bu durumda elipse dönüşür.
                         // Seçilmeyen günler zeminsiz: yedi dolu kutucuk
                         // gereksiz görsel gürültü yaratıyordu.
-                        .background(
-                            Capsule().fill(isOn ? Theme.Palette.accent : Color.clear)
-                        )
+                        .background {
+                            if isOn {
+                                Capsule()
+                                    .fill(Theme.Gradients.ember)
+                                    .shadow(color: Theme.Shadow.ember, radius: 8, y: 3)
+                            }
+                        }
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(day.shortLabel)
@@ -141,8 +145,22 @@ struct PrimaryButton: View {
             .frame(height: Theme.Size.primaryButton)
             .background(
                 RoundedRectangle(cornerRadius: Theme.Radius.control + 2, style: .continuous)
-                    .fill(Theme.Palette.accent)
+                    .fill(Theme.Gradients.ember)
             )
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.Radius.control + 2, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [.white.opacity(0.3), .clear],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        ),
+                        lineWidth: 1
+                    )
+            )
+            // Gölge butonun kendi renginde: nötr gri gölge yerine sıcak bir
+            // ışık halesi, düğmeyi yüzeyden kaldırıyor.
+            .shadow(color: Theme.Shadow.ember, radius: 16, y: 8)
         }
         .buttonStyle(.plain)
         .opacity(isEnabled ? 1 : 0.4)
@@ -159,8 +177,9 @@ struct RoundAccentButton: View {
     var body: some View {
         Button(action: action) {
             Circle()
-                .fill(Theme.Palette.accent)
+                .fill(Theme.Gradients.ember)
                 .frame(width: Theme.Size.roundButton, height: Theme.Size.roundButton)
+                .shadow(color: Theme.Shadow.ember, radius: 12, y: 5)
                 .overlay {
                     Image(systemName: systemImage)
                         .font(.system(size: 18, weight: .bold))
@@ -172,25 +191,29 @@ struct RoundAccentButton: View {
     }
 }
 
-/// Kart görünümlü grup — koyu yüzey, yumuşak kenarlık.
-struct CardBackground: ViewModifier {
-    var cornerRadius: CGFloat = Theme.Radius.card
+/// Kart malzemesi: gradyan yüzey + üst kenarda ışık çizgisi + yumuşak gölge.
+///
+/// Bu üçü birlikte kartı ekranın üstünde duruyormuş gibi gösteriyor. Düz
+/// dolgu tek başına "premium" durmuyor; asıl fark bu 1px kenar ışığında.
+struct MaterialCard: ViewModifier {
+    var cornerRadius: CGFloat = Theme.Radius.cardLarge
 
     func body(content: Content) -> some View {
         content
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(Theme.Palette.surface)
+                    .fill(Theme.Gradients.surface)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .strokeBorder(Theme.Palette.separator, lineWidth: 1)
+                    .strokeBorder(Theme.Gradients.edgeHighlight, lineWidth: 1)
             )
+            .shadow(color: Theme.Shadow.card, radius: 16, y: 8)
     }
 }
 
 extension View {
-    func cardBackground(cornerRadius: CGFloat = Theme.Radius.card) -> some View {
-        modifier(CardBackground(cornerRadius: cornerRadius))
+    func materialCard(cornerRadius: CGFloat = Theme.Radius.cardLarge) -> some View {
+        modifier(MaterialCard(cornerRadius: cornerRadius))
     }
 }

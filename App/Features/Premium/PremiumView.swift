@@ -13,7 +13,7 @@ struct PremiumView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Theme.Palette.background.ignoresSafeArea()
+                Theme.Gradients.page.ignoresSafeArea()
 
                 if premium.isPremium {
                     PremiumActiveView()
@@ -53,8 +53,9 @@ struct PremiumActiveView: View {
                     .frame(width: 96, height: 96)
                     .blur(radius: 24)
                 RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .fill(Theme.Palette.accent)
+                    .fill(Theme.Gradients.ember)
                     .frame(width: 72, height: 72)
+                    .shadow(color: Theme.Shadow.ember, radius: 20, y: 10)
                     .overlay {
                         Image(systemName: "star.fill")
                             .font(.system(size: 32, weight: .semibold))
@@ -131,7 +132,7 @@ struct PaywallSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Theme.Palette.sheetBackground.ignoresSafeArea()
+                Theme.Gradients.sheet.ignoresSafeArea()
                 PaywallContentView(reason: reason)
             }
             .navigationBarTitleDisplayMode(.inline)

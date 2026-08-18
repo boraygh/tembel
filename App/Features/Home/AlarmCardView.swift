@@ -21,11 +21,8 @@ struct AlarmCardView: View {
             }
         }
         .padding(Theme.Spacing.md + 4)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.Radius.cardLarge, style: .continuous)
-                .fill(Theme.Palette.surface)
-        )
-        .opacity(alarm.isEnabled ? 1 : 0.38)
+        .materialCard()
+        .opacity(alarm.isEnabled ? 1 : 0.34)
         .contentShape(Rectangle())
         .onTapGesture(perform: onEdit)
         .contextMenu {
@@ -93,7 +90,7 @@ struct AlarmCardView: View {
 
 #Preview {
     ZStack {
-        Theme.Palette.background.ignoresSafeArea()
+        Theme.Gradients.page.ignoresSafeArea()
         VStack(spacing: 12) {
             ForEach(Alarm.samples) { alarm in
                 AlarmCardView(alarm: alarm, onToggle: { _ in }, onEdit: {}, onDelete: {})

@@ -13,7 +13,7 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Theme.Palette.background.ignoresSafeArea()
+                Theme.Gradients.page.ignoresSafeArea()
 
                 VStack(spacing: 0) {
                     header
@@ -220,7 +220,7 @@ struct HomeView: View {
         .padding(Theme.Spacing.sm + 4)
         .background(
             RoundedRectangle(cornerRadius: Theme.Radius.control, style: .continuous)
-                .fill(Theme.Palette.surface)
+                .fill(Theme.Gradients.surface)
         )
         .padding(.horizontal, Theme.Spacing.lg)
         .padding(.bottom, Theme.Spacing.md)

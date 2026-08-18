@@ -18,6 +18,9 @@ enum Theme {
         static let sheetBackground = Color(red: 0.075, green: 0.075, blue: 0.094)
         /// Vurgu rengi — uyandırıcı turuncu-kırmızı.
         static let accent = Color(red: 1.0, green: 0.302, blue: 0.180)
+        /// Vurgunun açık ucu. Gradyanların üst tarafında ve ikonlarda kullanılır;
+        /// tek renk yerine iki uç, yüzeye derinlik veriyor.
+        static let accentBright = Color(red: 1.0, green: 0.451, blue: 0.329)
 
         static let textPrimary = Color.white
         static let textSecondary = Color.white.opacity(0.56)
@@ -29,6 +32,76 @@ enum Theme {
         /// Vurgu renginin şeffaf varyantları — dolgu ve kenarlık için.
         static let accentFill = accent.opacity(0.12)
         static let accentBorder = accent.opacity(0.28)
+    }
+
+    /// Yüzey malzemeleri.
+    ///
+    /// Premium his düz dolgudan değil malzemeden gelir: yüzeyde hafif dikey
+    /// gradyan, üst kenarda 1px ışık çizgisi, altta yumuşak gölge. Bu üçü
+    /// birlikte kartı "ekrana yapışık" olmaktan çıkarıp üstünde duruyormuş
+    /// gibi gösterir.
+    enum Gradients {
+
+        /// Sayfa zemini — yukarıdan aşağı koyulaşır.
+        static let page = LinearGradient(
+            stops: [
+                .init(color: Color(red: 0.063, green: 0.063, blue: 0.090), location: 0),
+                .init(color: Color(red: 0.039, green: 0.039, blue: 0.055), location: 0.45),
+                .init(color: Color(red: 0.027, green: 0.027, blue: 0.039), location: 1)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+
+        /// Kart yüzeyi.
+        static let surface = LinearGradient(
+            colors: [
+                Color(red: 0.110, green: 0.110, blue: 0.141),
+                Color(red: 0.078, green: 0.078, blue: 0.098)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+
+        /// Üst kenardaki ışık çizgisi — aşağı doğru söner.
+        static let edgeHighlight = LinearGradient(
+            colors: [Color.white.opacity(0.08), Color.white.opacity(0.012)],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+
+        /// Yaprak (sheet) zemini — ana zeminden bir ton açık başlar ki
+        /// üst üste bindiklerinde ayrışsınlar.
+        static let sheet = LinearGradient(
+            colors: [
+                Color(red: 0.082, green: 0.082, blue: 0.110),
+                Color(red: 0.047, green: 0.047, blue: 0.067)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+
+        /// Vurgu gradyanı — butonlar, seçili günler, açık anahtarlar.
+        static let ember = LinearGradient(
+            colors: [Palette.accentBright, Palette.accent],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+
+        /// Vurgunun soluk dolgusu — ikincil butonlar ve rozetler.
+        static let emberFaint = LinearGradient(
+            colors: [Palette.accent.opacity(0.16), Palette.accent.opacity(0.05)],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+
+    /// Gölgeler.
+    enum Shadow {
+        static let card = Color.black.opacity(0.36)
+        /// Vurgu renkli butonun altındaki sıcak gölge — nötr gri gölge yerine
+        /// butonun kendi rengi, ışık kaynağı hissi veriyor.
+        static let ember = Palette.accent.opacity(0.34)
     }
 
     /// Tipografi.

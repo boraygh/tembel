@@ -7,122 +7,123 @@
 <body>
 <x-dc>
 <helmet>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap">
   <style>
     body { margin: 0; }
-    a { color: #FF4D2E; } a:hover { color: #ff6a50; }
+    a { color: #FF4D2E; } a:hover { color: #ff7a45; }
   </style>
 </helmet>
 
-<div style="width: 393px; min-height: 1120px; background: #0B0B0F; font-family: Archivo, system-ui, sans-serif; color: #FFFFFF; display: flex; flex-direction: column; overflow: hidden;">
+<div style="position: relative; width: 393px; min-height: 1120px; font-family: Archivo, system-ui, sans-serif; color: #FFFFFF; display: flex; flex-direction: column; overflow: hidden; {{pageStyle}}">
+
+  <div style="position: absolute; top: 40px; left: 50%; width: 460px; height: 320px; margin-left: -230px; border-radius: 50%; background: {{clockGlow}}; filter: blur(72px); pointer-events: none;"></div>
 
   <!-- Nav -->
-  <div style="display: flex; align-items: center; justify-content: space-between; padding: 68px 20px 0 20px;">
-    <div style="font-size: 16px; font-weight: 500; color: rgba(255,255,255,0.45);">Vazgeç</div>
-    <div style="font-size: 16px; font-weight: 700; color: {{accent}};">Kaydet</div>
+  <div style="position: relative; display: flex; align-items: center; justify-content: space-between; padding: 68px 20px 0 20px;">
+    <span style="font-size: 16px; font-weight: 500; color: rgba(255,255,255,0.42);">Vazgeç</span>
+    <span style="font-size: 16px; font-weight: 750; color: {{accentHi}};">Kaydet</span>
   </div>
 
   <!-- Saat -->
-  <div style="position: relative; display: flex; flex-direction: column; align-items: center; padding: 36px 20px 34px 20px;">
-    <div style="position: absolute; top: 10px; left: 50%; width: 300px; height: 180px; margin-left: -150px; border-radius: 50%; background: {{glow}}; filter: blur(50px); pointer-events: none;"></div>
-    <div style="position: relative; display: flex; align-items: baseline; font-size: 92px; font-weight: 800; letter-spacing: -0.055em; line-height: 1; font-variant-numeric: tabular-nums;">
-      <span>07</span><span style="color: {{accent}};">:</span><span>30</span>
+  <div style="position: relative; display: flex; flex-direction: column; align-items: center; padding: 40px 20px 36px 20px;">
+    <div style="display: flex; align-items: baseline; font-size: 98px; font-weight: 800; letter-spacing: -0.06em; line-height: 1; font-variant-numeric: tabular-nums; text-shadow: 0 4px 40px rgba(255,255,255,0.10);">
+      <span>07</span><span style="color: {{accentHi}}; text-shadow: 0 0 26px {{accent}};">:</span><span>30</span>
     </div>
-    <div style="position: relative; margin-top: 10px; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.35);">Değiştirmek için dokun</div>
+    <div style="margin-top: 12px; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.30);">Değiştirmek için dokun</div>
   </div>
 
   <!-- Tekrar -->
-  <div style="padding: 0 20px 30px 20px;">
-    <div style="display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 12px;">
-      <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: rgba(255,255,255,0.30);">TEKRAR</span>
-      <span style="font-size: 13px; font-weight: 600; color: {{accent}};">{{repeatSummary}}</span>
+  <div style="position: relative; padding: 0 20px 30px 20px;">
+    <div style="display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 13px;">
+      <span style="font-size: 11px; font-weight: 800; letter-spacing: 0.2em; color: rgba(255,255,255,0.28);">TEKRAR</span>
+      <span style="font-size: 13px; font-weight: 700; color: {{accentHi}};">{{repeatSummary}}</span>
     </div>
     <div style="display: flex; justify-content: space-between; gap: 5px;">
       <sc-for list="{{days}}" as="day" hint-placeholder-count="7">
-        <div style="flex-grow: 1; flex-basis: 0; height: 46px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; {{day.style}}">{{day.label}}</div>
+        <div style="flex-grow: 1; flex-basis: 0; height: 46px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 750; {{day.style}}">{{day.label}}</div>
       </sc-for>
     </div>
   </div>
 
   <!-- Ad -->
-  <div style="padding: 0 20px 30px 20px;">
-    <div style="display: flex; align-items: center; gap: 12px; height: 56px; padding: 0 18px; border-radius: 16px; background: #15151A;">
+  <div style="position: relative; padding: 0 20px 30px 20px;">
+    <div style="display: flex; align-items: center; gap: 12px; height: 58px; padding: 0 18px; border-radius: 18px; {{fieldStyle}}">
       <span style="font-size: 17px; font-weight: 600;">İşe Kalk</span>
     </div>
   </div>
 
   <!-- Görevler -->
-  <div style="padding: 0 20px;">
-    <div style="display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 12px;">
-      <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: rgba(255,255,255,0.30);">GÖREVLER</span>
-      <span style="font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.35);">{{taskCountLabel}}</span>
+  <div style="position: relative; padding: 0 20px;">
+    <div style="display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 13px;">
+      <span style="font-size: 11px; font-weight: 800; letter-spacing: 0.2em; color: rgba(255,255,255,0.28);">GÖREVLER</span>
+      <span style="font-size: 13px; font-weight: 650; color: rgba(255,255,255,0.32);">{{taskCountLabel}}</span>
     </div>
 
-    <div style="display: flex; flex-direction: column; gap: 8px;">
+    <div style="display: flex; flex-direction: column; gap: 9px;">
       <sc-for list="{{tasks}}" as="task" hint-placeholder-count="3">
-        <div style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 18px; background: #15151A;">
-          <div style="width: 38px; height: 38px; border-radius: 12px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <div style="display: flex; align-items: center; gap: 14px; padding: 15px 16px; border-radius: 20px; {{cardStyle}}">
+          <div style="width: 40px; height: 40px; border-radius: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; {{iconBoxStyle}}">
             <sc-if value="{{task.isShake}}" hint-placeholder-val="{{true}}">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="18" rx="2"></rect><path d="M4 9v6"></path><path d="M20 9v6"></path></svg>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="{{accentHi}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="18" rx="2"></rect><path d="M4 9v6"></path><path d="M20 9v6"></path></svg>
             </sc-if>
             <sc-if value="{{task.isMath}}" hint-placeholder-val="{{true}}">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h7"></path><path d="M7.5 3.5v7"></path><path d="M13.5 17h7"></path><path d="M14 6.5l6 6"></path><path d="M20 6.5l-6 6"></path></svg>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="{{accentHi}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h7"></path><path d="M7.5 3.5v7"></path><path d="M13.5 17h7"></path><path d="M14 6.5l6 6"></path><path d="M20 6.5l-6 6"></path></svg>
             </sc-if>
             <sc-if value="{{task.isPhoto}}" hint-placeholder-val="{{true}}">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1.7l1.2-2h6.2l1.2 2h1.7A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5Z"></path><circle cx="12" cy="12.5" r="3"></circle></svg>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="{{accentHi}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1.7l1.2-2h6.2l1.2 2h1.7A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5Z"></path><circle cx="12" cy="12.5" r="3"></circle></svg>
             </sc-if>
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0;">
             <div style="font-size: 15px; font-weight: 650;">{{task.title}}</div>
-            <div style="font-size: 13px; font-weight: 450; color: rgba(255,255,255,0.42);">{{task.detail}}</div>
+            <div style="font-size: 13px; font-weight: 450; color: rgba(255,255,255,0.40);">{{task.detail}}</div>
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 3.5px; flex-shrink: 0;">
-            <div style="width: 15px; height: 1.5px; border-radius: 1px; background: rgba(255,255,255,0.16);"></div>
-            <div style="width: 15px; height: 1.5px; border-radius: 1px; background: rgba(255,255,255,0.16);"></div>
-            <div style="width: 15px; height: 1.5px; border-radius: 1px; background: rgba(255,255,255,0.16);"></div>
+            <div style="width: 15px; height: 1.5px; border-radius: 1px; background: rgba(255,255,255,0.14);"></div>
+            <div style="width: 15px; height: 1.5px; border-radius: 1px; background: rgba(255,255,255,0.14);"></div>
+            <div style="width: 15px; height: 1.5px; border-radius: 1px; background: rgba(255,255,255,0.14);"></div>
           </div>
         </div>
       </sc-for>
 
-      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 54px; border-radius: 18px; background: rgba(255,77,46,0.07);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
-        <span style="font-size: 15px; font-weight: 650; color: {{accent}};">Görev ekle</span>
+      <div style="display: flex; align-items: center; justify-content: center; gap: 9px; height: 56px; border-radius: 20px; {{addTaskStyle}}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{accentHi}}" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+        <span style="font-size: 15px; font-weight: 700; color: {{accentHi}};">Görev ekle</span>
       </div>
     </div>
   </div>
 
   <!-- Alarm ayarları -->
-  <div style="padding: 30px 20px 0 20px;">
-    <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: rgba(255,255,255,0.30); padding-bottom: 12px;">ALARM</div>
-    <div style="border-radius: 18px; background: #15151A; overflow: hidden;">
+  <div style="position: relative; padding: 30px 20px 0 20px;">
+    <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.2em; color: rgba(255,255,255,0.28); padding-bottom: 13px;">ALARM</div>
+    <div style="border-radius: 20px; overflow: hidden; {{cardStyle}}">
 
       <div style="display: flex; align-items: center; gap: 14px; height: 58px; padding: 0 18px;">
         <span style="font-size: 16px; font-weight: 550; flex-grow: 1;">Ses</span>
-        <span style="font-size: 15px; font-weight: 500; color: rgba(255,255,255,0.42);">Varsayılan</span>
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg>
+        <span style="font-size: 15px; font-weight: 500; color: rgba(255,255,255,0.40);">Varsayılan</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg>
       </div>
 
       <div style="height: 1px; background: rgba(255,255,255,0.05); margin-left: 18px;"></div>
 
-      <div style="display: flex; align-items: center; gap: 14px; padding: 14px 18px;">
+      <div style="display: flex; align-items: center; gap: 14px; padding: 15px 18px;">
         <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;">
           <span style="font-size: 16px; font-weight: 550;">Erteleme</span>
-          <span style="font-size: 12px; font-weight: 450; color: rgba(255,255,255,0.32);">Kapalı — görevler zorunlu</span>
+          <span style="font-size: 12px; font-weight: 450; color: rgba(255,255,255,0.30);">Kapalı — görevler zorunlu</span>
         </div>
-        <div style="width: 51px; height: 31px; border-radius: 999px; background: rgba(255,255,255,0.10); display: flex; align-items: center; padding: 2px; box-sizing: border-box;">
-          <div style="width: 27px; height: 27px; border-radius: 999px; background: #FFFFFF;"></div>
+        <div style="width: 52px; height: 32px; border-radius: 999px; background: rgba(255,255,255,0.09); display: flex; align-items: center; padding: 2.5px; box-sizing: border-box;">
+          <div style="width: 27px; height: 27px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 2px 5px rgba(0,0,0,0.4);"></div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Test -->
-  <div style="padding: 20px 20px 40px 20px; margin-top: auto;">
-    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; height: 52px; border-radius: 16px; background: rgba(255,255,255,0.05);">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3.5 19 12 5 20.5Z"></path></svg>
-      <span style="font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.55);">10 saniye sonra test et</span>
+  <div style="position: relative; padding: 20px 20px 40px 20px; margin-top: auto;">
+    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; height: 54px; border-radius: 17px; {{testStyle}}">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.50)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3.5 19 12 5 20.5Z"></path></svg>
+      <span style="font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.50);">10 saniye sonra test et</span>
     </div>
   </div>
 
@@ -135,8 +136,19 @@
   "selectedDays": { "editor": "enum", "default": "weekdays", "options": ["weekdays", "everyday", "weekend", "custom", "none"] }
 }'>
 class Component extends DCLogic {
+  shift(hex, amount) {
+    const value = parseInt(hex.slice(1), 16);
+    const channel = (offset) => {
+      const raw = ((value >> offset) & 255) + amount;
+      return Math.max(0, Math.min(255, raw));
+    };
+    return '#' + [channel(16), channel(8), channel(0)]
+      .map((c) => c.toString(16).padStart(2, '0')).join('');
+  }
+
   renderVals() {
     const accent = this.props.accent ?? '#FF4D2E';
+    const accentHi = this.shift(accent, 38);
     const count = this.props.taskCount ?? 3;
     const mode = this.props.selectedDays ?? 'weekdays';
 
@@ -150,15 +162,13 @@ class Component extends DCLogic {
     };
     const selection = byMode[mode] ?? byMode.weekdays;
 
-    const days = labels.map((label, index) => {
-      const on = selection.indices.includes(index);
-      return {
-        label,
-        style: on
-          ? 'background: ' + accent + '; color: #0B0B0F;'
-          : 'background: transparent; color: rgba(255,255,255,0.28);'
-      };
-    });
+    const days = labels.map((label, index) => ({
+      label,
+      style: selection.indices.includes(index)
+        ? 'background: linear-gradient(135deg, ' + accentHi + ', ' + accent + ');' +
+          'color: #0B0B0F; box-shadow: 0 4px 14px ' + accent + '4D;'
+        : 'background: transparent; color: rgba(255,255,255,0.26);'
+    }));
 
     const allTasks = [
       { title: 'Telefonu salla', detail: '10 kez', isShake: true, isMath: false, isPhoto: false },
@@ -168,13 +178,30 @@ class Component extends DCLogic {
       { title: 'Matematik', detail: 'Zor · 3 soru', isShake: false, isMath: true, isPhoto: false }
     ];
 
+    const card =
+      'background: linear-gradient(180deg, #1C1C24 0%, #141419 100%);' +
+      'box-shadow: inset 0 1px 0 rgba(255,255,255,0.055), 0 8px 22px rgba(0,0,0,0.34);';
+
     return {
       accent,
-      glow: 'radial-gradient(circle, ' + accent + '20 0%, transparent 70%)',
+      accentHi,
       days,
       repeatSummary: selection.summary,
       tasks: allTasks.slice(0, count),
-      taskCountLabel: count === 0 ? 'Görev yok' : count + ' / 5'
+      taskCountLabel: count === 0 ? 'Görev yok' : count + ' / 5',
+      pageStyle: 'background: linear-gradient(180deg, #121219 0%, #0A0A0E 35%, #07070A 100%);',
+      clockGlow: 'radial-gradient(circle, ' + accent + '24 0%, transparent 70%)',
+      cardStyle: card,
+      fieldStyle: card,
+      iconBoxStyle:
+        'background: rgba(255,255,255,0.045);' +
+        'box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);',
+      addTaskStyle:
+        'background: linear-gradient(180deg, ' + accent + '1C 0%, ' + accent + '0A 100%);' +
+        'box-shadow: inset 0 1px 0 ' + accent + '2E;',
+      testStyle:
+        'background: rgba(255,255,255,0.04);' +
+        'box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);'
     };
   }
 }

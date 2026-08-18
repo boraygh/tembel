@@ -14,7 +14,17 @@ struct AlarmRingingView: View {
 
     var body: some View {
         ZStack {
-            Theme.Palette.background.ignoresSafeArea()
+            Theme.Gradients.page.ignoresSafeArea()
+
+            // Alttan yükselen köz: dikkat ekranın ortasındaki göreve
+            // toplanıyor, alarmın "yanan" hissi veriliyor.
+            Circle()
+                .fill(Theme.Palette.accent.opacity(0.22))
+                .frame(width: 620, height: 520)
+                .blur(radius: 90)
+                .offset(y: 380)
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
 
             if let session = sessionModel.session {
                 if session.isComplete {

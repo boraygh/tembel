@@ -205,7 +205,7 @@ struct MathTaskView: View {
 
 #Preview {
     ZStack {
-        Theme.Palette.background.ignoresSafeArea()
+        Theme.Gradients.page.ignoresSafeArea()
         MathTaskView(difficulty: .medium, questionCount: 2) {}
     }
     .preferredColorScheme(.dark)

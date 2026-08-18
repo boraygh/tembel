@@ -65,13 +65,20 @@ struct ShakeTaskView: View {
 
     private var counter: some View {
         ZStack {
+            // Halkanın arkasındaki hale: sayaç ilerledikçe güçlenir,
+            // ekranın odak noktası olduğunu belli eder.
             Circle()
-                .stroke(Theme.Palette.fill, lineWidth: 10)
+                .fill(Theme.Palette.accent.opacity(0.18 + 0.16 * detector.progress))
+                .blur(radius: 34)
+                .padding(14)
+
+            Circle()
+                .stroke(Theme.Palette.fill, lineWidth: 11)
             Circle()
                 .trim(from: 0, to: detector.progress)
                 .stroke(
-                    Theme.Palette.accent,
-                    style: StrokeStyle(lineWidth: 10, lineCap: .round)
+                    Theme.Gradients.ember,
+                    style: StrokeStyle(lineWidth: 11, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
                 .animation(.snappy(duration: 0.2), value: detector.progress)
@@ -120,7 +127,7 @@ struct ShakeTaskView: View {
 
 #Preview {
     ZStack {
-        Theme.Palette.background.ignoresSafeArea()
+        Theme.Gradients.page.ignoresSafeArea()
         ShakeTaskView(target: 10, motionService: PreviewMotionService()) {}
     }
     .preferredColorScheme(.dark)

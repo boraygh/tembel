@@ -18,7 +18,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Theme.Palette.background.ignoresSafeArea()
+                Theme.Gradients.page.ignoresSafeArea()
 
                 List {
                     #if DEBUG

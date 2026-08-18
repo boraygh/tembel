@@ -148,7 +148,7 @@ struct PhotoTaskView: View {
 
 #Preview {
     ZStack {
-        Theme.Palette.background.ignoresSafeArea()
+        Theme.Gradients.page.ignoresSafeArea()
         PhotoTaskView(prompt: "Mutfaktaki kahve makinesi") {}
     }
     .preferredColorScheme(.dark)

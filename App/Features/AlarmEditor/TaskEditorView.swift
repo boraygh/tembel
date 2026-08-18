@@ -54,7 +54,7 @@ struct TaskEditorView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Theme.Palette.sheetBackground.ignoresSafeArea()
+                Theme.Gradients.sheet.ignoresSafeArea()
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
@@ -229,7 +229,7 @@ struct TaskEditorView: View {
         .padding(.horizontal, Theme.Spacing.md)
         .background(
             RoundedRectangle(cornerRadius: Theme.Radius.task, style: .continuous)
-                .fill(Theme.Palette.surface)
+                .fill(Theme.Gradients.surface)
         )
     }
 
@@ -273,7 +273,7 @@ struct TaskEditorView: View {
         .padding(Theme.Spacing.md)
         .background(
             RoundedRectangle(cornerRadius: Theme.Radius.task, style: .continuous)
-                .fill(Theme.Palette.surface)
+                .fill(Theme.Gradients.surface)
         )
     }
 
@@ -305,7 +305,7 @@ struct TaskEditorView: View {
         .padding(Theme.Spacing.md)
         .background(
             RoundedRectangle(cornerRadius: Theme.Radius.task, style: .continuous)
-                .fill(Theme.Palette.surface)
+                .fill(Theme.Gradients.surface)
         )
     }
 

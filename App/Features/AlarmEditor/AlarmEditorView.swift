@@ -26,7 +26,7 @@ struct AlarmEditorView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Theme.Palette.background.ignoresSafeArea()
+                Theme.Gradients.page.ignoresSafeArea()
                 content
             }
             .navigationTitle(isNewAlarm ? AppStrings.Editor.newAlarmTitle : AppStrings.Editor.editAlarmTitle)
@@ -160,7 +160,7 @@ struct AlarmEditorView: View {
             .frame(height: Theme.Size.row)
             .background(
                 RoundedRectangle(cornerRadius: Theme.Radius.control, style: .continuous)
-                    .fill(Theme.Palette.surface)
+                    .fill(Theme.Gradients.surface)
             )
             .padding(.bottom, Theme.Spacing.lg)
         }
@@ -252,7 +252,7 @@ struct AlarmEditorView: View {
         }
         .background(
             RoundedRectangle(cornerRadius: Theme.Radius.task, style: .continuous)
-                .fill(Theme.Palette.surface)
+                .fill(Theme.Gradients.surface)
         )
         .padding(.bottom, Theme.Spacing.xl)
     }
@@ -414,7 +414,7 @@ private struct TaskRowView: View {
         .padding(.vertical, Theme.Spacing.sm + 6)
         .background(
             RoundedRectangle(cornerRadius: Theme.Radius.task, style: .continuous)
-                .fill(Theme.Palette.surface)
+                .fill(Theme.Gradients.surface)
         )
     }
 }

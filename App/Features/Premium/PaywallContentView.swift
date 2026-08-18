@@ -39,8 +39,9 @@ struct PaywallContentView: View {
                     .frame(width: 88, height: 88)
                     .blur(radius: 22)
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(Theme.Palette.accent)
+                    .fill(Theme.Gradients.ember)
                     .frame(width: 64, height: 64)
+                    .shadow(color: Theme.Shadow.ember, radius: 18, y: 9)
                     .overlay {
                         Image(systemName: "star.fill")
                             .font(.system(size: 28, weight: .semibold))
@@ -147,14 +148,21 @@ struct PaywallContentView: View {
             .padding(.horizontal, Theme.Spacing.sm)
             .background(
                 RoundedRectangle(cornerRadius: Theme.Radius.task, style: .continuous)
-                    .fill(isSelected ? Theme.Palette.accentFill : Theme.Palette.surface)
+                    .fill(isSelected ? AnyShapeStyle(Theme.Gradients.emberFaint)
+                                     : AnyShapeStyle(Theme.Gradients.surface))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.Radius.task, style: .continuous)
                     .strokeBorder(
-                        isSelected ? Theme.Palette.accent : .clear,
+                        isSelected ? AnyShapeStyle(Theme.Palette.accent)
+                                   : AnyShapeStyle(Theme.Gradients.edgeHighlight),
                         lineWidth: 1.5
                     )
+            )
+            .shadow(
+                color: isSelected ? Theme.Shadow.ember : .clear,
+                radius: 14,
+                y: 6
             )
             .overlay(alignment: .top) {
                 if offer.isRecommended {
