@@ -51,16 +51,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: const BoxDecoration(gradient: AppTheme.pageGradient),
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _header(),
-            _nextAlarmSummary(),
-            Expanded(child: _alarms.isEmpty ? _emptyState() : _list()),
-          ],
+    // Scaffold zorunlu: Switch gibi Material bileşenleri üstlerinde bir
+    // Material atasosu arar. Zemin gradyanı Scaffold'un içinde duruyor ki
+    // ekranın tamamını kaplasın.
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(gradient: AppTheme.pageGradient),
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _header(),
+              _nextAlarmSummary(),
+              Expanded(child: _alarms.isEmpty ? _emptyState() : _list()),
+            ],
+          ),
         ),
       ),
     );

@@ -51,12 +51,12 @@ abstract final class Strings {
       final minutes = interval.inMinutes % 60;
       return minutes == 0
           ? '${interval.inHours} saat sonra'
-          : '${interval.inHours} sa \$minutes dk sonra';
+          : '${interval.inHours} sa $minutes dk sonra';
     }
     final hours = interval.inHours % 24;
     return hours == 0
         ? '${interval.inDays} gün sonra'
-        : '${interval.inDays} gün \$hours saat sonra';
+        : '${interval.inDays} gün $hours saat sonra';
   }
 }
 
