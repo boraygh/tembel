@@ -24,8 +24,12 @@ Thumbs.db
 desktop.ini
 
 # --- Editör ---
-.vscode/
+# VS Code ayarları paylaşılıyor: proje tek tıkla çalışsın ve biçimlendirme
+# ikimizde de aynı olsun diye.
+.vscode/*
 !.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
 .idea/
 
 # Design canvas cikti dosyasi - kaynak .dc.html dosyalarindan uretilir

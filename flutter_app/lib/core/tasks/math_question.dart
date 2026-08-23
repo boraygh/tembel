@@ -28,13 +28,13 @@ class MathQuestion {
     required this.right,
     required this.operation,
     String? id,
-  })  : answer = switch (operation) {
-          MathOperation.addition => left + right,
-          MathOperation.subtraction => left - right,
-          MathOperation.multiplication => left * right,
-          MathOperation.division => left ~/ right,
-        },
-        id = id ?? '$left${operation.name}$right#${_counter++}';
+  }) : answer = switch (operation) {
+         MathOperation.addition => left + right,
+         MathOperation.subtraction => left - right,
+         MathOperation.multiplication => left * right,
+         MathOperation.division => left ~/ right,
+       },
+       id = id ?? '$left${operation.name}$right#${_counter++}';
 
   static int _counter = 0;
 
@@ -72,14 +72,14 @@ class MathQuestionGenerator {
   final MathDifficulty difficulty;
 
   List<MathOperation> get operations => switch (difficulty) {
-        MathDifficulty.easy => const [MathOperation.addition, MathOperation.subtraction],
-        MathDifficulty.medium => const [
-            MathOperation.addition,
-            MathOperation.subtraction,
-            MathOperation.multiplication,
-          ],
-        MathDifficulty.hard => MathOperation.values,
-      };
+    MathDifficulty.easy => const [MathOperation.addition, MathOperation.subtraction],
+    MathDifficulty.medium => const [
+      MathOperation.addition,
+      MathOperation.subtraction,
+      MathOperation.multiplication,
+    ],
+    MathDifficulty.hard => MathOperation.values,
+  };
 
   List<MathQuestion> makeQuestions(int count, {Random? random}) {
     final rng = random ?? Random();
@@ -139,38 +139,38 @@ class MathQuestionGenerator {
       range.$1 + rng.nextInt(range.$2 - range.$1 + 1);
 
   (int, int) get _additionRange => switch (difficulty) {
-        MathDifficulty.easy => (2, 20),
-        MathDifficulty.medium => (12, 89),
-        MathDifficulty.hard => (45, 249),
-      };
+    MathDifficulty.easy => (2, 20),
+    MathDifficulty.medium => (12, 89),
+    MathDifficulty.hard => (45, 249),
+  };
 
   (int, int) get _subtractionResultRange => switch (difficulty) {
-        MathDifficulty.easy => (1, 15),
-        MathDifficulty.medium => (6, 60),
-        MathDifficulty.hard => (18, 180),
-      };
+    MathDifficulty.easy => (1, 15),
+    MathDifficulty.medium => (6, 60),
+    MathDifficulty.hard => (18, 180),
+  };
 
   (int, int) get _subtractionOperandRange => switch (difficulty) {
-        MathDifficulty.easy => (2, 9),
-        MathDifficulty.medium => (11, 49),
-        MathDifficulty.hard => (24, 199),
-      };
+    MathDifficulty.easy => (2, 9),
+    MathDifficulty.medium => (11, 49),
+    MathDifficulty.hard => (24, 199),
+  };
 
   (int, int) get _multiplicationRange => switch (difficulty) {
-        MathDifficulty.easy => (2, 9),
-        MathDifficulty.medium => (3, 12),
-        MathDifficulty.hard => (6, 19),
-      };
+    MathDifficulty.easy => (2, 9),
+    MathDifficulty.medium => (3, 12),
+    MathDifficulty.hard => (6, 19),
+  };
 
   (int, int) get _divisionDivisorRange => switch (difficulty) {
-        MathDifficulty.easy => (2, 5),
-        MathDifficulty.medium => (2, 9),
-        MathDifficulty.hard => (3, 12),
-      };
+    MathDifficulty.easy => (2, 5),
+    MathDifficulty.medium => (2, 9),
+    MathDifficulty.hard => (3, 12),
+  };
 
   (int, int) get _divisionQuotientRange => switch (difficulty) {
-        MathDifficulty.easy => (2, 5),
-        MathDifficulty.medium => (2, 9),
-        MathDifficulty.hard => (3, 15),
-      };
+    MathDifficulty.easy => (2, 5),
+    MathDifficulty.medium => (2, 9),
+    MathDifficulty.hard => (3, 15),
+  };
 }

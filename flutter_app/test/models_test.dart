@@ -25,7 +25,10 @@ void main() {
     test('geçersiz ClockTime üretilemez', () {
       for (var raw = -5000; raw <= 5000; raw += 137) {
         final time = ClockTime.fromMinutes(raw);
-        expect(time.minutesSinceMidnight, inInclusiveRange(0, ClockTime.minutesPerDay - 1));
+        expect(
+          time.minutesSinceMidnight,
+          inInclusiveRange(0, ClockTime.minutesPerDay - 1),
+        );
         expect(time.hour, inInclusiveRange(0, 23));
         expect(time.minute, inInclusiveRange(0, 59));
       }
@@ -88,13 +91,13 @@ void main() {
 
   group('Alarm', () {
     Alarm makeAlarm({List<AlarmTask> tasks = const []}) => Alarm(
-          id: 'a1',
-          title: 'İşe Kalk',
-          time: ClockTime(7, 30),
-          repeatDays: Weekday.weekdays,
-          tasks: tasks,
-          createdAt: DateTime.utc(2026, 8, 17, 6),
-        );
+      id: 'a1',
+      title: 'İşe Kalk',
+      time: ClockTime(7, 30),
+      repeatDays: Weekday.weekdays,
+      tasks: tasks,
+      createdAt: DateTime.utc(2026, 8, 17, 6),
+    );
 
     test('varsayılanlar uygulamanın vaadiyle tutarlıdır', () {
       final alarm = Alarm(id: 'x', time: ClockTime(7, 0));
@@ -129,13 +132,22 @@ void main() {
       const shake = AlarmTask(id: 't1', configuration: ShakeConfiguration(count: 10));
       const math = AlarmTask(
         id: 't2',
-        configuration: MathConfiguration(difficulty: MathDifficulty.hard, questionCount: 3),
+        configuration: MathConfiguration(
+          difficulty: MathDifficulty.hard,
+          questionCount: 3,
+        ),
       );
-      const photo = AlarmTask(id: 't3', configuration: PhotoConfiguration(prompt: 'Kupa'));
+      const photo = AlarmTask(
+        id: 't3',
+        configuration: PhotoConfiguration(prompt: 'Kupa'),
+      );
 
       final alarm = makeAlarm(tasks: const [shake, math, photo]);
-      expect(alarm.tasks.map((t) => t.kind).toList(),
-          [TaskKind.shake, TaskKind.math, TaskKind.photo]);
+      expect(alarm.tasks.map((t) => t.kind).toList(), [
+        TaskKind.shake,
+        TaskKind.math,
+        TaskKind.photo,
+      ]);
 
       // Sonuncuyu başa taşı.
       final toFront = alarm.movingTask(oldIndex: 2, newIndex: 0);
@@ -159,10 +171,15 @@ void main() {
           AlarmTask(id: '1', configuration: ShakeConfiguration(count: 9999)),
           AlarmTask(
             id: '2',
-            configuration:
-                MathConfiguration(difficulty: MathDifficulty.easy, questionCount: 0),
+            configuration: MathConfiguration(
+              difficulty: MathDifficulty.easy,
+              questionCount: 0,
+            ),
           ),
-          AlarmTask(id: '3', configuration: PhotoConfiguration(prompt: '  kupa  ')),
+          AlarmTask(
+            id: '3',
+            configuration: PhotoConfiguration(prompt: '  kupa  '),
+          ),
           AlarmTask(id: '4', configuration: ShakeConfiguration(count: 1)),
           AlarmTask(id: '5', configuration: ShakeConfiguration(count: 5)),
           AlarmTask(id: '6', configuration: ShakeConfiguration(count: 6)),
@@ -172,15 +189,19 @@ void main() {
 
       expect(alarm.title.length, Alarm.titleMaxLength);
       expect(alarm.tasks.length, Alarm.maxTaskCount);
-      expect(alarm.tasks[0].configuration,
-          const ShakeConfiguration(count: TaskConfiguration.shakeCountMax));
+      expect(
+        alarm.tasks[0].configuration,
+        const ShakeConfiguration(count: TaskConfiguration.shakeCountMax),
+      );
       expect(
         alarm.tasks[1].configuration,
         const MathConfiguration(difficulty: MathDifficulty.easy, questionCount: 1),
       );
       expect(alarm.tasks[2].configuration, const PhotoConfiguration(prompt: 'kupa'));
-      expect(alarm.tasks[3].configuration,
-          const ShakeConfiguration(count: TaskConfiguration.shakeCountMin));
+      expect(
+        alarm.tasks[3].configuration,
+        const ShakeConfiguration(count: TaskConfiguration.shakeCountMin),
+      );
       expect(alarm.snooze.durationMinutes, SnoozeSetting.durationMax);
       expect(alarm.snooze.maxCount, SnoozeSetting.maxCountMax);
     });
@@ -196,10 +217,15 @@ void main() {
           AlarmTask(id: 't1', configuration: ShakeConfiguration(count: 15)),
           AlarmTask(
             id: 't2',
-            configuration:
-                MathConfiguration(difficulty: MathDifficulty.hard, questionCount: 3),
+            configuration: MathConfiguration(
+              difficulty: MathDifficulty.hard,
+              questionCount: 3,
+            ),
           ),
-          AlarmTask(id: 't3', configuration: PhotoConfiguration(prompt: 'Spor çantası')),
+          AlarmTask(
+            id: 't3',
+            configuration: PhotoConfiguration(prompt: 'Spor çantası'),
+          ),
         ],
         snooze: const SnoozeSetting(isEnabled: true, durationMinutes: 10, maxCount: 2),
         createdAt: DateTime.utc(2026, 8, 18, 9, 23, 38),
@@ -227,11 +253,11 @@ void main() {
 
     test('açık alarmlar kapalı olanlardan önce, her grup saate göre sıralanır', () {
       Alarm at(String id, int hour, {bool enabled = true}) => Alarm(
-            id: id,
-            time: ClockTime(hour, 0),
-            isEnabled: enabled,
-            createdAt: DateTime.utc(2026, 1, 1),
-          );
+        id: id,
+        time: ClockTime(hour, 0),
+        isEnabled: enabled,
+        createdAt: DateTime.utc(2026, 1, 1),
+      );
 
       final sorted = [
         at('c', 23, enabled: false),
@@ -246,9 +272,15 @@ void main() {
 
     test('sıralama kararlıdır', () {
       final early = Alarm(
-          id: 'z', time: ClockTime(7, 0), createdAt: DateTime.utc(2026, 1, 1, 0, 0, 1));
+        id: 'z',
+        time: ClockTime(7, 0),
+        createdAt: DateTime.utc(2026, 1, 1, 0, 0, 1),
+      );
       final late = Alarm(
-          id: 'a', time: ClockTime(7, 0), createdAt: DateTime.utc(2026, 1, 1, 0, 0, 2));
+        id: 'a',
+        time: ClockTime(7, 0),
+        createdAt: DateTime.utc(2026, 1, 1, 0, 0, 2),
+      );
 
       final once = [late, early].sortedForDisplay();
       final twice = once.sortedForDisplay();

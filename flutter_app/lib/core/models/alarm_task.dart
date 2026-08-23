@@ -14,8 +14,10 @@ enum MathDifficulty {
   medium,
   hard;
 
-  static MathDifficulty fromName(String? name) => MathDifficulty.values
-      .firstWhere((d) => d.name == name, orElse: () => MathDifficulty.medium);
+  static MathDifficulty fromName(String? name) => MathDifficulty.values.firstWhere(
+    (d) => d.name == name,
+    orElse: () => MathDifficulty.medium,
+  );
 }
 
 /// Bir görevin ayarları.
@@ -42,23 +44,24 @@ sealed class TaskConfiguration {
 
   /// Yeni görev eklerken kullanılan makul başlangıç değerleri.
   static TaskConfiguration makeDefault(TaskKind kind) => switch (kind) {
-        TaskKind.shake => const ShakeConfiguration(count: 10),
-        TaskKind.math =>
-          const MathConfiguration(difficulty: MathDifficulty.medium, questionCount: 1),
-        TaskKind.photo => const PhotoConfiguration(prompt: ''),
-      };
+    TaskKind.shake => const ShakeConfiguration(count: 10),
+    TaskKind.math => const MathConfiguration(
+      difficulty: MathDifficulty.medium,
+      questionCount: 1,
+    ),
+    TaskKind.photo => const PhotoConfiguration(prompt: ''),
+  };
 
   factory TaskConfiguration.fromJson(Map<String, Object?> json) {
     final kind = TaskKind.fromName(json['kind'] as String?);
     return switch (kind) {
       TaskKind.shake => ShakeConfiguration(count: (json['count'] as int?) ?? 10),
       TaskKind.math => MathConfiguration(
-          difficulty: MathDifficulty.fromName(json['difficulty'] as String?),
-          questionCount: (json['questionCount'] as int?) ?? 1,
-        ),
+        difficulty: MathDifficulty.fromName(json['difficulty'] as String?),
+        questionCount: (json['questionCount'] as int?) ?? 1,
+      ),
       TaskKind.photo => PhotoConfiguration(prompt: (json['prompt'] as String?) ?? ''),
-    }
-        .normalized();
+    }.normalized();
   }
 }
 
@@ -73,18 +76,14 @@ final class ShakeConfiguration extends TaskConfiguration {
 
   @override
   TaskConfiguration normalized() => ShakeConfiguration(
-        count: count.clamp(
-          TaskConfiguration.shakeCountMin,
-          TaskConfiguration.shakeCountMax,
-        ),
-      );
+    count: count.clamp(TaskConfiguration.shakeCountMin, TaskConfiguration.shakeCountMax),
+  );
 
   @override
   Map<String, Object?> toJson() => {'kind': kind.name, 'count': count};
 
   @override
-  bool operator ==(Object other) =>
-      other is ShakeConfiguration && other.count == count;
+  bool operator ==(Object other) => other is ShakeConfiguration && other.count == count;
 
   @override
   int get hashCode => Object.hash(kind, count);
@@ -102,16 +101,19 @@ final class MathConfiguration extends TaskConfiguration {
 
   @override
   TaskConfiguration normalized() => MathConfiguration(
-        difficulty: difficulty,
-        questionCount: questionCount.clamp(
-          TaskConfiguration.mathQuestionCountMin,
-          TaskConfiguration.mathQuestionCountMax,
-        ),
-      );
+    difficulty: difficulty,
+    questionCount: questionCount.clamp(
+      TaskConfiguration.mathQuestionCountMin,
+      TaskConfiguration.mathQuestionCountMax,
+    ),
+  );
 
   @override
-  Map<String, Object?> toJson() =>
-      {'kind': kind.name, 'difficulty': difficulty.name, 'questionCount': questionCount};
+  Map<String, Object?> toJson() => {
+    'kind': kind.name,
+    'difficulty': difficulty.name,
+    'questionCount': questionCount,
+  };
 
   @override
   bool operator ==(Object other) =>
@@ -146,8 +148,7 @@ final class PhotoConfiguration extends TaskConfiguration {
   Map<String, Object?> toJson() => {'kind': kind.name, 'prompt': prompt};
 
   @override
-  bool operator ==(Object other) =>
-      other is PhotoConfiguration && other.prompt == prompt;
+  bool operator ==(Object other) => other is PhotoConfiguration && other.prompt == prompt;
 
   @override
   int get hashCode => Object.hash(kind, prompt);
@@ -169,17 +170,16 @@ class AlarmTask {
   AlarmTask copyWith({TaskConfiguration? configuration}) =>
       AlarmTask(id: id, configuration: configuration ?? this.configuration);
 
-  AlarmTask normalized() =>
-      AlarmTask(id: id, configuration: configuration.normalized());
+  AlarmTask normalized() => AlarmTask(id: id, configuration: configuration.normalized());
 
   Map<String, Object?> toJson() => {'id': id, 'configuration': configuration.toJson()};
 
   factory AlarmTask.fromJson(Map<String, Object?> json) => AlarmTask(
-        id: (json['id'] as String?) ?? '',
-        configuration: TaskConfiguration.fromJson(
-          (json['configuration'] as Map?)?.cast<String, Object?>() ?? const {},
-        ),
-      );
+    id: (json['id'] as String?) ?? '',
+    configuration: TaskConfiguration.fromJson(
+      (json['configuration'] as Map?)?.cast<String, Object?>() ?? const {},
+    ),
+  );
 
   @override
   bool operator ==(Object other) =>

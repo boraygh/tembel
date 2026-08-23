@@ -45,32 +45,33 @@ abstract final class AppTheme {
   );
 
   /// Kartın üst kenarındaki ışık çizgisi — aşağı doğru söner.
-  static Border get edgeHighlight => Border.all(color: Colors.white.withValues(alpha: 0.055));
+  static Border get edgeHighlight =>
+      Border.all(color: Colors.white.withValues(alpha: 0.055));
 
   static List<BoxShadow> get cardShadow => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.36),
-          blurRadius: 18,
-          offset: const Offset(0, 8),
-        ),
-      ];
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.36),
+      blurRadius: 18,
+      offset: const Offset(0, 8),
+    ),
+  ];
 
   /// Vurgu renkli düğmenin altındaki sıcak gölge — nötr gri yerine kendi rengi.
   static List<BoxShadow> get emberShadow => [
-        BoxShadow(
-          color: accent.withValues(alpha: 0.34),
-          blurRadius: 20,
-          offset: const Offset(0, 8),
-        ),
-      ];
+    BoxShadow(
+      color: accent.withValues(alpha: 0.34),
+      blurRadius: 20,
+      offset: const Offset(0, 8),
+    ),
+  ];
 
   /// Kart malzemesi: gradyan yüzey + kenar ışığı + gölge.
   static BoxDecoration card({double radius = 24}) => BoxDecoration(
-        gradient: surfaceGradient,
-        borderRadius: BorderRadius.circular(radius),
-        border: edgeHighlight,
-        boxShadow: cardShadow,
-      );
+    gradient: surfaceGradient,
+    borderRadius: BorderRadius.circular(radius),
+    border: edgeHighlight,
+    boxShadow: cardShadow,
+  );
 
   // MARK: Boşluk ve yarıçap
   static const double spaceXs = 4;
@@ -148,15 +149,15 @@ abstract final class AppTheme {
   );
 
   static ThemeData get data => ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-        fontFamily: _family,
-        scaffoldBackgroundColor: background,
-        colorScheme: const ColorScheme.dark(
-          primary: accent,
-          secondary: accentBright,
-          surface: surface,
-        ),
-        splashFactory: InkSparkle.splashFactory,
-      );
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    fontFamily: _family,
+    scaffoldBackgroundColor: background,
+    colorScheme: const ColorScheme.dark(
+      primary: accent,
+      secondary: accentBright,
+      surface: surface,
+    ),
+    splashFactory: InkSparkle.splashFactory,
+  );
 }

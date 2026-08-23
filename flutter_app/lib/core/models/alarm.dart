@@ -77,18 +77,17 @@ class Alarm {
     AlarmSound? sound,
     List<AlarmTask>? tasks,
     SnoozeSetting? snooze,
-  }) =>
-      Alarm(
-        id: id,
-        title: title ?? this.title,
-        time: time ?? this.time,
-        repeatDays: repeatDays ?? this.repeatDays,
-        isEnabled: isEnabled ?? this.isEnabled,
-        sound: sound ?? this.sound,
-        tasks: tasks ?? this.tasks,
-        snooze: snooze ?? this.snooze,
-        createdAt: createdAt,
-      );
+  }) => Alarm(
+    id: id,
+    title: title ?? this.title,
+    time: time ?? this.time,
+    repeatDays: repeatDays ?? this.repeatDays,
+    isEnabled: isEnabled ?? this.isEnabled,
+    sound: sound ?? this.sound,
+    tasks: tasks ?? this.tasks,
+    snooze: snooze ?? this.snooze,
+    createdAt: createdAt,
+  );
 
   /// Görevleri yeniden sıralar.
   ///
@@ -125,37 +124,37 @@ class Alarm {
   }
 
   Map<String, Object?> toJson() => {
-        'id': id,
-        'title': title,
-        'time': time.toJson(),
-        'repeatDays': repeatDays.map((d) => d.value).toList()..sort(),
-        'isEnabled': isEnabled,
-        'sound': sound.name,
-        'tasks': tasks.map((t) => t.toJson()).toList(),
-        'snooze': snooze.toJson(),
-        'createdAt': createdAt.toUtc().toIso8601String(),
-      };
+    'id': id,
+    'title': title,
+    'time': time.toJson(),
+    'repeatDays': repeatDays.map((d) => d.value).toList()..sort(),
+    'isEnabled': isEnabled,
+    'sound': sound.name,
+    'tasks': tasks.map((t) => t.toJson()).toList(),
+    'snooze': snooze.toJson(),
+    'createdAt': createdAt.toUtc().toIso8601String(),
+  };
 
   factory Alarm.fromJson(Map<String, Object?> json) => Alarm(
-        id: (json['id'] as String?) ?? '',
-        title: (json['title'] as String?) ?? '',
-        time: ClockTime.fromJson(json['time']),
-        repeatDays: ((json['repeatDays'] as List?) ?? const [])
-            .whereType<int>()
-            .map(Weekday.fromValue)
-            .nonNulls
-            .toSet(),
-        isEnabled: (json['isEnabled'] as bool?) ?? true,
-        sound: AlarmSound.fromName(json['sound'] as String?),
-        tasks: ((json['tasks'] as List?) ?? const [])
-            .whereType<Map>()
-            .map((e) => AlarmTask.fromJson(e.cast<String, Object?>()))
-            .toList(),
-        snooze: SnoozeSetting.fromJson(
-          (json['snooze'] as Map?)?.cast<String, Object?>() ?? const {},
-        ),
-        createdAt: DateTime.tryParse((json['createdAt'] as String?) ?? '')?.toLocal(),
-      ).normalized();
+    id: (json['id'] as String?) ?? '',
+    title: (json['title'] as String?) ?? '',
+    time: ClockTime.fromJson(json['time']),
+    repeatDays: ((json['repeatDays'] as List?) ?? const [])
+        .whereType<int>()
+        .map(Weekday.fromValue)
+        .nonNulls
+        .toSet(),
+    isEnabled: (json['isEnabled'] as bool?) ?? true,
+    sound: AlarmSound.fromName(json['sound'] as String?),
+    tasks: ((json['tasks'] as List?) ?? const [])
+        .whereType<Map>()
+        .map((e) => AlarmTask.fromJson(e.cast<String, Object?>()))
+        .toList(),
+    snooze: SnoozeSetting.fromJson(
+      (json['snooze'] as Map?)?.cast<String, Object?>() ?? const {},
+    ),
+    createdAt: DateTime.tryParse((json['createdAt'] as String?) ?? '')?.toLocal(),
+  ).normalized();
 
   @override
   bool operator ==(Object other) =>
@@ -172,16 +171,16 @@ class Alarm {
 
   @override
   int get hashCode => Object.hash(
-        id,
-        title,
-        time,
-        const SetEquality<Weekday>().hash(repeatDays),
-        isEnabled,
-        sound,
-        const ListEquality<AlarmTask>().hash(tasks),
-        snooze,
-        createdAt,
-      );
+    id,
+    title,
+    time,
+    const SetEquality<Weekday>().hash(repeatDays),
+    isEnabled,
+    sound,
+    const ListEquality<AlarmTask>().hash(tasks),
+    snooze,
+    createdAt,
+  );
 }
 
 extension AlarmListOrdering on List<Alarm> {

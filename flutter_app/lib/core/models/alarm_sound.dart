@@ -18,6 +18,8 @@ enum AlarmSound {
   /// Gerçek cihazda doğrulanana kadar kullanıcıya sunulacak sesler.
   static const List<AlarmSound> availableForSelection = [AlarmSound.systemDefault];
 
-  static AlarmSound fromName(String? name) => AlarmSound.values
-      .firstWhere((s) => s.name == name, orElse: () => AlarmSound.systemDefault);
+  static AlarmSound fromName(String? name) => AlarmSound.values.firstWhere(
+    (s) => s.name == name,
+    orElse: () => AlarmSound.systemDefault,
+  );
 }

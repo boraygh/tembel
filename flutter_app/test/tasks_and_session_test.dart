@@ -31,7 +31,9 @@ void main() {
       });
 
       test('${difficulty.name}: bölme tam bölünür, sıfıra bölünmez', () {
-        for (final q in sample(difficulty).where((q) => q.operation == MathOperation.division)) {
+        for (final q in sample(
+          difficulty,
+        ).where((q) => q.operation == MathOperation.division)) {
           expect(q.right, isNot(0));
           expect(q.left % q.right, 0);
         }
@@ -55,13 +57,17 @@ void main() {
     }
 
     test('seviyeler doğru işlem kümesini kullanır', () {
-      expect(sample(MathDifficulty.easy).map((q) => q.operation).toSet(),
-          {MathOperation.addition, MathOperation.subtraction});
+      expect(sample(MathDifficulty.easy).map((q) => q.operation).toSet(), {
+        MathOperation.addition,
+        MathOperation.subtraction,
+      });
       final medium = sample(MathDifficulty.medium).map((q) => q.operation).toSet();
       expect(medium.contains(MathOperation.multiplication), isTrue);
       expect(medium.contains(MathOperation.division), isFalse);
-      expect(sample(MathDifficulty.hard).map((q) => q.operation).toSet(),
-          MathOperation.values.toSet());
+      expect(
+        sample(MathDifficulty.hard).map((q) => q.operation).toSet(),
+        MathOperation.values.toSet(),
+      );
     });
 
     test('zorluk arttıkça sorular gerçekten zorlaşır', () {
@@ -78,8 +84,10 @@ void main() {
       const generator = MathQuestionGenerator(MathDifficulty.hard);
       final left = generator.makeQuestions(20, random: Random(42));
       final right = generator.makeQuestions(20, random: Random(42));
-      expect(left.map((q) => q.promptText).toList(),
-          right.map((q) => q.promptText).toList());
+      expect(
+        left.map((q) => q.promptText).toList(),
+        right.map((q) => q.promptText).toList(),
+      );
     });
 
     test('istenen sayıda soru üretilir', () {
@@ -103,24 +111,38 @@ void main() {
     });
 
     test('işaretler gerçek matematik karakterleridir', () {
-      expect(MathQuestion(left: 30, right: 8, operation: MathOperation.subtraction)
-          .promptText, '30 − 8'); // U+2212
-      expect(MathQuestion(left: 12, right: 7, operation: MathOperation.multiplication)
-          .promptText, '12 × 7');
-      expect(MathQuestion(left: 40, right: 8, operation: MathOperation.division)
-          .promptText, '40 ÷ 8');
+      expect(
+        MathQuestion(left: 30, right: 8, operation: MathOperation.subtraction).promptText,
+        '30 − 8',
+      ); // U+2212
+      expect(
+        MathQuestion(
+          left: 12,
+          right: 7,
+          operation: MathOperation.multiplication,
+        ).promptText,
+        '12 × 7',
+      );
+      expect(
+        MathQuestion(left: 40, right: 8, operation: MathOperation.division).promptText,
+        '40 ÷ 8',
+      );
     });
   });
 
   group('Sallama algılama', () {
     MotionSample at(double magnitude, int milliseconds) => MotionSample(
-        x: magnitude, y: 0, z: 0, timestamp: Duration(milliseconds: milliseconds));
+      x: magnitude,
+      y: 0,
+      z: 0,
+      timestamp: Duration(milliseconds: milliseconds),
+    );
 
     /// Temiz sallama dalgası: her döngüde önce dinlenme, sonra tepe.
     /// Tepeler 200 ms arayla gelir — varsayılan 180 ms beklemenin üstünde.
     List<MotionSample> wave(int count) => [
-          for (var i = 0; i < count; i++) ...[at(0.2, i * 200), at(2.5, i * 200 + 100)],
-        ];
+      for (var i = 0; i < count; i++) ...[at(0.2, i * 200), at(2.5, i * 200 + 100)],
+    ];
 
     test('temiz dalgada tepe sayısı kadar sallama sayılır', () {
       final detector = ShakeDetector(target: 10);
@@ -147,14 +169,12 @@ void main() {
     });
 
     test('eşiğin altındaki hareket ve sabit cihaz sayılmaz', () {
-      final gentle = ShakeDetector(target: 5)..processAll([
-          for (var i = 0; i < 60; i++) at(1.2, i * 100),
-        ]);
+      final gentle = ShakeDetector(target: 5)
+        ..processAll([for (var i = 0; i < 60; i++) at(1.2, i * 100)]);
       expect(gentle.count, 0);
 
-      final still = ShakeDetector(target: 5)..processAll([
-          for (var i = 0; i < 100; i++) at(0.03, i * 20),
-        ]);
+      final still = ShakeDetector(target: 5)
+        ..processAll([for (var i = 0; i < 100; i++) at(0.03, i * 20)]);
       expect(still.count, 0);
     });
 
@@ -206,10 +226,7 @@ void main() {
     });
 
     test('büyüklük üç eksenin bileşkesidir', () {
-      expect(
-        const MotionSample(x: 3, y: 4, z: 0, timestamp: Duration.zero).magnitude,
-        5,
-      );
+      expect(const MotionSample(x: 3, y: 4, z: 0, timestamp: Duration.zero).magnitude, 5);
     });
   });
 
@@ -342,12 +359,12 @@ void main() {
       expect(gate(EntitlementStatus.lifetime).isPremium, isTrue);
 
       final expired = EntitlementStatus.subscription(
-          now.subtract(const Duration(seconds: 1)));
+        now.subtract(const Duration(seconds: 1)),
+      );
       expect(gate(expired).isPremium, isFalse);
       expect(expired.isLifetime, isFalse);
 
-      final active =
-          EntitlementStatus.subscription(now.add(const Duration(days: 1)));
+      final active = EntitlementStatus.subscription(now.add(const Duration(days: 1)));
       expect(gate(active).isPremium, isTrue);
     });
 

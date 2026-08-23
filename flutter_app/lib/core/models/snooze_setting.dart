@@ -26,8 +26,11 @@ class SnoozeSetting {
   ///
   /// Uygulamanın vaadi "kolayca susturamamak" olduğu için erteleme kapalı
   /// gelir; açmak kullanıcının bilinçli tercihidir.
-  static const SnoozeSetting disabled =
-      SnoozeSetting(isEnabled: false, durationMinutes: 5, maxCount: 1);
+  static const SnoozeSetting disabled = SnoozeSetting(
+    isEnabled: false,
+    durationMinutes: 5,
+    maxCount: 1,
+  );
 
   SnoozeSetting copyWith({bool? isEnabled, int? durationMinutes, int? maxCount}) =>
       SnoozeSetting(
@@ -37,22 +40,22 @@ class SnoozeSetting {
       );
 
   SnoozeSetting normalized() => SnoozeSetting(
-        isEnabled: isEnabled,
-        durationMinutes: durationMinutes.clamp(durationMin, durationMax),
-        maxCount: maxCount.clamp(maxCountMin, maxCountMax),
-      );
+    isEnabled: isEnabled,
+    durationMinutes: durationMinutes.clamp(durationMin, durationMax),
+    maxCount: maxCount.clamp(maxCountMin, maxCountMax),
+  );
 
   Map<String, Object?> toJson() => {
-        'isEnabled': isEnabled,
-        'durationMinutes': durationMinutes,
-        'maxCount': maxCount,
-      };
+    'isEnabled': isEnabled,
+    'durationMinutes': durationMinutes,
+    'maxCount': maxCount,
+  };
 
   factory SnoozeSetting.fromJson(Map<String, Object?> json) => SnoozeSetting(
-        isEnabled: (json['isEnabled'] as bool?) ?? false,
-        durationMinutes: (json['durationMinutes'] as int?) ?? 5,
-        maxCount: (json['maxCount'] as int?) ?? 1,
-      ).normalized();
+    isEnabled: (json['isEnabled'] as bool?) ?? false,
+    durationMinutes: (json['durationMinutes'] as int?) ?? 5,
+    maxCount: (json['maxCount'] as int?) ?? 1,
+  ).normalized();
 
   @override
   bool operator ==(Object other) =>

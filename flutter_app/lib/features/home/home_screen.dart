@@ -74,7 +74,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _header() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-          AppTheme.spaceLg, AppTheme.spaceSm, AppTheme.spaceLg, AppTheme.spaceSm),
+        AppTheme.spaceLg,
+        AppTheme.spaceSm,
+        AppTheme.spaceLg,
+        AppTheme.spaceSm,
+      ),
       child: Row(
         children: [
           const Text(Strings.alarmsTab, style: AppTheme.largeTitle),
@@ -92,12 +96,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _nextAlarmSummary() {
     final next = AlarmScheduler.nextAlarm(_alarms, _now);
-    final remaining =
-        next == null ? null : Strings.timeRemaining(next.date, _now);
+    final remaining = next == null ? null : Strings.timeRemaining(next.date, _now);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-          AppTheme.spaceLg, 0, AppTheme.spaceLg, AppTheme.spaceLg),
+        AppTheme.spaceLg,
+        0,
+        AppTheme.spaceLg,
+        AppTheme.spaceLg,
+      ),
       child: Row(
         children: [
           Container(
@@ -116,14 +123,18 @@ class _HomeScreenState extends State<HomeScreen> {
             Text(
               Strings.noEnabledAlarm,
               style: AppTheme.footnote.copyWith(
-                  fontSize: 14, color: AppTheme.textSecondary),
+                fontSize: 14,
+                color: AppTheme.textSecondary,
+              ),
             )
           else
             Text.rich(
               TextSpan(
                 text: Strings.nextAlarmPrefix,
-                style: AppTheme.footnote
-                    .copyWith(fontSize: 14, color: AppTheme.textSecondary),
+                style: AppTheme.footnote.copyWith(
+                  fontSize: 14,
+                  color: AppTheme.textSecondary,
+                ),
                 children: [
                   TextSpan(
                     text: remaining,
@@ -144,15 +155,16 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _list() {
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(
-          AppTheme.spaceLg, 0, AppTheme.spaceLg, AppTheme.spaceXl),
+        AppTheme.spaceLg,
+        0,
+        AppTheme.spaceLg,
+        AppTheme.spaceXl,
+      ),
       itemCount: _alarms.length,
       separatorBuilder: (_, _) => const SizedBox(height: 13),
       itemBuilder: (context, index) {
         final alarm = _alarms[index];
-        return AlarmCard(
-          alarm: alarm,
-          onToggle: (value) => _setEnabled(alarm, value),
-        );
+        return AlarmCard(alarm: alarm, onToggle: (value) => _setEnabled(alarm, value));
       },
     );
   }
@@ -171,8 +183,11 @@ class _HomeScreenState extends State<HomeScreen> {
             Text(
               Strings.emptyMessage,
               textAlign: TextAlign.center,
-              style: AppTheme.footnote
-                  .copyWith(fontSize: 15, color: AppTheme.textSecondary, height: 1.5),
+              style: AppTheme.footnote.copyWith(
+                fontSize: 15,
+                color: AppTheme.textSecondary,
+                height: 1.5,
+              ),
             ),
             const SizedBox(height: AppTheme.spaceLg),
             Container(

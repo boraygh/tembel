@@ -64,9 +64,7 @@ class ScheduledFire {
 @immutable
 class FollowUpPolicy {
   FollowUpPolicy(List<Duration> delays)
-      : delays = List.unmodifiable(
-          delays.where((d) => d > Duration.zero).toList()..sort(),
-        );
+    : delays = List.unmodifiable(delays.where((d) => d > Duration.zero).toList()..sort());
 
   final List<Duration> delays;
 
@@ -134,8 +132,9 @@ abstract final class AlarmScheduler {
     if (!alarm.isEnabled) return const [];
     final first = nextOccurrence(alarm, after);
     if (first == null) return const [];
-    final effective =
-        alarm.requiresTasks ? (policy ?? FollowUpPolicy.standard) : FollowUpPolicy.none;
+    final effective = alarm.requiresTasks
+        ? (policy ?? FollowUpPolicy.standard)
+        : FollowUpPolicy.none;
     return chainFrom(alarmId: alarm.id, firstFireAt: first, policy: effective);
   }
 
@@ -180,10 +179,7 @@ abstract final class AlarmScheduler {
   ///
   /// Ana sayfadaki "sonraki alarm ... sonra" satırı bunu kullanır.
   /// Kapalı alarmlar dikkate alınmaz.
-  static ({Alarm alarm, DateTime date})? nextAlarm(
-    List<Alarm> alarms,
-    DateTime after,
-  ) {
+  static ({Alarm alarm, DateTime date})? nextAlarm(List<Alarm> alarms, DateTime after) {
     ({Alarm alarm, DateTime date})? best;
     for (final alarm in alarms.where((a) => a.isEnabled)) {
       final date = nextOccurrence(alarm, after);

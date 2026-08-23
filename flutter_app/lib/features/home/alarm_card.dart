@@ -11,12 +11,7 @@ import '../../localization/strings.dart';
 /// ekranında okunan şey saat ve başlık, günlerin tek tek hangileri olduğu
 /// değil.
 class AlarmCard extends StatelessWidget {
-  const AlarmCard({
-    super.key,
-    required this.alarm,
-    required this.onToggle,
-    this.onTap,
-  });
+  const AlarmCard({super.key, required this.alarm, required this.onToggle, this.onTap});
 
   final Alarm alarm;
   final ValueChanged<bool> onToggle;

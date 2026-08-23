@@ -30,27 +30,26 @@ class AlarmSession {
     this.snoozeCount = 0,
     DateTime? initialSnoozedUntil,
     DateTime? finishedAt,
-  })  : completedTaskIds = completedTaskIds ?? <String>[],
-        _snoozedUntil = initialSnoozedUntil,
-        _finishedAt = finishedAt ?? (tasks.isEmpty ? startedAt : null);
+  }) : completedTaskIds = completedTaskIds ?? <String>[],
+       _snoozedUntil = initialSnoozedUntil,
+       _finishedAt = finishedAt ?? (tasks.isEmpty ? startedAt : null);
 
   /// Alarm çaldığında yeni oturum açar.
   factory AlarmSession.start({
     required String id,
     required Alarm alarm,
     required DateTime startedAt,
-  }) =>
-      AlarmSession(
-        id: id,
-        alarmId: alarm.id,
-        // Başlık ve saat kopyalanır: kullanıcı alarm çalarken alarmı silebilir,
-        // oturum ekranda ne göstereceğini bilmeli.
-        alarmTitle: alarm.title,
-        alarmTime: alarm.time,
-        startedAt: startedAt,
-        tasks: List.unmodifiable(alarm.tasks),
-        snooze: alarm.snooze,
-      );
+  }) => AlarmSession(
+    id: id,
+    alarmId: alarm.id,
+    // Başlık ve saat kopyalanır: kullanıcı alarm çalarken alarmı silebilir,
+    // oturum ekranda ne göstereceğini bilmeli.
+    alarmTitle: alarm.title,
+    alarmTime: alarm.time,
+    startedAt: startedAt,
+    tasks: List.unmodifiable(alarm.tasks),
+    snooze: alarm.snooze,
+  );
 
   final String id;
   final String alarmId;
@@ -83,8 +82,7 @@ class AlarmSession {
   }
 
   /// Şu an yapılması gereken görev. Sıra zorunludur — görev atlanamaz.
-  AlarmTask? get currentTask =>
-      isComplete ? null : tasks[completedTaskIds.length];
+  AlarmTask? get currentTask => isComplete ? null : tasks[completedTaskIds.length];
 
   /// Yürüyen görevin sırası (1'den başlar). Tamamlanmışsa `null`.
   int? get currentTaskNumber => isComplete ? null : completedTaskIds.length + 1;
@@ -93,8 +91,7 @@ class AlarmSession {
 
   List<AlarmTask> get remainingTasks => tasks.sublist(completedTaskIds.length);
 
-  double get progress =>
-      tasks.isEmpty ? 1 : completedTaskIds.length / tasks.length;
+  double get progress => tasks.isEmpty ? 1 : completedTaskIds.length / tasks.length;
 
   /// Erteleme hâlâ mümkün mü.
   ///
@@ -153,18 +150,18 @@ class AlarmSession {
   }
 
   Map<String, Object?> toJson() => {
-        'id': id,
-        'alarmId': alarmId,
-        'alarmTitle': alarmTitle,
-        'alarmTime': alarmTime.toJson(),
-        'startedAt': startedAt.toUtc().toIso8601String(),
-        'tasks': tasks.map((t) => t.toJson()).toList(),
-        'snooze': snooze.toJson(),
-        'completedTaskIds': completedTaskIds,
-        'snoozeCount': snoozeCount,
-        'snoozedUntil': _snoozedUntil?.toUtc().toIso8601String(),
-        'finishedAt': _finishedAt?.toUtc().toIso8601String(),
-      };
+    'id': id,
+    'alarmId': alarmId,
+    'alarmTitle': alarmTitle,
+    'alarmTime': alarmTime.toJson(),
+    'startedAt': startedAt.toUtc().toIso8601String(),
+    'tasks': tasks.map((t) => t.toJson()).toList(),
+    'snooze': snooze.toJson(),
+    'completedTaskIds': completedTaskIds,
+    'snoozeCount': snoozeCount,
+    'snoozedUntil': _snoozedUntil?.toUtc().toIso8601String(),
+    'finishedAt': _finishedAt?.toUtc().toIso8601String(),
+  };
 
   factory AlarmSession.fromJson(Map<String, Object?> json) {
     DateTime? parse(Object? value) =>
@@ -185,8 +182,9 @@ class AlarmSession {
       snooze: SnoozeSetting.fromJson(
         (json['snooze'] as Map?)?.cast<String, Object?>() ?? const {},
       ),
-      completedTaskIds:
-          ((json['completedTaskIds'] as List?) ?? const []).whereType<String>().toList(),
+      completedTaskIds: ((json['completedTaskIds'] as List?) ?? const [])
+          .whereType<String>()
+          .toList(),
       snoozeCount: (json['snoozeCount'] as int?) ?? 0,
       initialSnoozedUntil: parse(json['snoozedUntil']),
       finishedAt: parse(json['finishedAt']),
@@ -210,14 +208,14 @@ class AlarmSession {
 
   @override
   int get hashCode => Object.hash(
-        id,
-        alarmId,
-        alarmTime,
-        startedAt,
-        const ListEquality<AlarmTask>().hash(tasks),
-        const ListEquality<String>().hash(completedTaskIds),
-        snoozeCount,
-        _snoozedUntil,
-        _finishedAt,
-      );
+    id,
+    alarmId,
+    alarmTime,
+    startedAt,
+    const ListEquality<AlarmTask>().hash(tasks),
+    const ListEquality<String>().hash(completedTaskIds),
+    snoozeCount,
+    _snoozedUntil,
+    _finishedAt,
+  );
 }

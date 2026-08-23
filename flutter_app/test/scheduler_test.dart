@@ -15,18 +15,17 @@ void main() {
     bool enabled = true,
     int taskCount = 1,
     String id = 'a1',
-  }) =>
-      Alarm(
-        id: id,
-        time: ClockTime(hour, minute),
-        repeatDays: days,
-        isEnabled: enabled,
-        tasks: List.generate(
-          taskCount,
-          (i) => AlarmTask(id: 't$i', configuration: const ShakeConfiguration(count: 10)),
-        ),
-        createdAt: DateTime(2026, 1, 1),
-      );
+  }) => Alarm(
+    id: id,
+    time: ClockTime(hour, minute),
+    repeatDays: days,
+    isEnabled: enabled,
+    tasks: List.generate(
+      taskCount,
+      (i) => AlarmTask(id: 't$i', configuration: const ShakeConfiguration(count: 10)),
+    ),
+    createdAt: DateTime(2026, 1, 1),
+  );
 
   group('Sonraki çalma zamanı', () {
     test('tek seferlik alarm saati geçmediyse bugün çalar', () {
@@ -37,36 +36,46 @@ void main() {
 
     test('tek seferlik alarm saati geçtiyse ertesi güne kayar', () {
       final reference = DateTime(2026, 8, 17, 9);
-      expect(AlarmScheduler.nextOccurrence(makeAlarm(), reference),
-          DateTime(2026, 8, 18, 7, 30));
+      expect(
+        AlarmScheduler.nextOccurrence(makeAlarm(), reference),
+        DateTime(2026, 8, 18, 7, 30),
+      );
     });
 
     test('tam alarm saatinde referans verilirse bir sonraki güne geçer', () {
       final reference = DateTime(2026, 8, 17, 7, 30);
-      expect(AlarmScheduler.nextOccurrence(makeAlarm(), reference),
-          DateTime(2026, 8, 18, 7, 30));
+      expect(
+        AlarmScheduler.nextOccurrence(makeAlarm(), reference),
+        DateTime(2026, 8, 18, 7, 30),
+      );
     });
 
     test('tekrarlı alarm bugün de uygunsa bugünü seçer', () {
       final reference = DateTime(2026, 8, 17, 6);
       final alarm = makeAlarm(days: {Weekday.monday, Weekday.wednesday, Weekday.friday});
-      expect(AlarmScheduler.nextOccurrence(alarm, reference),
-          DateTime(2026, 8, 17, 7, 30));
+      expect(
+        AlarmScheduler.nextOccurrence(alarm, reference),
+        DateTime(2026, 8, 17, 7, 30),
+      );
     });
 
     test('tekrarlı alarm bugünü kaçırdıysa listedeki bir sonraki güne gider', () {
       final reference = DateTime(2026, 8, 17, 9); // Pazartesi, 07:30 kaçtı
       final alarm = makeAlarm(days: {Weekday.monday, Weekday.wednesday, Weekday.friday});
       // Sıradaki Çarşamba.
-      expect(AlarmScheduler.nextOccurrence(alarm, reference),
-          DateTime(2026, 8, 19, 7, 30));
+      expect(
+        AlarmScheduler.nextOccurrence(alarm, reference),
+        DateTime(2026, 8, 19, 7, 30),
+      );
     });
 
     test('haftanın tek günü seçiliyse bir hafta sonrasına sarar', () {
       final reference = DateTime(2026, 8, 17, 9);
       final alarm = makeAlarm(days: {Weekday.monday});
-      expect(AlarmScheduler.nextOccurrence(alarm, reference),
-          DateTime(2026, 8, 24, 7, 30));
+      expect(
+        AlarmScheduler.nextOccurrence(alarm, reference),
+        DateTime(2026, 8, 24, 7, 30),
+      );
     });
 
     test('hafta sonu alarmı Cuma gününden Cumartesiye gider', () {
@@ -115,8 +124,10 @@ void main() {
     });
 
     test('görevsiz alarmda takip zinciri kurulmaz', () {
-      final plan =
-          AlarmScheduler.firePlan(makeAlarm(taskCount: 0), DateTime(2026, 8, 17, 6));
+      final plan = AlarmScheduler.firePlan(
+        makeAlarm(taskCount: 0),
+        DateTime(2026, 8, 17, 6),
+      );
       expect(plan.length, 1);
       expect(plan.first.isFollowUp, isFalse);
     });
@@ -139,8 +150,11 @@ void main() {
     test('özel politika zincir uzunluğunu değiştirir', () {
       final start = DateTime(2026, 8, 17, 7, 30);
       final policy = FollowUpPolicy(const [Duration(seconds: 30), Duration(seconds: 90)]);
-      final plan =
-          AlarmScheduler.chainFrom(alarmId: 'x', firstFireAt: start, policy: policy);
+      final plan = AlarmScheduler.chainFrom(
+        alarmId: 'x',
+        firstFireAt: start,
+        policy: policy,
+      );
 
       expect(plan.length, 3);
       expect(plan.map((f) => f.date).toList(), [
@@ -187,10 +201,7 @@ void main() {
     test('hiç açık alarm yoksa sonuç yok', () {
       final reference = DateTime(2026, 8, 17, 5);
       expect(AlarmScheduler.nextAlarm(const [], reference), isNull);
-      expect(
-        AlarmScheduler.nextAlarm([makeAlarm(enabled: false)], reference),
-        isNull,
-      );
+      expect(AlarmScheduler.nextAlarm([makeAlarm(enabled: false)], reference), isNull);
     });
   });
 }

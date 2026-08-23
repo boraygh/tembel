@@ -37,10 +37,15 @@ final List<Alarm> sampleAlarms = [
       AlarmTask(id: 's1t1', configuration: ShakeConfiguration(count: 10)),
       AlarmTask(
         id: 's1t2',
-        configuration:
-            MathConfiguration(difficulty: MathDifficulty.medium, questionCount: 2),
+        configuration: MathConfiguration(
+          difficulty: MathDifficulty.medium,
+          questionCount: 2,
+        ),
       ),
-      AlarmTask(id: 's1t3', configuration: PhotoConfiguration(prompt: 'Kahve makinesi')),
+      AlarmTask(
+        id: 's1t3',
+        configuration: PhotoConfiguration(prompt: 'Kahve makinesi'),
+      ),
     ],
   ),
   Alarm(
@@ -52,8 +57,10 @@ final List<Alarm> sampleAlarms = [
       AlarmTask(id: 's2t1', configuration: ShakeConfiguration(count: 25)),
       AlarmTask(
         id: 's2t2',
-        configuration:
-            MathConfiguration(difficulty: MathDifficulty.hard, questionCount: 3),
+        configuration: MathConfiguration(
+          difficulty: MathDifficulty.hard,
+          questionCount: 3,
+        ),
       ),
     ],
   ),
@@ -66,8 +73,10 @@ final List<Alarm> sampleAlarms = [
     tasks: const [
       AlarmTask(
         id: 's3t1',
-        configuration:
-            MathConfiguration(difficulty: MathDifficulty.easy, questionCount: 1),
+        configuration: MathConfiguration(
+          difficulty: MathDifficulty.easy,
+          questionCount: 1,
+        ),
       ),
     ],
   ),

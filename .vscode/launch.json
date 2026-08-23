@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Tembel — Chrome",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "flutter_app",
+      "program": "lib/main.dart",
+      "deviceId": "chrome"
+    },
+    {
+      "name": "Tembel — Chrome (geniş pencere)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "flutter_app",
+      "program": "lib/main.dart",
+      "deviceId": "chrome",
+      "args": ["--web-browser-flag=--window-size=430,932"]
+    }
+  ]
+}

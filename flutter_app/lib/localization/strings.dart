@@ -29,14 +29,14 @@ abstract final class Strings {
   static String taskCount(int count) => count == 0 ? 'Görev yok' : '$count görev';
 
   static String weekdayShort(Weekday day) => switch (day) {
-        Weekday.monday => 'Pzt',
-        Weekday.tuesday => 'Sal',
-        Weekday.wednesday => 'Çar',
-        Weekday.thursday => 'Per',
-        Weekday.friday => 'Cum',
-        Weekday.saturday => 'Cmt',
-        Weekday.sunday => 'Paz',
-      };
+    Weekday.monday => 'Pzt',
+    Weekday.tuesday => 'Sal',
+    Weekday.wednesday => 'Çar',
+    Weekday.thursday => 'Per',
+    Weekday.friday => 'Cum',
+    Weekday.saturday => 'Cmt',
+    Weekday.sunday => 'Paz',
+  };
 
   /// "8 sa 42 dk sonra" — kalan süreyi yazar. Geçmiş bir an verilirse `null`.
   ///
@@ -70,8 +70,7 @@ extension AlarmDisplay on Alarm {
   String get repeatSummary {
     if (repeatDays.isEmpty) return Strings.noRepeat;
     if (repeatDays.length == 7) return Strings.everyday;
-    if (repeatDays.length == 5 &&
-        repeatDays.containsAll(Weekday.weekdays)) {
+    if (repeatDays.length == 5 && repeatDays.containsAll(Weekday.weekdays)) {
       return Strings.weekdaysLabel;
     }
     if (repeatDays.length == 2 && repeatDays.containsAll(Weekday.weekend)) {

@@ -24,16 +24,14 @@ class ClockTime implements Comparable<ClockTime> {
     return ClockTime._(wrapped);
   }
 
-  factory ClockTime(int hour, int minute) =>
-      ClockTime.fromMinutes(hour * 60 + minute);
+  factory ClockTime(int hour, int minute) => ClockTime.fromMinutes(hour * 60 + minute);
 
   int get hour => minutesSinceMidnight ~/ 60;
 
   int get minute => minutesSinceMidnight % 60;
 
   /// Dakika ekler, gerekirse gün sınırını sararak.
-  ClockTime adding(int minutes) =>
-      ClockTime.fromMinutes(minutesSinceMidnight + minutes);
+  ClockTime adding(int minutes) => ClockTime.fromMinutes(minutesSinceMidnight + minutes);
 
   /// "07:30" — her zaman iki haneli.
   String get displayText =>
@@ -57,8 +55,7 @@ class ClockTime implements Comparable<ClockTime> {
 
   @override
   bool operator ==(Object other) =>
-      other is ClockTime &&
-      other.minutesSinceMidnight == minutesSinceMidnight;
+      other is ClockTime && other.minutesSinceMidnight == minutesSinceMidnight;
 
   @override
   int get hashCode => minutesSinceMidnight.hashCode;

@@ -31,12 +31,10 @@ class ShakeDetectorConfiguration {
     required this.triggerThreshold,
     required double releaseThreshold,
     required Duration minimumInterval,
-  })  :
-        // Bırakma eşiği tetikleme eşiğinin üstünde olamaz; olursa histerezis
-        // anlamını yitirir ve her örnek sayılmaya başlar.
-        releaseThreshold = math.min(releaseThreshold, triggerThreshold),
-        minimumInterval =
-            minimumInterval.isNegative ? Duration.zero : minimumInterval;
+  }) : // Bırakma eşiği tetikleme eşiğinin üstünde olamaz; olursa histerezis
+       // anlamını yitirir ve her örnek sayılmaya başlar.
+       releaseThreshold = math.min(releaseThreshold, triggerThreshold),
+       minimumInterval = minimumInterval.isNegative ? Duration.zero : minimumInterval;
 
   /// Bu büyüklüğün üzerine çıkmak bir sallama sayılır.
   final double triggerThreshold;
@@ -67,8 +65,8 @@ class ShakeDetectorConfiguration {
 /// beslenebilir.
 class ShakeDetector {
   ShakeDetector({required int target, ShakeDetectorConfiguration? configuration})
-      : target = target < 0 ? 0 : target,
-        configuration = configuration ?? ShakeDetectorConfiguration.standard;
+    : target = target < 0 ? 0 : target,
+      configuration = configuration ?? ShakeDetectorConfiguration.standard;
 
   final int target;
   final ShakeDetectorConfiguration configuration;

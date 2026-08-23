@@ -67,17 +67,25 @@ void main() {
       expectNoRawInterpolation(
         Strings.timeRemaining(from.add(const Duration(hours: 3)), from),
       );
-      expect(Strings.timeRemaining(from.add(const Duration(hours: 3)), from),
-          '3 saat sonra');
-      expect(Strings.timeRemaining(from.add(const Duration(days: 2)), from),
-          '2 gün sonra');
+      expect(
+        Strings.timeRemaining(from.add(const Duration(hours: 3)), from),
+        '3 saat sonra',
+      );
+      expect(
+        Strings.timeRemaining(from.add(const Duration(days: 2)), from),
+        '2 gün sonra',
+      );
     });
 
     test('dakika altı ve geçmiş', () {
-      expect(Strings.timeRemaining(from.add(const Duration(seconds: 30)), from),
-          'birazdan');
-      expect(Strings.timeRemaining(from.subtract(const Duration(minutes: 1)), from),
-          isNull);
+      expect(
+        Strings.timeRemaining(from.add(const Duration(seconds: 30)), from),
+        'birazdan',
+      );
+      expect(
+        Strings.timeRemaining(from.subtract(const Duration(minutes: 1)), from),
+        isNull,
+      );
     });
   });
 }

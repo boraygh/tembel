@@ -59,9 +59,9 @@ class EntitlementStatus {
   }
 
   Map<String, Object?> toJson() => {
-        'isPurchased': isPurchased,
-        'expiresAt': expiresAt?.toUtc().toIso8601String(),
-      };
+    'isPurchased': isPurchased,
+    'expiresAt': expiresAt?.toUtc().toIso8601String(),
+  };
 
   factory EntitlementStatus.fromJson(Map<String, Object?> json) {
     if ((json['isPurchased'] as bool?) != true) return free;
@@ -112,8 +112,7 @@ class FeatureGate {
 
   int get alarmLimit => isPremium ? 1 << 30 : freeAlarmLimit;
 
-  int get taskLimitPerAlarm =>
-      isPremium ? Alarm.maxTaskCount : freeTaskLimitPerAlarm;
+  int get taskLimitPerAlarm => isPremium ? Alarm.maxTaskCount : freeTaskLimitPerAlarm;
 
   bool canAddAlarm(int currentCount) => currentCount < alarmLimit;
 
@@ -121,8 +120,7 @@ class FeatureGate {
 
   bool hasTaskKind(TaskKind kind) => isPremium || freeTaskKinds.contains(kind);
 
-  List<TaskKind> get availableTaskKinds =>
-      TaskKind.values.where(hasTaskKind).toList();
+  List<TaskKind> get availableTaskKinds => TaskKind.values.where(hasTaskKind).toList();
 
   bool hasSound(AlarmSound sound) => isPremium || sound == AlarmSound.systemDefault;
 
