@@ -90,6 +90,10 @@ Z0 = 0.60                        # zemin kat döşeme kotu (+0.60)
 DOSEME_T = 0.30                  # döşeme alnı
 SILME = 0.25                     # döşeme alnının cepheden taşması (yüzer beyaz bantlar)
 R_KOSE = 1.10                    # balkon dış köşe yarıçapı
+DUVAR_T = 0.25                   # dış duvar kalınlığı (pencere sövesi derinliği)
+CAM_GERI = 0.10                  # camın dış yüzden içeri çekilmesi
+ISIK_ORANI = 0.35                # akşamüstü ışığı yanan oda oranı (blok ve oda başına rastgele)
+ISIK_RENK = (1.0, 0.70, 0.42)    # iç mekân ışığı (~2700 K)
 KAHRAMAN = "7104-I"              # tek blok görselindeki blok (denize en yakın)
 
 _ARG = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
@@ -113,7 +117,7 @@ PALET = {
     "kaide":       "#3D3A36",   # zemin kaidesi – bazalt
     "bronz":       "#8E6C49",   # doğrama, dikey fin, küpeşte – şampanya bronz
     "ahsap":       "#7B4A2B",   # teras tavanları, saçak altı – tik
-    "cam":         "#24323A",   # cephe camı – füme
+    "cam":         "#C9D8D4",   # cephe camı – geçirgenlik tonu (hafif yeşil füme)
     "perde":       "#DED5C4",   # cam arkası tül perde
     "korkuluk":    "#E4F2EE",   # çerçevesiz cam korkuluk
     "tas":         "#D9D1C3",   # teras / peyzaj taşı
@@ -349,6 +353,28 @@ class Govde:
         self.v, self.f, self.m, self.mats = [], [], [], []
         self.ton = []            # köşe başına renk tonu (komşu evler için)
         self._t = 0.0
+        self._oz = []            # (ilk yüz, {ad: değer}): yüz öznitelikleri (oda, perde ölçüleri)
+
+    def ozellik(self, **kw):
+        """Bundan sonra eklenen yüzlerin öznitelikleri (verilmeyenler 0)."""
+        self._oz.append((len(self.f), kw))
+
+    def dortgen(self, pts, mat):
+        b = len(self.v)
+        self._v(list(pts))
+        self.yuz(range(b, b + len(pts)), mat)
+
+    def kutu6(self, x0, x1, y0, y1, z0, z1, m):
+        """Yüz başına malzemeli kutu: m = {'-x','+x','-y','+y','-z','+z': malzeme, 'v': varsayılan};
+        None verilen yüz oluşturulmaz."""
+        b = len(self.v)
+        self._v([(x0, y0, z0), (x1, y0, z0), (x1, y1, z0), (x0, y1, z0),
+                 (x0, y0, z1), (x1, y0, z1), (x1, y1, z1), (x0, y1, z1)])
+        for k, q in (("-z", (0, 3, 2, 1)), ("+z", (4, 5, 6, 7)), ("-y", (0, 1, 5, 4)),
+                     ("+y", (2, 3, 7, 6)), ("-x", (3, 0, 4, 7)), ("+x", (1, 2, 6, 5))):
+            mat = m.get(k, m.get("v"))
+            if mat is not None:
+                self.yuz([b + i for i in q], mat)
 
     def _mi(self, mat):
         if mat not in self.mats:
@@ -502,6 +528,15 @@ class Govde:
         if ton_attr:
             a = me.attributes.new("ton", 'FLOAT', 'POINT')
             a.data.foreach_set("value", self.ton)
+        n = len(self.f)
+        for ad in sorted({k for _, kw in self._oz for k in kw}):
+            deg = [0.0] * n
+            for j, (ilk, kw) in enumerate(self._oz):
+                son = self._oz[j + 1][0] if j + 1 < len(self._oz) else n
+                if ad in kw:
+                    deg[ilk:son] = [float(kw[ad])] * (son - ilk)
+            a = me.attributes.new(ad, 'FLOAT', 'FACE')
+            a.data.foreach_set("value", deg)
         me.update()
         ob = bpy.data.objects.new(ad, me)
         coll.objects.link(ob)
@@ -797,37 +832,148 @@ def mat_ahsap(hexr):
     return m
 
 
-def mat_cam_ic(hexr):
-    """Cephe camı: üstte yansıtıcı cam katmanı, altında oda oda değişen iç mekân
-    (tül perde / karanlık oda / yanan sıcak ışık)."""
+def mat_cam_ince(hexr):
+    """İnce mimari cam: Fresnel'e göre gökyüzü yansıması, arkasındaki oda görünür;
+    güneş ve gölge ışınları içeri geçer."""
     m, nt, out = _yeni_mat("Cephe_Cami")
-    cam_rgb = renk(hexr)
-    p = _bsdf(nt, cam_rgb, rough=0.6, spec=0.5, coat=1.0)
-    _ata(p, 0.0, "Coat Roughness", "Clearcoat Roughness")
-    _ata(p, 1.52, "Coat IOR")
-    obj = _koord(nt)
-    hucre = _vmat(nt, 'FLOOR', _vmat(nt, 'DIVIDE', _vmat(nt, 'SUBTRACT', obj, (0.0, 0.0, Z0)),
-                                     (2.4, 2.4, KAT_H)))
+    fr = nt.nodes.new("ShaderNodeFresnel")
+    fr.inputs["IOR"].default_value = 1.52
+    tr = nt.nodes.new("ShaderNodeBsdfTransparent")
+    tr.inputs[0].default_value = (*renk(hexr), 1.0)
+    gl = nt.nodes.new("ShaderNodeBsdfGlossy")
+    gl.inputs["Color"].default_value = (0.90, 0.95, 0.96, 1.0)
+    _ata(gl, 0.015, "Roughness")
+    mx = nt.nodes.new("ShaderNodeMixShader")
+    nt.links.new(_aralik(nt, fr.outputs[0], 0.0, 1.0, 0.11, 1.0), mx.inputs[0])
+    nt.links.new(tr.outputs[0], mx.inputs[1])
+    nt.links.new(gl.outputs[0], mx.inputs[2])
+    _golge_seffaf(nt, out, mx.outputs[0])
+    return m
+
+
+def _rastgele(nt, ad="oda", ofset=0.0):
+    """Yüz özniteliği (oda / pencere kimliği) ve blok örneğine göre değişen 0-1 rastgele sayı."""
+    at = nt.nodes.new("ShaderNodeAttribute")
+    at.attribute_name = ad
     oi = nt.nodes.new("ShaderNodeObjectInfo")
+    cb = nt.nodes.new("ShaderNodeCombineXYZ")
+    nt.links.new(at.outputs["Fac"], cb.inputs[0])
+    nt.links.new(oi.outputs["Random"], cb.inputs[1])
+    cb.inputs[2].default_value = ofset
     wn = nt.nodes.new("ShaderNodeTexWhiteNoise")
-    wn.noise_dimensions = '4D'
-    nt.links.new(hucre, wn.inputs["Vector"])
-    nt.links.new(oi.outputs["Random"], wn.inputs["W"])
-    r = wn.outputs["Value"]
+    wn.noise_dimensions = '3D'
+    nt.links.new(cb.outputs[0], wn.inputs["Vector"])
+    return wn.outputs["Value"]
+
+
+def _secim(nt, r, renkler):
+    """0-1 sayıyla paletten renk seç (sabit geçişli rampa)."""
+    c = _rampa(nt, r, [(i / len(renkler), rr) for i, rr in enumerate(renkler)])
+    c.node.color_ramp.interpolation = 'CONSTANT'
+    return c
+
+
+def _isik_acik(nt):
+    """Oda ışığı yanıyor mu (0/1): oda ve blok başına rastgele, oran ISIK_ORANI."""
+    return _matematik(nt, 'GREATER_THAN', _rastgele(nt, "oda", 3.7), 1.0 - ISIK_ORANI)
+
+
+def _oz_isik(nt, p, guc):
+    _ata(p, (*ISIK_RENK, 1.0), "Emission Color", "Emission")
+    nt.links.new(_matematik(nt, 'MULTIPLY', _isik_acik(nt), guc), _ata(p, 0.0, "Emission Strength"))
+
+
+def mat_ic(ad, renkler, rough=0.8, isik=0.0, ofset=0.0, spec=0.3, coat=0.0):
+    """İç mekân yüzeyi: oda + blok başına paletten renk; ışığı yanan odada sıcak öz-ışıma."""
+    m, nt, out = _yeni_mat(ad)
+    p = _bsdf(nt, renkler[0], rough, spec=spec, coat=coat)
+    if len(renkler) > 1:
+        nt.links.new(_secim(nt, _rastgele(nt, "oda", ofset), renkler), p.inputs["Base Color"])
+    if isik > 0:
+        _oz_isik(nt, p, isik)
+    nt.links.new(p.outputs[0], out.inputs["Surface"])
+    return m
+
+
+def mat_parke():
+    """Parke: oda başına ton (açık meşe / bal meşe / ceviz / gri taş), tahta damarı, hafif parlak."""
+    m, nt, out = _yeni_mat("Ic_Parke")
+    p = _bsdf(nt, renk("#B08F68"), 0.36, spec=0.45)
+    taban = _secim(nt, _rastgele(nt, "oda", 9.1), [renk("#C4A47E"), renk("#A9825A"),
+                                                   renk("#6E4B33"), renk("#BDB5A9")])
     wv = nt.nodes.new("ShaderNodeTexWave")
     wv.wave_type = 'BANDS'
     wv.bands_direction = 'X'
-    _ata(wv, 7.0, "Scale"); _ata(wv, 1.5, "Distortion")
-    nt.links.new(_vmat(nt, 'ADD', obj, (0.0, 0.0, 0.0)), wv.inputs["Vector"])
-    perde_c = renk(PALET["perde"])
-    perde = _rampa(nt, wv.outputs["Fac"], [(0.0, _kat(perde_c, 0.72)), (1.0, perde_c)])
-    ic = _karistir(nt, _matematik(nt, 'GREATER_THAN', r, 0.42), perde, renk("#3A322B"))
-    ic = _vmat(nt, 'MULTIPLY', ic, (0.62, 0.70, 0.72))
-    nt.links.new(ic, p.inputs["Base Color"])
-    _ata(p, (*renk("#FFB774"), 1.0), "Emission Color", "Emission")
-    nt.links.new(_matematik(nt, 'MULTIPLY', _matematik(nt, 'GREATER_THAN', r, 0.91), 1.4),
-                 _ata(p, 0.0, "Emission Strength"))
+    _ata(wv, 5.0, "Scale"); _ata(wv, 7.0, "Distortion"); _ata(wv, 3.0, "Detail")
+    nt.links.new(_koord(nt), wv.inputs["Vector"])
+    nt.links.new(_olcekle(nt, taban, _aralik(nt, wv.outputs["Fac"], 0.0, 1.0, 0.82, 1.12)),
+                 p.inputs["Base Color"])
+    _oz_isik(nt, p, 0.18)
     nt.links.new(p.outputs[0], out.inputs["Surface"])
+    return m
+
+
+def mat_lamba():
+    """Abajur / sarkıt: ışığı yanan odada parlak sıcak ışık, sönükken krem kumaş."""
+    m, nt, out = _yeni_mat("Lamba")
+    p = _bsdf(nt, renk("#EFE6D6"), 0.7, spec=0.3)
+    _oz_isik(nt, p, 9.0)
+    nt.links.new(p.outputs[0], out.inputs["Surface"])
+    return m
+
+
+def mat_perde():
+    """Perde: pencere (yüz öznitelikleri) ve blok başına rastgele – yanlara toplanmış ya da yarı
+    çekili fon perde, çekili tül, yarı inik stor; kıvrımlı, arkadan ışığı geçiren kumaş."""
+    m, nt, out = _yeni_mat("Perde")
+
+    def oz(ad):
+        a = nt.nodes.new("ShaderNodeAttribute")
+        a.attribute_name = ad
+        return a.outputs["Fac"]
+
+    sep = nt.nodes.new("ShaderNodeSeparateXYZ")
+    nt.links.new(_koord(nt), sep.inputs[0])
+    a = _matematik(nt, 'MULTIPLY_ADD', _matematik(nt, 'SUBTRACT', sep.outputs[1], sep.outputs[0]),
+                   oz("p_ax"), sep.outputs[0])                     # duvar boyunca konum (m)
+    a0, a1, z0, z1 = oz("p_a0"), oz("p_a1"), oz("p_z0"), oz("p_z1")
+    u = _matematik(nt, 'DIVIDE', _matematik(nt, 'SUBTRACT', a, a0), _matematik(nt, 'SUBTRACT', a1, a0))
+    v = _matematik(nt, 'DIVIDE', _matematik(nt, 'SUBTRACT', sep.outputs[2], z0),
+                   _matematik(nt, 'SUBTRACT', z1, z0))
+    r = [_rastgele(nt, "p_id", k * 1.37) for k in range(6)]
+    sol = _matematik(nt, 'MULTIPLY_ADD', _matematik(nt, 'POWER', r[0], 3.0), 0.44, 0.07)
+    sag = _matematik(nt, 'MULTIPLY_ADD', _matematik(nt, 'POWER', r[1], 3.0), 0.44, 0.07)
+    fon = _matematik(nt, 'MAXIMUM', _matematik(nt, 'LESS_THAN', u, sol),
+                     _matematik(nt, 'GREATER_THAN', u, _matematik(nt, 'SUBTRACT', 1.0, sag)))
+    stor = _matematik(nt, 'MULTIPLY', _matematik(nt, 'GREATER_THAN', r[2], 0.86),
+                      _matematik(nt, 'GREATER_THAN', v,
+                                 _matematik(nt, 'MULTIPLY_ADD', r[3], -0.5, 0.75)))
+    opak = _matematik(nt, 'MAXIMUM', fon, stor)
+    alfa = _matematik(nt, 'MAXIMUM', opak,
+                      _matematik(nt, 'MULTIPLY', _matematik(nt, 'GREATER_THAN', r[4], 0.70), 0.50))
+    kivrim = _matematik(nt, 'MULTIPLY_ADD',
+                        _matematik(nt, 'SINE', _matematik(nt, 'MULTIPLY', a, 2 * math.pi / 0.14)),
+                        0.14, 0.86)
+    fon_renk = _olcekle(nt, _secim(nt, r[5], [renk("#D9CDBB"), renk("#EFE9DF"), renk("#9C9488"),
+                                              renk("#7E6E5E"), renk("#C8C2B4"), renk("#5E6A63")]),
+                        kivrim)
+    tul = nt.nodes.new("ShaderNodeRGB")
+    tul.outputs[0].default_value = (0.93, 0.91, 0.87, 1.0)
+    c = _karistir(nt, opak, _olcekle(nt, tul.outputs[0], kivrim), fon_renk)
+    df = nt.nodes.new("ShaderNodeBsdfDiffuse")
+    nt.links.new(c, df.inputs[0])
+    tl = nt.nodes.new("ShaderNodeBsdfTranslucent")
+    nt.links.new(c, tl.inputs[0])
+    kumas = nt.nodes.new("ShaderNodeMixShader")
+    kumas.inputs[0].default_value = 0.35
+    nt.links.new(df.outputs[0], kumas.inputs[1])
+    nt.links.new(tl.outputs[0], kumas.inputs[2])
+    sf = nt.nodes.new("ShaderNodeBsdfTransparent")
+    mx = nt.nodes.new("ShaderNodeMixShader")
+    nt.links.new(alfa, mx.inputs[0])
+    nt.links.new(sf.outputs[0], mx.inputs[1])
+    nt.links.new(kumas.outputs[0], mx.inputs[2])
+    nt.links.new(mx.outputs[0], out.inputs["Surface"])
     return m
 
 
@@ -1029,7 +1175,25 @@ def malzemeler():
         "kaide": mat_duz("Bazalt_Kaide", P["kaide"], 0.6, var=0.12, olcek=3, bump=0.1),
         "bronz": mat_duz("Sampanya_Bronz", P["bronz"], 0.30, metal=1.0, var=0.04),
         "ahsap": mat_ahsap(P["ahsap"]),
-        "cam": mat_cam_ic(P["cam"]),
+        "cam": mat_cam_ince(P["cam"]),
+        "perde": mat_perde(),
+        "ic_siva": mat_duz("Ic_Siva", "#EAE5DC", 0.9, spec=0.3, var=0.02),
+        "ic_duvar": mat_ic("Ic_Duvar", [renk("#EDE7DD"), renk("#E4DCCF"), renk("#F2EFE9"),
+                                        renk("#D9D2C6"), renk("#C9B9A3")], 0.85, isik=0.30, ofset=1.1),
+        "ic_tavan": mat_ic("Ic_Tavan", [renk("#F4F1EC")], 0.9, isik=1.4),
+        "ic_zemin": mat_parke(),
+        "doseme": mat_ic("Doseme_Kumas", [renk("#8C857B"), renk("#C9BBA6"), renk("#3E4A5C"),
+                                          renk("#6F7B65"), renk("#A0644A"), renk("#D8D2C6"),
+                                          renk("#55504A")], 0.95, ofset=2.2, spec=0.2),
+        "hali": mat_ic("Hali", [renk("#CFC3AF"), renk("#8E9AA5"), renk("#B88C6E"), renk("#E2DDD3"),
+                                renk("#6E6A66")], 0.98, ofset=5.5, spec=0.15),
+        "tablo": mat_ic("Tablo", [renk("#2F5D7C"), renk("#C46A3C"), renk("#E9DFC9"), renk("#3B3B3B"),
+                                  renk("#7E9C7A"), renk("#B7A06B")], 0.6, ofset=7.7),
+        "nevresim": mat_duz("Nevresim", "#F3F0EA", 0.9, spec=0.2, var=0.03),
+        "mob_ahsap": mat_duz("Mobilya_Ahsap", "#7B5B40", 0.45, var=0.08, olcek=4.0),
+        "lake": mat_duz("Lake_Mutfak", "#ECE8E1", 0.22, coat=0.3, var=0.02),
+        "koyu": mat_duz("Mobilya_Koyu", "#202124", 0.35, var=0.02),
+        "lamba": mat_lamba(),
         "korkuluk": mat_seffaf("Cam_Korkuluk", P["korkuluk"]),
         "tas": tas,
         "minder": mat_duz("Minder", P["minder"], 0.9, spec=0.2, var=0.03),
@@ -1132,37 +1296,99 @@ def _balkon_hatti(t, sx, sy, i=0.07):
     return [(sx * x, -sy * y) for x, y in pts]
 
 
-def _kasa(g, nx, ny, w0, a0, a1, z0, z1, mat, t=0.06, d=0.10):
-    """Duvar düzleminde dikdörtgen pencere kasası; (nx,ny) dış normal."""
-    def parca(lo, hi, zl, zh):
-        if nx:
-            xa, xb = sorted((w0, w0 + nx * d))
-            g.kutu(xa, xb, lo, hi, zl, zh, mat)
-        else:
-            ya, yb = sorted((w0, w0 + ny * d))
-            g.kutu(lo, hi, ya, yb, zl, zh, mat)
-    parca(a0 - t, a1 + t, z0 - t, z0)
-    parca(a0 - t, a1 + t, z1, z1 + t)
-    parca(a0 - t, a0, z0, z1)
-    parca(a1, a1 + t, z0, z1)
-
-
-def _cam(g, M, eksen, w0, n, a0, a1, z0, z1, dikme=0):
-    """Duvar düzleminde cam + bronz kasa/dikme. eksen 'y': y = w0 duvarı, a: x aralığı;
-    'x': x = w0 duvarı, a: y aralığı. n: dış normal yönü (+1 / -1)."""
-    wa, wb = sorted((w0, w0 + n * 0.09))
+def _duzlem(eksen, w, a0, a1, z0, z1):
+    """Duvar düzleminde dörtgen (eksen 'y': y = w düzlemi, a: x; 'x': x = w, a: y)."""
     if eksen == "y":
-        g.kutu(a0, a1, w0 - 0.02, w0 + 0.02, z0, z1, M["cam"])
-        _kasa(g, 0, n, w0, a0, a1, z0, z1, M["bronz"])
+        return [(a0, w, z0), (a1, w, z0), (a1, w, z1), (a0, w, z1)]
+    return [(w, a0, z0), (w, a1, z0), (w, a1, z1), (w, a0, z1)]
+
+
+def _kutu_d(g, eksen, wa, wb, a0, a1, z0, z1, mat):
+    """Duvara göre kutu: w (duvar normali boyunca) × a (duvar boyunca) × z."""
+    wa, wb = sorted((wa, wb))
+    if eksen == "y":
+        g.kutu(a0, a1, wa, wb, z0, z1, mat)
     else:
-        g.kutu(w0 - 0.02, w0 + 0.02, a0, a1, z0, z1, M["cam"])
-        _kasa(g, n, 0, w0, a0, a1, z0, z1, M["bronz"])
+        g.kutu(wa, wb, a0, a1, z0, z1, mat)
+
+
+def _duvar_kutu(g, eksen, w0, n, a0, a1, z0, z1, dis, ic, ust=None, alt=None):
+    """Dış yüzü w0'da, DUVAR_T kalınlığında duvar parçası: dış yüz ve söveler 'dis', iç yüz 'ic'."""
+    wa, wb = sorted((w0, w0 - n * DUVAR_T))
+    if eksen == "y":
+        g.kutu6(a0, a1, wa, wb, z0, z1, {"v": dis, "-z": alt, "+z": ust, ("-y" if n > 0 else "+y"): ic})
+    else:
+        g.kutu6(wa, wb, a0, a1, z0, z1, {"v": dis, "-z": alt, "+z": ust, ("-x" if n > 0 else "+x"): ic})
+
+
+def _duvarlar(g, M, t, aciklik, zf, zt):
+    """Gövde konturunun her kenarında kat bandı boyunca açıklıklar dışında kalan duvar parçaları
+    (dış yüz traverten, çekirdek nişinde antrasit; iç yüz sıva)."""
+    G, O, B, N, D2, yi = _olculer(t)
+    pts = _kontur(t, False)
+    for p, q in zip(pts, pts[1:] + pts[:1]):
+        if abs(p[1] - q[1]) < 1e-6:
+            eksen, w0, n = "y", p[1], (1 if q[0] < p[0] else -1)
+            amin, amax = sorted((p[0], q[0]))
+            nis = N > 0 and abs(abs(w0) - yi) < 1e-6 and amax <= N + 1e-6
+        else:
+            eksen, w0, n = "x", p[0], (1 if q[1] > p[1] else -1)
+            amin, amax = sorted((p[1], q[1]))
+            nis = N > 0 and abs(abs(w0) - N) < 1e-6
+        dis = M["antrasit"] if nis else M["traverten"]
+        bu = sorted((a for a in aciklik if a["eksen"] == eksen and abs(a["w0"] - w0) < 1e-6 and
+                     a["n"] == n and amin - 1e-6 <= a["a0"] and a["a1"] <= amax + 1e-6),
+                    key=lambda a: a["a0"])
+        imlec = amin
+        for a in bu:
+            if a["a0"] > imlec + 1e-6:
+                _duvar_kutu(g, eksen, w0, n, imlec, a["a0"], zf, zt, dis, M["ic_siva"])
+            if a["z0"] > zf + 1e-6:
+                _duvar_kutu(g, eksen, w0, n, a["a0"], a["a1"], zf, a["z0"], dis, M["ic_siva"], ust=dis)
+            if a["z1"] < zt - 1e-6:
+                _duvar_kutu(g, eksen, w0, n, a["a0"], a["a1"], a["z1"], zt, dis, M["ic_siva"], alt=dis)
+            imlec = a["a1"]
+        if amax > imlec + 1e-6:
+            _duvar_kutu(g, eksen, w0, n, imlec, amax, zf, zt, dis, M["ic_siva"])
+
+
+def _pencere(g, M, eksen, w0, n, a0, a1, z0, z1, dikme=0):
+    """Söveye oturan sabit cam: söve içinde bronz kasa ve dikmeler."""
+    g.dortgen(_duzlem(eksen, w0 - n * CAM_GERI, a0, a1, z0, z1), M["cam"])
+    k0, k1 = w0 - n * 0.05, w0 - n * 0.15
+    for p in ((a0, a0 + 0.06, z0, z1), (a1 - 0.06, a1, z0, z1),
+              (a0, a1, z0, z0 + 0.06), (a0, a1, z1 - 0.06, z1)):
+        _kutu_d(g, eksen, k0, k1, *p, M["bronz"])
     for k in range(1, dikme + 1):
         a = a0 + (a1 - a0) * k / (dikme + 1)
-        if eksen == "y":
-            g.kutu(a - 0.03, a + 0.03, wa, wb, z0, z1, M["bronz"])
-        else:
-            g.kutu(wa, wb, a - 0.03, a + 0.03, z0, z1, M["bronz"])
+        _kutu_d(g, eksen, w0 - n * 0.06, w0 - n * 0.14, a - 0.025, a + 0.025, z0, z1, M["bronz"])
+
+
+def _surme(g, M, eksen, w0, n, a0, a1, z0, z1, acik=0.0):
+    """İki kanatlı sürme kapı: dış raydaki kanat sabit, iç raydaki kanat 'acik' oranında aralık."""
+    for p in ((a0, a0 + 0.05, z0, z1), (a1 - 0.05, a1, z0, z1),
+              (a0, a1, z0, z0 + 0.05), (a0, a1, z1 - 0.05, z1)):
+        _kutu_d(g, eksen, w0 - n * 0.04, w0 - n * 0.17, *p, M["bronz"])
+    pw = (a1 - a0) / 2 + 0.03
+    s = acik * (pw - 0.12)
+    for (b0, b1), wr in (((a0, a0 + pw), w0 - n * 0.08), ((a1 - pw - s, a1 - s), w0 - n * 0.13)):
+        g.dortgen(_duzlem(eksen, wr, b0, b1, z0 + 0.05, z1 - 0.05), M["cam"])
+        for p in ((b0, b0 + 0.06, z0 + 0.05, z1 - 0.05), (b1 - 0.06, b1, z0 + 0.05, z1 - 0.05),
+                  (b0, b1, z0 + 0.05, z0 + 0.11), (b0, b1, z1 - 0.11, z1 - 0.05)):
+            _kutu_d(g, eksen, wr - 0.02, wr + 0.02, *p, M["bronz"])
+
+
+def _giris(g, M, eksen, w0, n, a0, a1, z0, z1):
+    """Bina girişi: iki kanatlı cam kapı, üstte vasistas, yanlarda sabit cam, bronz kollar."""
+    _pencere(g, M, eksen, w0, n, a0, a1, z0, z1)
+    wa, wb = w0 - n * 0.05, w0 - n * 0.15
+    _kutu_d(g, eksen, wa, wb, a0, a1, z0 + 2.40, z0 + 2.46, M["bronz"])
+    for a in (-0.75, 0.0, 0.75):
+        if a0 + 0.1 < a < a1 - 0.1:
+            _kutu_d(g, eksen, wa, wb, a - 0.03, a + 0.03, z0, z0 + 2.40, M["bronz"])
+    for a in (-0.12, 0.12):
+        _kutu_d(g, eksen, w0 - n * 0.02, w0 - n * 0.06, a - 0.015, a + 0.015, z0 + 0.9, z0 + 1.5,
+                M["bronz"])
 
 
 def _fransiz(g, M, eksen, w0, n, a0, a1, z):
@@ -1171,6 +1397,117 @@ def _fransiz(g, M, eksen, w0, n, a0, a1, z):
     h = [(a0, w), (a1, w)] if eksen == "y" else [(w, a0), (w, a1)]
     g.serit(h, z, z + 1.05, 0.024, M["korkuluk"])
     g.serit(h, z + 1.05, z + 1.085, 0.05, M["bronz"])
+
+
+def _perde(g, M, a, rid, k, zf, zt):
+    """Duvarın iç yüzünden 10 cm geride, iki yanda 20 cm taşan perde (açıklığı shader belirler)."""
+    a0, a1, z0, z1 = a["a0"] - 0.20, a["a1"] + 0.20, zf + 0.02, zt - 0.04
+    g.ozellik(oda=rid, p_ax=0.0 if a["eksen"] == "y" else 1.0, p_a0=a0, p_a1=a1, p_z0=z0, p_z1=z1,
+              p_id=rid * 10.0 + k)
+    g.dortgen(_duzlem(a["eksen"], a["w0"] - a["n"] * (DUVAR_T + 0.10), a0, a1, z0, z1), M["perde"])
+    g.ozellik(oda=rid)
+
+
+def _yerel(r, on, ayna):
+    """Oda yerel koordinatı: s pencere duvarı boyunca (0..W), t pencereden içeri (0..D)."""
+    x0, x1, y0, y1 = r
+    W, D = (x1 - x0, y1 - y0) if on in ("-y", "+y") else (y1 - y0, x1 - x0)
+
+    def donus(s0, s1, t0, t1):
+        if ayna:
+            s0, s1 = W - s1, W - s0
+        if on == "-y":
+            return x0 + s0, x0 + s1, y0 + t0, y0 + t1
+        if on == "+y":
+            return x0 + s0, x0 + s1, y1 - t1, y1 - t0
+        if on == "-x":
+            return x0 + t0, x0 + t1, y0 + s0, y0 + s1
+        return x1 - t1, x1 - t0, y0 + s0, y0 + s1
+    return W, D, donus
+
+
+def _oda_kabugu(g, M, r, dis, zf, zt):
+    """Parke, tavan ve iç bölmeler. Dış duvar taraflarında (dis) bölme yok; zemin ve tavan
+    cam hattına kadar uzar."""
+    x0, x1, y0, y1 = r
+    e = DUVAR_T - CAM_GERI
+    X0, X1 = x0 - e * ("-x" in dis), x1 + e * ("+x" in dis)
+    Y0, Y1 = y0 - e * ("-y" in dis), y1 + e * ("+y" in dis)
+    za, zb = zf + 0.005, zt - 0.005
+    g.dortgen([(X0, Y0, za), (X1, Y0, za), (X1, Y1, za), (X0, Y1, za)], M["ic_zemin"])
+    g.dortgen([(X0, Y0, zb), (X0, Y1, zb), (X1, Y1, zb), (X1, Y0, zb)], M["ic_tavan"])
+    for k, (a, b) in (("-x", ((x0, y1), (x0, y0))), ("+x", ((x1, y0), (x1, y1))),
+                      ("-y", ((x0, y0), (x1, y0))), ("+y", ((x1, y1), (x0, y1)))):
+        if k not in dis:
+            g.dortgen([(a[0], a[1], zf), (b[0], b[1], zf), (b[0], b[1], zt), (a[0], a[1], zt)],
+                      M["ic_duvar"])
+
+
+def _mobilya(g, M, oda, zf, zt):
+    """Odaya göre mobilya: salon (mutfak, yemek, oturma grubu), yatak odası, sahanlık / lobi."""
+    W, D, T = _yerel(oda["r"], oda["on"], oda["ayna"])
+
+    def kutu(s0, s1, t0, t1, z0, z1, mat):
+        xa, xb, ya, yb = T(s0, s1, t0, t1)
+        g.kutu(xa, xb, ya, yb, zf + z0, zf + z1, mat)
+
+    def nokta(s, t):
+        xa, _, ya, _ = T(s, s, t, t)
+        return xa, ya
+
+    def saksi(s, t, r=0.22, h=0.45, tac=0.38):
+        x, y = nokta(s, t)
+        g.silindir((x, y, zf), (x, y, zf + h), r, M["antrasit"], 10)
+        g.kure((x, y, zf + h + tac * 1.2), (tac, tac, tac * 1.4), M["yesil"], 10, 6, 0.3, x * 0.7 + y)
+
+    tur = oda["tur"]
+    if tur == "salon":                       # s = 0 mutfak (bölme), s = W balkon kapısı tarafı
+        kutu(0.0, 0.62, 0.9, D, 0.0, 0.88, M["lake"])
+        kutu(0.0, 0.64, 0.9, D, 0.88, 0.92, M["koyu"])
+        kutu(0.0, 0.36, 0.9, D, 1.50, 2.25, M["lake"])
+        sm, tm = 1.75, D / 2 + 0.1
+        kutu(sm - 0.45, sm + 0.45, tm - 0.8, tm + 0.8, 0.72, 0.76, M["mob_ahsap"])
+        kutu(sm - 0.05, sm + 0.05, tm - 0.6, tm + 0.6, 0.0, 0.72, M["koyu"])
+        for dt in (-0.4, 0.4):
+            for ds in (-1, 1):
+                cs = sm + ds * 0.68
+                kutu(cs - 0.2, cs + 0.2, tm + dt - 0.2, tm + dt + 0.2, 0.42, 0.47, M["doseme"])
+                b0, b1 = sorted((cs + ds * 0.16, cs + ds * 0.21))
+                kutu(b0, b1, tm + dt - 0.2, tm + dt + 0.2, 0.47, 0.88, M["doseme"])
+            x, y = nokta(sm, tm + dt)
+            g.silindir((x, y, zt - 0.01), (x, y, zt - 0.62), 0.008, M["koyu"], 4)
+            g.kure((x, y, zt - 0.72), (0.15, 0.15, 0.12), M["lamba"], 8, 5)
+        kutu(W - 3.0, W - 0.9, D - 0.95, D - 0.08, 0.0, 0.42, M["doseme"])
+        kutu(W - 3.0, W - 0.9, D - 0.30, D - 0.08, 0.42, 0.85, M["doseme"])
+        for s0 in (W - 3.0, W - 1.1):
+            kutu(s0, s0 + 0.2, D - 0.95, D - 0.08, 0.42, 0.62, M["doseme"])
+        kutu(W - 3.3, W - 0.6, D - 2.6, D - 0.35, 0.0, 0.012, M["hali"])
+        kutu(W - 2.45, W - 1.45, D - 2.05, D - 1.35, 0.0, 0.38, M["mob_ahsap"])
+        x, y = nokta(W - 0.55, D - 0.45)
+        g.silindir((x, y, zf), (x, y, zf + 1.45), 0.015, M["koyu"], 4)
+        g.silindir((x, y, zf + 1.45), (x, y, zf + 1.75), 0.2, M["lamba"], 10)
+        kutu(W - 2.55, W - 1.35, D - 0.03, D, 1.20, 1.90, M["tablo"])
+        saksi(0.95, 0.45)
+    elif tur in ("oda", "orta"):              # yatak başlığı arka duvarda, ayak ucu pencereye
+        gen, sm = (1.6 if tur == "oda" else 1.4), W / 2
+        kutu(sm - gen / 2, sm + gen / 2, D - 2.1, D - 0.06, 0.0, 0.32, M["doseme"])
+        kutu(sm - gen / 2 + 0.02, sm + gen / 2 - 0.02, D - 2.08, D - 0.08, 0.32, 0.55, M["nevresim"])
+        kutu(sm - gen / 2 - 0.01, sm + gen / 2 + 0.01, D - 2.10, D - 1.45, 0.50, 0.58, M["doseme"])
+        for ds in (-gen / 4, gen / 4):
+            kutu(sm + ds - 0.32, sm + ds + 0.32, D - 0.55, D - 0.15, 0.55, 0.70, M["nevresim"])
+        kutu(sm - gen / 2 - 0.05, sm + gen / 2 + 0.05, D - 0.08, D - 0.01, 0.0, 1.15, M["doseme"])
+        for ds in (-1, 1):
+            c = sm + ds * (gen / 2 + 0.3)
+            kutu(c - 0.22, c + 0.22, D - 0.45, D - 0.05, 0.0, 0.48, M["mob_ahsap"])
+            x, y = nokta(c, D - 0.25)
+            g.silindir((x, y, zf + 0.48), (x, y, zf + 0.76), 0.11, M["lamba"], 8)
+        kutu(sm - 0.5, sm + 0.5, D - 0.03, D, 1.30, 1.90, M["tablo"])
+    else:                                     # merdiven sahanlığı / giriş lobisi
+        x, y = nokta(W / 2, D / 2)
+        g.silindir((x, y, zt - 0.01), (x, y, zt - 0.5), 0.01, M["koyu"], 4)
+        g.kure((x, y, zt - 0.7), (0.28, 0.28, 0.22), M["lamba"], 10, 6)
+        kutu(W / 2 - 0.6, W / 2 + 0.6, D - 0.03, D, 1.2, 2.0, M["tablo"])
+        saksi(0.35, D - 0.4, 0.25, 0.55, 0.45)
 
 
 def _balkon_mobilya(g, M, t, z, sx, sy, kat):
@@ -1205,15 +1542,18 @@ def _balkon_mobilya(g, M, t, z, sx, sy, kat):
 
 
 def blok_tipi(M, coll, ad, t):
-    """Vaziyet planındaki blok: kuzey + güney kanatta ikişer 2+1, ortada çekirdek, köşe balkonları."""
+    """Vaziyet planındaki blok: kuzey + güney kanatta ikişer 2+1, ortada çekirdek, köşe balkonları.
+    Pencerelerin arkasında döşenmiş odalar; perde ve ışıklar blok ve oda başına değişir."""
     g = Govde()
     G, O, B, N, D2, yi = _olculer(t)
     Zc = Z0 + KAT * KAT_H                    # çatı döşemesi üstü
     Zt = Zc - DOSEME_T                       # gövde üstü
     zk = Z0 + KAT_H                          # 1. kat döşemesi
-    xo = N + 0.25 if N else 0.15             # dairenin niş / ortak duvar tarafındaki iç yüzü
-    oda = (xo + 0.45, xo + 2.45)             # yatak odası camı (sağ yarı, x)
-    salon = (xo + 3.40, G - 0.45)            # salon + mutfak camı
+    xo = N + DUVAR_T if N else 0.15          # dairenin niş / ortak duvar tarafındaki iç yüzü
+    xp = xo + 2.95                           # yatak odası | salon bölmesi
+    oda_c = (xo + 0.45, xo + 2.45)           # yatak odası camı (sağ yarı, x)
+    salon_c = (xo + 3.40, G - 0.45)          # salon + mutfak camı
+    rnd = random.Random(TOHUM + int(t["gw"] * 100))
 
     # zemin: bazalt kaide (zemin kat köşe terasları dahil), kaide önünde alçak çit
     g.prizma(_kontur(t, True, 0.30, R_KOSE), 0.0, Z0, M["kaide"], ust=M["tas"], alt=False)
@@ -1222,9 +1562,6 @@ def blok_tipi(M, coll, ad, t):
             xa, xb = sorted((sx * 2.3, sx * (G - 0.2)))
             ya, yb = sorted((sy * (D2 + 0.32), sy * (D2 + 0.85)))
             g.kutu(xa, xb, ya, yb, 0.0, 0.85, M["yesil"])
-
-    # gövde: traverten
-    g.prizma(_kontur(t, False), Z0, Zt, M["traverten"], ust=False, alt=False)
 
     # ara döşemeler: beyaz alın bantları, tik tavan, taş balkon zemini
     for i in range(1, KAT):
@@ -1249,28 +1586,77 @@ def blok_tipi(M, coll, ad, t):
                 g.serit(h, z + 1.05, z + 1.085, 0.05, M["bronz"])
                 _balkon_mobilya(g, M, t, z, sx, sy, i)
 
+    # katlar: açıklıklı duvarlar, camlar, sürme kapılar, arkalarında odalar
     for i in range(KAT):
         zf = Z0 + i * KAT_H
         zt = zf + KAT_H - DOSEME_T
+        ac, odalar = [], []
+
+        def oda(r, dis, on, tur, ayna=False):
+            o = dict(id=1.0 + i * 20 + len(odalar), r=r, dis=dis, on=on, tur=tur, ayna=ayna, pen=[])
+            odalar.append(o)
+            return o
+
+        def aciklik(o, **kw):
+            ac.append(kw)
+            o["pen"].append(kw)
+
         for sy in (-1, 1):
-            # kuzey / güney cephe: yerden tavana salon ve yatak odası camı (+ Fransız balkon)
+            on = "+y" if sy > 0 else "-y"
+            ya, yb = sorted((sy * (yi + 0.05), sy * (D2 - DUVAR_T)))
+            lobi = not N and i == 0 and sy > 0       # B280: giriş kuzey cephe ortasında
             for sx in (-1, 1):
-                pencereler = [(salon, 3)]
-                if i or sy < 0 or N:                 # B280 girişi kuzey cephe ortasında
-                    pencereler.append((oda, 1))
-                for (p0, p1), dk in pencereler:
-                    a0, a1 = sorted((sx * p0, sx * p1))
-                    _cam(g, M, "y", sy * D2, sy, a0, a1, zf, zt, dk)
-                    if i:
-                        _fransiz(g, M, "y", sy * D2, sy, a0, a1, zf)
-                # kanat ucu: salondan köşe balkonuna sürme kapı
+                xa, xb = sorted((sx * (xp + 0.05), sx * (G - DUVAR_T)))
+                s = oda((xa, xb, ya, yb), {on, "+x" if sx > 0 else "-x"}, on, "salon", sx < 0)
+                a0, a1 = sorted((sx * salon_c[0], sx * salon_c[1]))
+                aciklik(s, eksen="y", w0=sy * D2, n=sy, a0=a0, a1=a1, z0=zf, z1=zt, tur="pencere",
+                        dikme=3, fransiz=i > 0)
                 b0, b1 = sorted((sy * (yi + 0.55), sy * (D2 - 0.55)))
-                _cam(g, M, "x", sx * G, sx, b0, b1, zf, zt, 1)
-            if N and not (i == 0 and sy > 0):
-                _cam(g, M, "y", sy * yi, sy, -N + 0.15, N - 0.15, zf, zt, 1)   # merdiven sahanlığı
+                aciklik(s, eksen="x", w0=sx * G, n=sx, a0=b0, a1=b1, z0=zf, z1=zt, tur="surme",
+                        acik=rnd.choice((0.0, 0.0, 0.0, 0.45, 0.85)))
+                if not lobi:
+                    xa, xb = sorted((sx * ((N + DUVAR_T) if N else 0.10), sx * (xp - 0.05)))
+                    dis = {on} | ({"-x" if sx > 0 else "+x"} if N else set())
+                    y_ = oda((xa, xb, ya, yb), dis, on, "oda")
+                    a0, a1 = sorted((sx * oda_c[0], sx * oda_c[1]))
+                    aciklik(y_, eksen="y", w0=sy * D2, n=sy, a0=a0, a1=a1, z0=zf, z1=zt,
+                            tur="pencere", dikme=1, fransiz=i > 0)
+            if lobi:
+                lo = oda((-(xp - 0.05), xp - 0.05, ya, yb), {on}, on, "hol")
+                aciklik(lo, eksen="y", w0=D2, n=1, a0=-0.95, a1=0.95, z0=zf, z1=zt, tur="giris")
+            if N:                                    # çekirdek nişi arkasında merdiven sahanlığı
+                ha, hb = sorted((sy * (yi - DUVAR_T), sy * (yi - DUVAR_T - 2.0)))
+                h = oda((-N, N, ha, hb), {on}, on, "hol")
+                aciklik(h, eksen="y", w0=sy * yi, n=sy, a0=-N + 0.15, a1=N - 0.15, z0=zf, z1=zt,
+                        tur="giris" if (i == 0 and sy > 0) else "pencere", dikme=1)
         for sx in (-1, 1):                           # orta bölge uçları: yatak odaları
-            for yc in (-1.45, 1.45):
-                _cam(g, M, "x", sx * O, sx, yc - 0.65, yc + 0.65, zf + 0.9, zt - 0.15)
+            on = "+x" if sx > 0 else "-x"
+            xa, xb = sorted((sx * (O - DUVAR_T - 3.0), sx * (O - DUVAR_T)))
+            for sy in (-1, 1):
+                ya, yb = sorted((sy * 0.05, sy * (yi - 0.05)))
+                o = oda((xa, xb, ya, yb), {on}, on, "orta")
+                aciklik(o, eksen="x", w0=sx * O, n=sx, a0=sy * 1.45 - 0.65, a1=sy * 1.45 + 0.65,
+                        z0=zf + 0.9, z1=zt - 0.15, tur="pencere", dikme=0)
+
+        _duvarlar(g, M, t, ac, zf, zt)
+        for a in ac:
+            args = (g, M, a["eksen"], a["w0"], a["n"], a["a0"], a["a1"], a["z0"], a["z1"])
+            if a["tur"] == "surme":
+                _surme(*args, a["acik"])
+            elif a["tur"] == "giris":
+                _giris(*args)
+            else:
+                _pencere(*args, a["dikme"])
+            if a.get("fransiz"):
+                _fransiz(g, M, a["eksen"], a["w0"], a["n"], a["a0"], a["a1"], zf)
+        for o in odalar:
+            g.ozellik(oda=o["id"])
+            _oda_kabugu(g, M, o["r"], o["dis"], zf, zt)
+            _mobilya(g, M, o, zf, zt)
+            if o["tur"] != "hol":
+                for k, a in enumerate(o["pen"]):
+                    _perde(g, M, a, o["id"], k, zf, zt)
+            g.ozellik()
 
     # orta bölge uçlarında bronz dikey fin perdesi
     for sx in (-1, 1):
@@ -1280,18 +1666,11 @@ def blok_tipi(M, coll, ad, t):
             g.kutu(xa, xb, y - 0.03, y + 0.03, Z0, Zt, M["bronz"])
 
     if N:
-        # çekirdek nişi: antrasit kaplı yan yüzler; kuzeyde giriş (sahanlık, basamak, saçak)
-        for sx in (-1, 1):
-            for sy in (-1, 1):
-                xa, xb = sorted((sx * N, sx * (N - 0.04)))
-                ya, yb = sorted((sy * yi, sy * D2))
-                g.kutu(xa, xb, ya, yb, Z0, Zt, M["antrasit"])
+        # giriş nişi: sahanlık, basamak, tik altlı saçak
         g.kutu(-N, N, yi, yi + 1.6, 0.0, Z0, M["kaide"], ust=M["tas"])
         for k in range(3):
             y0 = yi + 1.6 + 0.35 * k
             g.kutu(-N, N, y0, y0 + 0.35, 0.0, Z0 - 0.15 * (k + 1), M["kaide"], ust=M["tas"])
-        _cam(g, M, "y", yi, 1, -0.75, 0.75, Z0, Z0 + 2.45, 1)
-        _cam(g, M, "y", yi, 1, -N + 0.15, N - 0.15, Z0 + 2.55, zk - DOSEME_T)
         g.kutu(-1.9, 1.9, yi + 1.4, D2 + 1.7, zk - DOSEME_T, zk, M["beyaz"], alt=M["ahsap"])
     else:
         # iki daireyi ayıran traverten bıçak duvar; giriş kuzey cephe ortasında
@@ -1301,7 +1680,6 @@ def blok_tipi(M, coll, ad, t):
         for k in range(3):
             y0 = D2 + 0.30 + 0.35 * k
             g.kutu(-1.3, 1.3, y0, y0 + 0.35, 0.0, Z0 - 0.15 * (k + 1), M["kaide"], ust=M["tas"])
-        _cam(g, M, "y", D2, 1, -0.95, 0.95, Z0, Z0 + 2.45, 1)
         g.kutu(-2.1, 2.1, D2, D2 + 1.9, zk - DOSEME_T, zk, M["beyaz"], alt=M["ahsap"])
     return g.obje(ad, coll)
 
