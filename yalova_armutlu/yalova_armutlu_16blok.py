@@ -7,7 +7,8 @@ PARSEL 7104 (5.648 m²) + 7105 (4.510 m²)
 Blok tipleri: Katar Mühendislik Mimarlık T_P-4 kat planı (7104 ve 7105 tip planları, 264 m²);
 blok konumları T_P-4 vaziyet planından. Kuzey ve güney yarıda ikişer daire, uçlarda balkonlu
 salonlar, ortada asansör + merdiven, kuzeyde bina girişi nişi. Salon cephesinde Fransız cam,
-balkon tarafında sürgülü cam, yatak odalarında 1,50 x 1,50 m pencere. Cephe dili v2 ile aynı.
+balkon tarafında sürgülü cam, yatak odalarında 1,50 x 1,50 m pencere. Kat silmeleri #302B27;
+diğer cephe malzemeleri v2 ile aynı.
 
 Blender 4.2 – 5.x · Cycles (GPU önerilir)
 Arayüzden : Scripting sekmesi > Open > bu dosya > Run Script
@@ -95,7 +96,7 @@ DIZI = {
 KAT, KAT_H = 6, 3.10             # zemin + 5 normal kat, kattan kata
 Z0 = 0.60                        # zemin kat döşeme kotu (+0.60)
 DOSEME_T = 0.30                  # döşeme alnı
-SILME = 0.25                     # döşeme alnının cepheden taşması (yüzer beyaz bantlar)
+SILME = 0.25                     # kat silmesinin (döşeme alnı) cepheden taşması
 R_KOSE = 1.10                    # balkon dış köşe yarıçapı
 DUVAR_T = 0.25                   # dış duvar kalınlığı (pencere sövesi derinliği)
 CAM_GERI = 0.10                  # camın dış yüzden içeri çekilmesi
@@ -123,7 +124,8 @@ SADECE_YAN = "--yan" in _ARG
 # =========================== PALET (sRGB HEX) ===========================
 # Sancaktepe'de kullandığınız kodlar varsa bu satırlara birebir yazın; tüm sahne günceller.
 PALET = {
-    "beyaz":       "#ECE8E1",   # döşeme alınları, yüzer saçak – sıcak beyaz kompozit
+    "beyaz":       "#ECE8E1",   # bahçe duvarı – sıcak beyaz kompozit
+    "silme":       "#302B27",   # kat silmeleri (döşeme alınları), çatı saçağı – koyu kahve-antrasit
     "traverten":   "#CDBDA2",   # cephe kaplama – açık traverten
     "antrasit":    "#2C2E31",   # çekirdek kulesi, saksılar
     "kaide":       "#3D3A36",   # zemin kaidesi – bazalt
@@ -1182,6 +1184,7 @@ def malzemeler():
            else mat_karo("Tas_Kaplama", P["tas"], 0.6))
     M = {
         "beyaz": mat_duz("Beyaz_Kompozit", P["beyaz"], 0.42, var=0.03),
+        "silme": mat_duz("Kat_Silmesi", P["silme"], 0.40, spec=0.45, var=0.05, olcek=2.0),
         "traverten": mat_traverten(P["traverten"]),
         "antrasit": mat_duz("Antrasit", P["antrasit"], 0.38, coat=0.15, var=0.05),
         "kaide": mat_duz("Bazalt_Kaide", P["kaide"], 0.6, var=0.12, olcek=3, bump=0.1),
@@ -1625,17 +1628,19 @@ def blok_tipi(M, coll, ad, t):
                     y0, y1 = sorted((sy * (y + 0.32), sy * (y + 0.85)))
                     g.kutu(x0, x1, y0, y1, 0.0, 0.85, M["yesil"])
 
-    # ara döşemeler: beyaz alın bantları, tik tavan, taş balkon zemini
+    # ara döşemeler: kat silmeleri (koyu alın bantları), tik tavan, taş balkon zemini
     for i in range(1, KAT):
         z = Z0 + i * KAT_H
-        g.prizma(_kontur(t, True, SILME, R_KOSE), z - DOSEME_T, z, M["beyaz"], ust=M["tas"],
+        g.prizma(_kontur(t, True, SILME, R_KOSE), z - DOSEME_T, z, M["silme"], ust=M["tas"],
                  alt=M["ahsap"])
 
-    # çatı: üst kat balkonlarını da örten yüzer saçak, çakıl, asansör + merdiven kulesi
-    g.prizma(_kontur(t, True, SILME + 0.15, R_KOSE), Zt, Zc + 0.25, M["beyaz"], alt=M["ahsap"])
+    # çatı: üst kat balkonlarını da örten saçak (yan yüzü kat silmesi rengi), çakıl,
+    # asansör + merdiven kulesi
+    g.prizma(_kontur(t, True, SILME + 0.15, R_KOSE), Zt, Zc + 0.25, M["silme"], ust=M["cati"],
+             alt=M["ahsap"])
     g.prizma(_kontur(t, False, -0.40), Zc + 0.25, Zc + 0.29, M["cati"], alt=False)
     g.kutu(-3.75, 3.75, -1.85, 1.85, Zc + 0.25, Zc + 2.9, M["traverten"], alt=False)
-    g.kutu(-3.9, 3.9, -2.0, 2.0, Zc + 2.9, Zc + 3.1, M["beyaz"], alt=M["ahsap"])
+    g.kutu(-3.9, 3.9, -2.0, 2.0, Zc + 2.9, Zc + 3.1, M["silme"], alt=M["ahsap"])
     g.kutu(0.8, 1.9, 1.83, 1.88, Zc + 0.29, Zc + 2.45, M["antrasit"])
 
     # balkonlar: çerçevesiz cam korkuluk + bronz küpeşte, cephede dolu traverten duvar, iki
@@ -1724,7 +1729,7 @@ def blok_tipi(M, coll, ad, t):
     for k in range(3):
         y0 = yo + 0.3 + 0.35 * k
         g.kutu(-nx - 0.4, nx + 0.4, y0, y0 + 0.35, 0.0, Z0 - 0.15 * (k + 1), M["kaide"], ust=M["tas"])
-    g.kutu(-nx - 0.8, nx + 0.8, ny + 0.5, yo + 1.5, zk - DOSEME_T + 0.01, zk - 0.01, M["beyaz"],
+    g.kutu(-nx - 0.8, nx + 0.8, ny + 0.5, yo + 1.5, zk - DOSEME_T + 0.01, zk - 0.01, M["silme"],
            alt=M["ahsap"])
     return g.obje(ad, coll)
 
