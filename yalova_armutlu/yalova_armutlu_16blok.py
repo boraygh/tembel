@@ -14,6 +14,7 @@ Arayüzden : Scripting sekmesi > Open > bu dosya > Run Script
             İki sahne kurulur: "YALOVA_GENEL" (tüm proje) ve "YALOVA_TEK_BLOK" -> F12
 Konsoldan : blender -b -P yalova_armutlu_16blok.py -- --render  [--cikti KLASOR] [--ornek N]
             [--cevrimdisi]  (internet kullanmadan, prosedürel malzemelerle)
+            [--sol N] [--sag N]  (7104 / 7105 blok adedi; örn. --sol 6 -> 6 + 7 dizilim)
 
 İlk çalıştırmada Poly Haven'dan (CC0, ücretsiz) altın saat gökyüzü HDRI'ı ve PBR dokular
 indirilir (~60 MB, bir kez; ~/Yalova_Armutlu_Render/polyhaven altında saklanır).
@@ -107,6 +108,10 @@ if "--ornek" in _ARG:
     ORNEK = int(_ARG[_ARG.index("--ornek") + 1])
 if "--cevrimdisi" in _ARG:
     POLYHAVEN = False
+if "--sol" in _ARG:
+    DIZI["7104"]["adet"] = int(_ARG[_ARG.index("--sol") + 1])
+if "--sag" in _ARG:
+    DIZI["7105"]["adet"] = int(_ARG[_ARG.index("--sag") + 1])
 
 # =========================== PALET (sRGB HEX) ===========================
 # Sancaktepe'de kullandığınız kodlar varsa bu satırlara birebir yazın; tüm sahne günceller.
@@ -2772,7 +2777,8 @@ def kur():
 
 def render_al(sc, sc2):
     os.makedirs(CIKTI_KLASORU, exist_ok=True)
-    for s, dosya in ((sc, "01_yalova_16blok_genel.png"), (sc2, "02_yalova_16blok_tek_blok.png")):
+    n = sum(d["adet"] for d in DIZI.values())
+    for s, dosya in ((sc, f"01_yalova_{n}blok_genel.png"), (sc2, f"02_yalova_{n}blok_tek_blok.png")):
         s.render.filepath = os.path.join(CIKTI_KLASORU, dosya)
         bpy.ops.render.render(write_still=True, scene=s.name)
         print("Kaydedildi:", s.render.filepath)
