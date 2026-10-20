@@ -16,7 +16,7 @@ Arayüzden : Scripting sekmesi > Open > bu dosya > Run Script
 Konsoldan : blender -b -P yalova_armutlu_16blok.py -- --render  [--cikti KLASOR] [--ornek N]
             [--cevrimdisi]  (internet kullanmadan, prosedürel malzemelerle)
             [--sol N] [--sag N]  (7104 / 7105 blok adedi; plandaki dizilim için --sol 9)
-            [--yan]  (yalnız yan cephe görüntüsü)
+            [--yan] [--yakin]  (yalnız yan cephe / yalnız denizden yakın genel görüntü)
 
 İlk çalıştırmada Poly Haven'dan (CC0, ücretsiz) altın saat gökyüzü HDRI'ı ve PBR dokular
 indirilir (~60 MB, bir kez; ~/Yalova_Armutlu_Render/polyhaven altında saklanır).
@@ -119,7 +119,7 @@ if "--sol" in _ARG:
     DIZI["7104"]["adet"] = int(_ARG[_ARG.index("--sol") + 1])
 if "--sag" in _ARG:
     DIZI["7105"]["adet"] = int(_ARG[_ARG.index("--sag") + 1])
-SADECE_YAN = "--yan" in _ARG
+SADECE = {k for k in ("yan", "yakin") if "--" + k in _ARG}   # boşsa tüm görüntüler
 
 # =========================== PALET (sRGB HEX) ===========================
 # Sancaktepe'de kullandığınız kodlar varsa bu satırlara birebir yazın; tüm sahne günceller.
@@ -2784,6 +2784,8 @@ def kur():
 
     # Kamera 1: denizden, güneydoğudan kuşbakışı – tüm proje
     cam1 = kamera("CAM_GENEL", (138.0, -221.0, 70.0), (22.4, -46.0, 0.0), 35.0, c_kam)
+    # Kamera 1b: aynı yönden daha yakın – proje ~%20 büyük; deniz, iskele teknesi ve yat kadrajda
+    kamera("CAM_YAKIN", (151.6, -219.1, 61.4), (18.0, -58.0, 0.0), 42.0, c_kam)
     # Kamera 2: denize en yakın blok, güneybatıdan – deniz cephesi + güneş alan balkonlar
     hb = next((b for b in bloklar if b["ad"] == KAHRAMAN), min(bloklar, key=lambda b: b["v"]))
     cam2 = kamera("CAM_BLOK", (hb["u"] - 34.0, hb["v"] - 60.0, 17.0),
@@ -2823,18 +2825,21 @@ def kur():
     return sc, sc2
 
 
-def render_al(sc, sc2, sadece_yan=False):
+def render_al(sc, sc2, sadece=()):
     os.makedirs(CIKTI_KLASORU, exist_ok=True)
     n = sum(d["adet"] for d in DIZI.values())
-    isler = [(sc2, "CAM_YAN", f"03_yalova_{n}blok_yan_cephe.png")]
-    if not sadece_yan:
-        isler = [(sc, "CAM_GENEL", f"01_yalova_{n}blok_genel.png"),
-                 (sc2, "CAM_BLOK", f"02_yalova_{n}blok_tek_blok.png")] + isler
-    for s, kam, dosya in isler:
+    isler = [("genel", sc, "CAM_GENEL", f"01_yalova_{n}blok_genel.png"),
+             ("blok", sc2, "CAM_BLOK", f"02_yalova_{n}blok_tek_blok.png"),
+             ("yan", sc2, "CAM_YAN", f"03_yalova_{n}blok_yan_cephe.png"),
+             ("yakin", sc, "CAM_YAKIN", f"04_yalova_{n}blok_genel_yakin.png")]
+    for anahtar, s, kam, dosya in isler:
+        if sadece and anahtar not in sadece:
+            continue
         s.camera = bpy.data.objects[kam]
         s.render.filepath = os.path.join(CIKTI_KLASORU, dosya)
         bpy.ops.render.render(write_still=True, scene=s.name)
         print("Kaydedildi:", s.render.filepath)
+    sc.camera = bpy.data.objects["CAM_GENEL"]
     sc2.camera = bpy.data.objects["CAM_BLOK"]
 
 
@@ -2845,4 +2850,4 @@ if __name__ == "__main__":
     finally:
         gc.enable()
     if OTOMATIK_RENDER:
-        render_al(_sc, _sc2, SADECE_YAN)
+        render_al(_sc, _sc2, SADECE)
