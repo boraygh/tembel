@@ -2784,8 +2784,8 @@ def kur():
 
     # Kamera 1: denizden, güneydoğudan kuşbakışı – tüm proje
     cam1 = kamera("CAM_GENEL", (138.0, -221.0, 70.0), (22.4, -46.0, 0.0), 35.0, c_kam)
-    # Kamera 1b: aynı yönden daha yakın – proje ~%20 büyük; deniz, iskele teknesi ve yat kadrajda
-    kamera("CAM_YAKIN", (151.6, -219.1, 61.4), (18.0, -58.0, 0.0), 42.0, c_kam)
+    # Kamera 1b: aynı yönden yakın – proje kadraj genişliğinin ~%85'i, deniz alt kenarda şerit
+    kamera("CAM_YAKIN", (134.9, -193.9, 60.8), (14.0, -36.0, 0.0), 50.0, c_kam)
     H = Z0 + KAT * KAT_H                     # bina yüksekliği: tek blok kadrajları buna göre
     # Kamera 2: denize en yakın blok, güneybatıdan – deniz cephesi + güneş alan balkonlar
     hb = next((b for b in bloklar if b["ad"] == KAHRAMAN), min(bloklar, key=lambda b: b["v"]))
