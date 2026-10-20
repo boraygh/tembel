@@ -2,7 +2,7 @@
 """
 YALOVA · ARMUTLU · KARŞIYAKA MAH. (Tavşantepe Mevkii, Pafta 39/2)
 PARSEL 7104 (5.648 m²) + 7105 (4.510 m²)
-13 BLOK (7104: 6 · 7105: 7) · ZEMİN+5 = 6 KAT · KATTA 4 DAİRE (2+1)  ->  312 DAİRE   (v4)
+13 BLOK (7104: 6 · 7105: 7) · ZEMİN+4 = 5 KAT · KATTA 4 DAİRE (2+1)  ->  260 DAİRE   (v4)
 
 Blok tipleri: Katar Mühendislik Mimarlık T_P-4 kat planı (7104 ve 7105 tip planları, 264 m²);
 blok konumları T_P-4 vaziyet planından. Kuzey ve güney yarıda ikişer daire, uçlarda balkonlu
@@ -93,7 +93,7 @@ DIZI = {
     "7104": dict(tip="A264", adet=6, kuzey=(-22.36, 64.30), guney=(-20.86, -71.76)),
     "7105": dict(tip="B264", adet=7, kuzey=(18.39, 63.37), guney=(19.83, -54.54)),
 }
-KAT, KAT_H = 6, 3.10             # zemin + 5 normal kat, kattan kata
+KAT, KAT_H = 5, 3.10             # zemin + 4 normal kat (planlardaki 'Zemin ve 1.2.3.4. Kat')
 Z0 = 0.60                        # zemin kat döşeme kotu (+0.60)
 DOSEME_T = 0.30                  # döşeme alnı
 SILME = 0.25                     # kat silmesinin (döşeme alnı) cepheden taşması
@@ -2786,13 +2786,14 @@ def kur():
     cam1 = kamera("CAM_GENEL", (138.0, -221.0, 70.0), (22.4, -46.0, 0.0), 35.0, c_kam)
     # Kamera 1b: aynı yönden daha yakın – proje ~%20 büyük; deniz, iskele teknesi ve yat kadrajda
     kamera("CAM_YAKIN", (151.6, -219.1, 61.4), (18.0, -58.0, 0.0), 42.0, c_kam)
+    H = Z0 + KAT * KAT_H                     # bina yüksekliği: tek blok kadrajları buna göre
     # Kamera 2: denize en yakın blok, güneybatıdan – deniz cephesi + güneş alan balkonlar
     hb = next((b for b in bloklar if b["ad"] == KAHRAMAN), min(bloklar, key=lambda b: b["v"]))
     cam2 = kamera("CAM_BLOK", (hb["u"] - 34.0, hb["v"] - 60.0, 17.0),
-                  (hb["u"] - 1.0, hb["v"] + 2.0, 10.5), 50.0, c_kam)
+                  (hb["u"] - 1.0, hb["v"] + 2.0, 0.55 * H), 50.0, c_kam)
     # Kamera 3: aynı blok, batıdan – yan cephe: balkonlar, sürgülü camlar, Fransız camlı salonlar
     cam3 = kamera("CAM_YAN", (hb["u"] - 48.0, hb["v"] - 30.0, 24.0),
-                  (hb["u"] - 6.0, hb["v"] + 1.0, 11.5), 44.0, c_kam)
+                  (hb["u"] - 6.0, hb["v"] + 1.0, 0.60 * H), 44.0, c_kam)
 
     peyzaj(M, c_peyzaj, bloklar, agac, c_peyzaj)
     arazi = deniz_ve_arazi(M, c_cevre)
