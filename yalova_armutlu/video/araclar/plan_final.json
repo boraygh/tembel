@@ -1,0 +1,12 @@
+[
+ {"ad": "1 yaklaşma (C1b)", "klip": "klipler/C1b.mp4", "t0": 0.0, "t1": 5.0, "v0": 0.4, "v": 1.15, "v1": 0.3, "a": 0.12, "b": 0.22, "karart_gir": 0.6},
+ {"ad": "2 yükselme (C2)", "klip": "klipler/C2.mp4", "t0": 0.5, "t1": 5.0, "v": 1.15, "gecis": 8},
+ {"ad": "3 yörünge GD-KD (C3)", "klip": "klipler/C3.mp4", "t0": 0.0, "t1": 5.0, "v0": 0.35, "v": 1.55, "a": 0.25, "gecis": 4},
+ {"ad": "4 yörünge KD-KB (C4)", "klip": "klipler/C4.mp4", "t0": 0.0, "t1": 5.0, "v": 1.55, "gecis": 6},
+ {"ad": "5 yörünge KB-GB (C5)", "klip": "klipler/C5.mp4", "t0": 0.0, "t1": 5.0, "v": 1.55, "gecis": 6},
+ {"ad": "6 yörünge GB-GD (C6)", "klip": "klipler/C6.mp4", "t0": 0.0, "t1": 5.0, "v": 1.55, "v1": 0.35, "b": 0.25, "gecis": 6},
+ {"ad": "7 iniş (C2 ters)", "klip": "klipler/C2.mp4", "t0": 5.0, "t1": 0.8, "v": 1.45, "gecis": 8},
+ {"ad": "8 geri çekilme (C1b ters)", "klip": "klipler/C1b.mp4", "t0": 5.0, "t1": 0.0, "v0": 0.3, "v": 2.0, "v1": 0.25, "a": 0.2, "b": 0.25, "gecis": 8},
+ {"tur": "bekle", "sure": 0.8},
+ {"ad": "9 kapanış", "tur": "kapanis", "klip": "kapanis_g.mp4", "gecis": 19}
+]

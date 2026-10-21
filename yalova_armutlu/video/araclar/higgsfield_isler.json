@@ -1,0 +1,24 @@
+{
+ "not": "Videoda kullanılan Higgsfield işleri. Klipler bu iş kimlikleriyle Higgsfield geçmişinden yeniden indirilebilir (repoya konmadı, ~165 MB).",
+ "kareler_nano_banana_pro_2k": {
+  "K1_yaklasma_sonu": "4da12180-0e12-4e8f-83fa-2e401fc59322",
+  "K2_blok_havada_GD": "a5334413-10f9-402c-95c9-a9c65db554e6",
+  "K3_yorunge_KD": "7a4a3387-3a3e-466b-a394-b42e53dd8b5d",
+  "K4_yorunge_KB": "43342748-d0d5-4927-aac9-1a3342e9012d",
+  "K5_yorunge_GB": "06f1f7e7-840f-403d-aa4e-5e28a35c1258"
+ },
+ "klipler_kling_o3_flf_pro_5sn": {
+  "C1b_yaklasma_K0_K1": "b1be07b3-a273-403a-baa1-48694cdb73b1",
+  "C2_yukselme_K1_K2": "9f240db5-6f1f-43a3-ba85-644d685b20d5",
+  "C3_yorunge_K2_K3": "213b78d2-2ade-4888-bd07-9f3bd0c638ed",
+  "C4_yorunge_K3_K4": "535b17df-a4c1-400c-bf27-59c6f299b21c",
+  "C5_yorunge_K4_K5": "8419ed6b-0900-4e4d-9647-39a01081d236",
+  "C6_yorunge_K5_K2": "03826f5a-d475-4c97-a578-6778df2d208e"
+ },
+ "kullanilmayan": {
+  "C1_ilk_yaklasma_cati_paneli_hatasi": "0f155378-9a8d-4479-9634-26c7f13106b1",
+  "K3_K4_K5_ilk_deneme_referans_karisti": ["7257d081-f7bb-4fef-a3a7-1b63c65daff3", "998e118f-a57d-4588-b5fd-fde81114d0c3", "cbd80e26-848e-49ee-8828-2c3c1420b2b8"],
+  "K5_ikinci_deneme_avlu_toprak": "34818f3a-9781-4a43-bf45-664d0836e8ec"
+ },
+ "harcanan_kredi": 61.75
+}
