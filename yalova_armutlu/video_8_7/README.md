@@ -1,7 +1,7 @@
 # Yalova Armutlu – 8 + 7 blok: gerçekçi drone + yaya turu
 
-`yalova_armutlu_8_7_gercekci.mp4` — 1920×1080, 24 fps, 85,5 sn, sessiz. Repodaki kopya CRF 24'tür.
-Teslim edilen ana kopya CRF 17'dir. Bu v3'tür: girişten sonraki bütün video tek reçeteyle yeniden üretildi.
+`yalova_armutlu_8_7_gercekci.mp4` — 1920×1080, 24 fps, 85,5 sn, sessiz. Repodaki kopya CRF 24'tür (45 MB).
+Teslim edilen ana kopya CRF 17'dir (111 MB). Bu v3'tür: girişten sonraki bütün video tek reçeteyle yeniden üretildi.
 
 > **Görsel çalışmadır.** Kamera yolu ve bütün yapıların yeri, Blender modelinden birebir gelir. Kling yalnızca
 > yüzeyleri gerçekçileştirdi. Birkaç yerde küçük yorumlar ekledi: ağaç türleri, sokak ağaçları, panoramada
@@ -46,9 +46,21 @@ halinde aynı reçeteyle yeniden üretildi:
 
 Bütün iş ve medya kimlikleri `v3/isler.json` dosyasında.
 
-### Ölçümler (tam video)
+### Ölçümler (tam video, `v3/olc_final.py`, `v3/kipirti.py`)
 
-Geçişlerde içerik benzerliği 0,86–0,99. Parlaklık ve netlik sıçramaları geçişlerde gözle görülmeyecek düzeydedir.
+- **Geçişler:** İçerik benzerliği 0,86–0,99. Geçiş pencerelerinde kareler arası en büyük parlaklık farkı 2,6,
+  netlik farkı 1,4 (0–255 ölçeğinde); gözle görülmez.
+- **Karıncalanma:** Hareket telafili ince doku kıpırtısının doku enerjisine oranı ölçüldü.
+
+  | Bölüm | Oran |
+  |---|---|
+  | Giriş | 0,19 |
+  | Kayma | 0,17 |
+  | Yürüyüş | 0,20 |
+  | Panorama | 0,34 |
+
+  Kayma ve yürüyüş girişle aynı düzeyde. Panoramadaki yüksek oran denizdeki dalga hareketinden geliyor. Mutlak
+  kıpırtı kayma ve yürüyüşte girişten düşüktür.
 
 ### Bilinen sınırlar
 
