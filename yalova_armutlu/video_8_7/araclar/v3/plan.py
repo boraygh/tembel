@@ -5,12 +5,15 @@ GIRIS = (0, 216)                       # kling/sonuc_1.mp4
 # N1 (168-528) ilk reçeteyle üretildi; 324'ten sonra Kling gölgeli sokakta Blender'ı neredeyse değiştirmedi (kor 0,97).
 # Kalan 5 klip (M1-M5) aynı reçetenin kesin hâliyle: Blender girdisi on_duzelt.py ile girişin tonuna çekilir,
 # istem "Transform this rough ... previsualisation" ile açılır.
-KLIP = [(168, 528), (308, 668), (625, 985), (932, 1292), (1276, 1636), (1618, 1978)]
-GECIS = [170, 308, 652, 969, 1276, 1620]    # her klibe geçişin başladığı kare (öncekinden bu klibe), 16 kare sürer
+# v3.1: son klip (M5z) M4'ün bitmiş son 16 karesiyle başlayan zincirleme girdiyle yeniden üretildi (parca_zincir.py):
+# 1:08'deki görüntü değişimi, yer tutucu arabalar ve sondaki koy/gemi sorunu için.
+KLIP = [(168, 528), (308, 668), (625, 985), (932, 1292), (1276, 1636), (1604, 1940)]
+SON_KLIP = "sonuc_m5z.mp4"
+GECIS = [170, 308, 652, 969, 1276, 1604]    # her klibe geçişin başladığı kare (öncekinden bu klibe), 16 kare sürer
 GECIS_UZ = 16
-# M5 ~1945'ten sonra Blender'da kamera dururken kendi başına öne atılıp bulanıklaşıyor (netlik 6,8 -> 2,8):
-# kamera 1944'te durmuş olduğundan video burada biter, kapanış kartı buradan çapraz geçişle girer.
-SON = 1944
+# Kamera ~1940'ta durur; Kling'in ilk M5'i bundan sonra kendi başına öne atılıp bulanıklaşıyordu (netlik 6,8 -> 2,8).
+# Video burada biter, kapanış kartı buradan çapraz geçişle girer.
+SON = 1940
 STIL_KARE = 150                        # girişten stil karesi (sonuc_1 yerel kare)
 CIPA_KARE = [348, 668, 928, 1168, 1500, 1800]
 KLIP_CIPA = [348, 348, 668, 1168, 1500, 1800]  # her klibin içerik çapası

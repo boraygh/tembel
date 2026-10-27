@@ -16,7 +16,7 @@ W, H, FPS = B.W, B.H, B.FPS
 BOL = [plan.GIRIS] + plan.KLIP
 V3 = os.path.join(D, os.environ.get("V3", "v3"))
 YOL = [os.path.join(D, "kling", "sonuc_1.mp4"), os.path.join(V3, "sonuc_1.mp4")] + \
-      [os.path.join(V3, f"sonuc_m{k}.mp4") for k in range(1, len(plan.KLIP))]
+      [os.path.join(V3, f"sonuc_m{k}.mp4") for k in range(1, len(plan.KLIP) - 1)] + [os.path.join(V3, plan.SON_KLIP)]
 GBAS = [None] + plan.GECIS                                   # bölüm k'ye geçişin başladığı kare
 G = plan.GECIS_UZ                                            # çapraz geçiş uzunluğu (kare)
 SONUM = 48                                                  # renk eşlemenin geçişten sonra sönme süresi (kare)

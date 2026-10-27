@@ -58,5 +58,16 @@
    "4": "v3/sonuc_m4.mp4 (iyi; yürüyüş aydınlık)",
    "5": "v3/sonuc_m5.mp4 (iyi ~1944'e kadar; deniz kıyısında karşıda kasaba olan bir koya dönüşmüş, gemi yok; 1945'ten sonra kamera kendi başına öne atılıp bulanıklaşıyor, kurguda 1944'te kesildi)"
   }
+ },
+ "v31": {
+  "plan": "M5z 1604-1940: M4 son 16 kare (1604-1620) + 8 kare harman + on_duzelt Blender (renk M4'e eşlenip 96 karede söner); parca_zincir.py",
+  "cipa_1800z": {
+   "nb_is": "fc7d908f-deaa-4c81-96ce-30883cddf080",
+   "medya": "d4ed34ca-74da-40c4-884b-790f1b66eacd",
+   "not": "eski 1800 çapasında arabalar kutu gibi kalmış, gemi yoktu"
+  },
+  "video": "aacd4447-a8a6-4016-beb5-44d1b4f6562c",
+  "onceki": "b279cdca-e32f-430e-b8b0-7857a593c4f1",
+  "kling": "64b2930d-e41d-448e-9607-d11da8f53505"
  }
 }
