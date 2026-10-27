@@ -1,12 +1,15 @@
-# Render 27-30 (O1 = ortadan, K2 = köşe; ikisinde de solda 6, sağda 7 blok).
+# Render 27-30 (O1 = ortadan, K2 = köşe; ikisinde de solda 6, sağda 7 blok); render 31-32: K2, solda 7, sağda 6 blok.
 # Revizyon kareleri: ortadan kuşbakışı (iki sıra arasındaki eksen) ve köşe açısı (görsel 14/23 yönü, biraz yüksek).
 # Kullanım: blender -b --factory-startup -P ortadan_kose_6x7.py -- --onizle | --sec AD [--ornek N] | --sec AD --maske
+#           [--sol N --sag N] (7104 / 7105 blok adedi, varsayılan 6 / 7)  [--klasor DIR] (çıktı klasörü)
 import sys, os, json, runpy, gc, math
 import bpy
 from mathutils import Vector
 from bpy_extras.object_utils import world_to_camera_view
-OUT = os.path.dirname(os.path.abspath(__file__))
+BURASI = os.path.dirname(os.path.abspath(__file__))
 arg = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
+OUT = arg[arg.index("--klasor") + 1] if "--klasor" in arg else BURASI
+DIZILIM = [a for k in ("--sol", "--sag") if k in arg for a in (k, arg[arg.index(k) + 1])]
 ONIZLE, MASKE = "--onizle" in arg, "--maske" in arg
 SEC = arg[arg.index("--sec") + 1] if "--sec" in arg else None
 ORNEK = int(arg[arg.index("--ornek") + 1]) if "--ornek" in arg else 512
@@ -27,8 +30,8 @@ ADAY = {   # ad: (kamera, hedef, lens)
     "K2": (kose(28.0), (22.4, -46.0, 0.0), 42.0),              # aynı yön ve mesafe, 28° (iki sıra ayrışır)
     "O3": ((-1.0, -278.0, 142.0), (-1.0, -60.0, 0.0), 38.0),   # ortadan, denizin üstünden: altta kumsal ve deniz
 }
-sys.argv = [sys.argv[0], "--"]
-ns = runpy.run_path(os.path.join(OUT, "..", "yalova_armutlu_16blok.py"), run_name="orta")
+sys.argv = [sys.argv[0], "--"] + DIZILIM
+ns = runpy.run_path(os.path.join(BURASI, "..", "yalova_armutlu_16blok.py"), run_name="orta")
 gc.disable()
 sc, sc2 = ns["kur"]()
 gc.enable()
