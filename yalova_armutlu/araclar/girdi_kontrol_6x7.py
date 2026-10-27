@@ -2,6 +2,7 @@
 #   python3 girdi_kontrol_6x7.py girdi AD                 -> AD_girdi.png (yumuşatılmış yapay zekâ girdisi) + AD_girdi_k.jpg
 #   python3 girdi_kontrol_6x7.py kontrol AD NB.png        -> karo korelasyonu, hizalama ve blok etiketli kırpım (AD_etiket.jpg)
 #   python3 girdi_kontrol_6x7.py filigran NB.png CIKTI.png
+# Başka yerleşim için: KAMERALAR=kameralar_7x6.json SIRA=7,6 python3 girdi_kontrol_6x7.py ...
 import json, os, sys
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
@@ -9,12 +10,13 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 from girdi_yap import maske_oku, izin_bolgesi, girdi
 from proj import proj
 
-K = json.load(open("kameralar.json"))
+K = json.load(open(os.environ.get("KAMERALAR", "kameralar.json")))
+SOL, SAG = (int(v) for v in os.environ.get("SIRA", "6,7").split(","))   # 7104 / 7105 blok adedi (sağ üst görseli: 7,6)
 
 
 def bloklar():
     out = []
-    for ad, (u0, v0), (u1, v1), n in (("S", (-22.36, 64.30), (-20.86, -71.76), 6), ("Ğ", (18.39, 63.37), (19.83, -54.54), 7)):
+    for ad, (u0, v0), (u1, v1), n in (("S", (-22.36, 64.30), (-20.86, -71.76), SOL), ("Ğ", (18.39, 63.37), (19.83, -54.54), SAG)):
         for k in range(n):
             f = k / (n - 1)
             out.append((ad, k, u0 + (u1 - u0) * f, v0 + (v1 - v0) * f))
