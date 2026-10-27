@@ -7,22 +7,30 @@ import numpy as np
 from PIL import Image
 D = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, D)
-import rota, bolumler
+import rota, bolumler, bakis
 import birlestir as B
 
 W, H, FPS = B.W, B.H, B.FPS
 BOL = bolumler.BOLUM
 YOL = [os.path.join(D, os.environ.get("KLING", "kling"), f"sonuc_{k + 1}.mp4") for k in range(len(BOL))]
 G = bolumler.GECIS                                           # çapraz geçiş uzunluğu (kare)
-SONUM = 48
+SONUM = 48                                                  # renk eşlemenin geçişten sonra sönme süresi (kare)
 # bölüm başına gölge açma (gama): Kling bölüm 7'de koyu sokağı neredeyse değiştirmedi, burada havadarlaştırılıyor
 TON = {6: 0.8}
+# tek görünüm standardı = bölüm 1 (giriş): bölüm 2-8'e yumuşatma + ince parlama + atmosfer pusu (bakis.py)
 
 
 def ton(k, f):
     if k not in TON:
         return f
-    return np.power(f / 255.0, TON[k]) * 255.0                                                  # renk eşlemenin bindirmeden sonra sönme süresi (kare)
+    return np.power(f / 255.0, TON[k]) * 255.0
+
+
+def isle(k, f8):
+    """Ham Kling karesi (uint8) -> kurguya giren kare (float): bölüm tonu, sonra görünüm standardı."""
+    if k in TON:
+        f8 = np.clip(ton(k, f8.astype(np.float32)) + 0.5, 0, 255).astype(np.uint8)
+    return f8.astype(np.float32) if k == 0 else bakis.uygula(f8)
 
 
 def ffmpeg_oku(yol, w, h, sec=None):
@@ -43,10 +51,10 @@ def eslem():
     T = [None]
     for k in range(1, len(BOL)):
         a0, a1 = BOL[k - 1][0], BOL[k][0]
-        onc = ton(k - 1, kareler_al(YOL[k - 1], (a1 - a0, a1 - a0 + G)))
-        son = ton(k, kareler_al(YOL[k], (0, G)))
+        onc = np.stack([isle(k - 1, f.astype(np.uint8)) for f in kareler_al(YOL[k - 1], (a1 - a0, a1 - a0 + G))])
+        son = np.stack([isle(k, f.astype(np.uint8)) for f in kareler_al(YOL[k], (0, G))])
         benzer = np.corrcoef(onc.mean(0).mean(2).ravel(), son.mean(0).mean(2).ravel())[0, 1]
-        if benzer < 0.6:                                    # içerik farklı (ör. 5->6): eşleme yanlış yöne iter
+        if benzer < 0.75:                                   # içerik farklı (ör. 4->5, 5->6): eşleme yanlış yöne iter
             T.append(None)
             print(f"bölüm {k + 1} renk eşleme atlandı (benzerlik {benzer:.2f})", flush=True)
             continue
@@ -76,7 +84,9 @@ class Okuyucu:
 
     def sonraki(self):
         b = self.p.stdout.read(self.n)
-        return ton(self.k, np.frombuffer(b, np.uint8).reshape(H, W, 3).astype(np.float32)) if len(b) == self.n else None
+        if len(b) != self.n:
+            return None
+        return isle(self.k, np.frombuffer(b, np.uint8).reshape(H, W, 3))
 
     def kapat(self):
         self.p.stdout.read()                                  # Kling'in fazladan verdiği kareleri boşalt

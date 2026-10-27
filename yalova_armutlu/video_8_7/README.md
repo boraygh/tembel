@@ -1,7 +1,7 @@
 # Yalova Armutlu – 8 + 7 blok: gerçekçi drone + yaya turu
 
-`yalova_armutlu_8_7_gercekci.mp4` — 1920×1080, 24 fps, 86,9 sn, sessiz. Repodaki kopya CRF 24'tür (51 MB).
-Teslim edilen ana kopya CRF 17'dir (135 MB).
+`yalova_armutlu_8_7_gercekci.mp4` — 1920×1080, 24 fps, 86,9 sn, sessiz. Repodaki kopya CRF 24'tür (43 MB).
+Teslim edilen ana kopya CRF 17'dir (110 MB). Bu v2'dir: bütün video girişin görünüm standardındadır.
 
 > **Görsel çalışmadır.** Kamera yolu ve bütün yapıların yeri, Blender modelinden birebir gelir. Kling yalnızca
 > yüzeyleri gerçekçileştirdi. Birkaç yerde küçük yorumlar ekledi: ağaç türleri, sokak ağaçları, panoramada
@@ -43,6 +43,14 @@ Sağ altta mini vaziyet planı yer alır: etkin blok turuncu, kamera noktası ve
    - Geçiş: sonraki bölümün ilk 8 karesinde çapraz geçiş yapılır.
    - Renk eşleme: içerik benzerse, geçiş penceresinde kanal başına kazanç ve ofset uygulanır; bu düzeltme 2 sn içinde söner.
    - Ton: bölüm 7'de gölgeler açıldı (gama 0,8).
+   - Görünüm standardı (`bakis.py`): giriş, yani bölüm 1, puslu ve yumuşaktı. Bölüm 2 ve sonrası ~%20 daha keskin
+     ve doygundu; v1'de 9. saniyede kalite sıçraması görünüyordu. Bölüm 2–8'e üç işlem uygulanır:
+     - 0,7 px yumuşatma;
+     - %12 geniş parlama (diffusion);
+     - nötr-sıcak atmosfer pusu: tepede %25, aşağı doğru sıfıra iner.
+
+     Pus profili, bölüm 1 ile bölüm 2'nin aynı içerikli karelerinin 6 yatay banttaki ortalamalarından ölçüldü.
+     İçeriği farklı geçişlerde (4→5, 5→6) renk eşleme kapalıdır (benzerlik < 0,75).
    - Yazılar ve mini plan `birlestir.py`'den gelir (`GENISLIK=1920`).
 
 ## Karşılaşılan sorunlar
