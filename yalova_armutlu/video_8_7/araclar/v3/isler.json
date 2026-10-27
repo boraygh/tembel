@@ -1,0 +1,62 @@
+{
+ "stil": "d55e35af-4a00-4848-a630-aefaef36e173",
+ "onceki_1": "331cdb25-287e-4f11-8fbb-79846975ad32",
+ "klip_video": [
+  "aaec547a-015c-4697-b6c1-07d69d731e21",
+  "5d837cb3-8109-4b7b-9a87-ef0d84425c0e",
+  "4975afa2-a605-468e-8fc3-05fec6985394",
+  "d3015c51-ff69-44bd-bb94-b16617c1988a",
+  "261d11a5-2c7e-4c83-aea6-ed41f642e08b",
+  "f588f7ea-bd17-454b-9a8c-6c20447899f8"
+ ],
+ "cipa": {
+  "348": "63f86f22-622c-45ed-8d6b-3459a78faf50",
+  "1500": "efaf3600-52b5-4b48-8127-0659694f6b1f",
+  "1800": "dd714758-80d8-4d83-8a6a-159954dd7abf",
+  "668": "968af7ff-39db-4ec7-bdf4-743ab831425d",
+  "928": "1745df5b-6d08-46d4-bd44-378953231730",
+  "1168": "85324a46-a9b1-4feb-9801-452ede2c5261"
+ },
+ "kling": {
+  "1": "f6a4e69b-27b9-4f30-bbf3-2c027fd20d6e"
+ },
+ "onceki_yuva": {
+  "2": "v3_dummy_a.jpg",
+  "3": "v3_dummy_b.jpg",
+  "4": "v3_dummy_c.jpg",
+  "5": "v3_dummy_d.jpg",
+  "6": "v3_dummy_e.jpg"
+ },
+ "not": "928 ve 1168 çapaları tek görselli (stil metinle): iki görselli tarifte NB stil karesinin içeriğini kopyaladı",
+ "v3b": {
+  "plan": "M1 308-668, M2 625-985, M3 932-1292, M4 1276-1636, M5 1618-1978; girdi on_duzelt.py; istem Transform...",
+  "video": {
+   "1": "f3302655-0ac5-4571-b1ba-8be2a2252805",
+   "2": "b7f04c91-99a0-4881-a5c5-3da280a00539",
+   "3": "e212f0f6-ceb3-4865-9e02-7297424bfdce",
+   "4": "4d8c9057-4514-4af0-850e-00b4cdcff001",
+   "5": "5ff3e66c-a793-4af9-87f2-8ce0dd781b8c"
+  },
+  "onceki_yuva": {
+   "1": "v3_dummy_a.jpg",
+   "2": "v3_dummy_b.jpg",
+   "3": "v3_dummy_c.jpg",
+   "4": "v3_dummy_d.jpg",
+   "5": "v3_dummy_e.jpg"
+  },
+  "kling": {
+   "1": "0293833c-1bd0-42fc-b919-06724ed2c1a8",
+   "2": "697d9f1c-6a17-48ee-ad79-e2ea6b14eac7",
+   "3": "39479987-af51-43f5-bcf2-072ab30ea748",
+   "4": "59a350f4-d395-49d6-aa80-a57edfdb5815",
+   "5": "8a99bc10-d8bf-4b09-a143-8a70d8dc9980"
+  },
+  "sonuc": {
+   "1": "v3/sonuc_m1.mp4 (iyi: gölgeli sokak girişin tonunda)",
+   "2": "v3/sonuc_m2.mp4 (iyi)",
+   "3": "v3/sonuc_m3.mp4 (iyi; batı bakışında sağa blok benzeri yapı eklemiş)",
+   "4": "v3/sonuc_m4.mp4 (iyi; yürüyüş aydınlık)",
+   "5": "v3/sonuc_m5.mp4 (iyi ~1944'e kadar; deniz kıyısında karşıda kasaba olan bir koya dönüşmüş, gemi yok; 1945'ten sonra kamera kendi başına öne atılıp bulanıklaşıyor, kurguda 1944'te kesildi)"
+  }
+ }
+}
