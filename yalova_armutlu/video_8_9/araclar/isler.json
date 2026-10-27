@@ -1,0 +1,68 @@
+{
+ "girdi_media": {
+  "A0": "2eb2763b-a82e-4901-9ddb-bb3ec7976fd9",
+  "S1": "59854a3f-03a9-4664-a68e-0efc1143a4cd",
+  "S2": "317d9f07-3de5-4021-8c61-643bebfccd68",
+  "S3": "18dc41a7-4341-4fe2-8ea2-52b55e1993b7",
+  "S4": "2e08ab2f-60ce-4faa-b470-9f880b3e05ec",
+  "S5": "13b8f31c-053c-4e92-a5fe-d92d47350d16",
+  "S6": "cf367a53-e986-48b6-b81f-8cb378f03218",
+  "S7": "31e4d339-1e34-4851-9fe4-34d4294c5837",
+  "S8": "91929cdc-725e-4886-85d9-19e6f52ba88a",
+  "S8_2560": "e738ac68-b0f7-4ebf-bd80-a0eb38d152dd",
+  "S6_2560": "04c93379-25fd-4bcd-b1df-5b6ae8353d2b",
+  "A0_son_kirpim": "a012e0a4-e926-49bc-bc4c-3151c16f91ab"
+ },
+ "nb_pro_2k": {
+  "A0": "c0f49e76-7222-44b7-bd1d-03d7c60bcd1b",
+  "S1": "a88b8bbf-2101-4de4-aed8-4678796534a3",
+  "S8_deneme1_kadraj_bozuk": "143d7118-cfe8-4d08-bacd-f3b00430cdb3",
+  "S2": "b8c5488e-0dba-4ba3-bfc4-806a81abda72",
+  "S3": "22cb1665-2d77-4baf-b688-43d7ae031b14",
+  "S4": "83702004-fac3-4fd0-8624-0cd8c2d0a9d8",
+  "S5": "334d8dad-313d-4bb4-b3cd-f83e42c56c15",
+  "S7": "347cdbbb-d89c-434a-b5c9-7ef0488b8cbc",
+  "S6_deneme1_kadraj_bozuk": "20654a40-491b-4540-a26c-71a02d8783ad",
+  "S8_deneme2_hizali": "78f553d2-dfd9-43e0-af48-3c39f4261917"
+ },
+ "nb_pro_2k_ikinci_tur": {
+  "S3": "77304ce6-5496-4ea9-a9dd-20341df10c39 (girdi: S3 ilk tur)",
+  "S4": "13c12734-5e3c-48e6-8c80-3d4b2d495e24 (girdi: S4 ilk tur)",
+  "S8": "c958f5bf-76c4-4837-ab99-762d38244977 (girdi: S8 deneme 2)",
+  "S6": "9ac24434-73f2-4000-b410-91bebe217065 (girdi: S6 konum kilitli deneme 253955e1)"
+ },
+ "nb_pro_2k_ucuncu_tur_bakimli": {
+  "S3": "203f05a5-7a74-4632-9d52-d53c6408ffe4",
+  "S4": "dd4c24a7-ab22-4686-9390-a1af7d2f2fcb",
+  "S6": "c2f5a1ad-a3cb-4055-8917-cf5066d05fe1",
+  "S8": "7c6f8de8-1727-4c36-9989-bdb7d2437fb3"
+ },
+ "secilen_kareler": {
+  "A0": "c0f49e76",
+  "S1": "a88b8bbf",
+  "S2": "b8c5488e",
+  "S3": "203f05a5",
+  "S4": "dd4c24a7",
+  "S5": "334d8dad",
+  "S6": "c2f5a1ad",
+  "S7": "347cdbbb",
+  "S8": "7c6f8de8"
+ },
+ "kling_o3_flf": {
+  "A0_5sn": "37375fd8-b86d-495d-b742-347869035ba8",
+  "S1_3sn": "bfbc234d-cd35-4c1d-bd25-6bc736400861",
+  "S2_3sn": "c44bb96f-946a-4714-863d-486eaeb1a90e",
+  "S4_3sn": "6013c0f1-5db0-4e52-a01c-11762e4da50f",
+  "S5_3sn": "8a0b42cd-d452-4da7-ad95-7b659902c9a5",
+  "S7_3sn": "5b21dfe8-de90-451c-b407-72b5141e129d",
+  "S8_4sn": "8fc12f0b-7442-47f9-8bdb-adf3d63ccef4",
+  "S3_3sn_ilk_yana_dondu_kullanilmadi": "a8cbabd3-cbcc-4f26-a07b-4753921d4ac6",
+  "S3_3sn": "f8ddb179-1ce3-46bf-a309-df1b4488df73",
+  "S6_3sn": "3ee8a111-0e03-4254-8305-773b798dcca6"
+ },
+ "kredi": {
+  "nano_banana_pro_2k": "19 iş x 2 = 38",
+  "kling_o3_flf_pro": "41,25 (5 sn 6,25; 3 sn 3,75; 4 sn 5)",
+  "toplam": 79.25
+ }
+}

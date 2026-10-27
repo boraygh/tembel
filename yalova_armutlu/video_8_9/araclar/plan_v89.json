@@ -1,0 +1,160 @@
+[
+ {
+  "ad": "A0 açılış",
+  "klip": "klipler/A0.mp4",
+  "t0": 0.0,
+  "t1": 5.0,
+  "v": 1.0,
+  "karart_gir": 0.6,
+  "kaplama": "kaplama_A0.png",
+  "k_bas": 1.3,
+  "k_son": 4.85,
+  "k_gir": 0.5,
+  "k_cik": 0.35
+ },
+ {
+  "ad": "S1",
+  "klip": "klipler/S1.mp4",
+  "t0": 0.25,
+  "t1": 2.65,
+  "v": 1.0,
+  "zoom": [
+   1.0,
+   1.035
+  ],
+  "merkez": [
+   0.5,
+   0.36
+  ],
+  "kaplama": "kaplama_S1.png",
+  "gecis": 6,
+  "k_gir": 0.3
+ },
+ {
+  "ad": "S2",
+  "klip": "klipler/S2.mp4",
+  "t0": 0.25,
+  "t1": 2.65,
+  "v": 1.0,
+  "zoom": [
+   1.0,
+   1.035
+  ],
+  "merkez": [
+   0.5,
+   0.36
+  ],
+  "kaplama": "kaplama_S2.png",
+  "gecis": 3
+ },
+ {
+  "ad": "S3",
+  "klip": "klipler/S3.mp4",
+  "t0": 0.25,
+  "t1": 2.65,
+  "v": 1.0,
+  "zoom": [
+   1.0,
+   1.035
+  ],
+  "merkez": [
+   0.5,
+   0.36
+  ],
+  "kaplama": "kaplama_S3.png",
+  "gecis": 3
+ },
+ {
+  "ad": "S4",
+  "klip": "klipler/S4.mp4",
+  "t0": 0.25,
+  "t1": 2.65,
+  "v": 1.0,
+  "zoom": [
+   1.0,
+   1.035
+  ],
+  "merkez": [
+   0.5,
+   0.36
+  ],
+  "kaplama": "kaplama_S4.png",
+  "gecis": 3
+ },
+ {
+  "ad": "S5",
+  "klip": "klipler/S5.mp4",
+  "t0": 0.25,
+  "t1": 2.65,
+  "v": 1.0,
+  "zoom": [
+   1.0,
+   1.035
+  ],
+  "merkez": [
+   0.5,
+   0.36
+  ],
+  "kaplama": "kaplama_S5.png",
+  "gecis": 3
+ },
+ {
+  "ad": "S6",
+  "klip": "klipler/S6.mp4",
+  "t0": 0.25,
+  "t1": 2.65,
+  "v": 1.0,
+  "zoom": [
+   1.0,
+   1.035
+  ],
+  "merkez": [
+   0.5,
+   0.36
+  ],
+  "kaplama": "kaplama_S6.png",
+  "gecis": 3
+ },
+ {
+  "ad": "S7",
+  "klip": "klipler/S7.mp4",
+  "t0": 0.25,
+  "t1": 2.65,
+  "v": 1.0,
+  "zoom": [
+   1.0,
+   1.035
+  ],
+  "merkez": [
+   0.5,
+   0.36
+  ],
+  "kaplama": "kaplama_S7.png",
+  "gecis": 3
+ },
+ {
+  "ad": "S8",
+  "klip": "klipler/S8.mp4",
+  "t0": 0.2,
+  "t1": 3.9,
+  "v": 1.0,
+  "zoom": [
+   1.0,
+   1.05
+  ],
+  "merkez": [
+   0.5,
+   0.4
+  ],
+  "kaplama": "kaplama_S8.png",
+  "k_cik": 0.5,
+  "k_son": 3.45,
+  "gecis": 3
+ },
+ {
+  "tur": "kapanis",
+  "ad": "kapanış",
+  "klip": "kapanis_v89.mp4",
+  "gecis": 14
+ }
+]
