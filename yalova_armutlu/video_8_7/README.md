@@ -1,11 +1,12 @@
 # Yalova Armutlu – 8 + 7 blok: gerçekçi drone + yaya turu
 
-`yalova_armutlu_8_7_gercekci.mp4` — 1920×1080, 24 fps, 85,5 sn, sessiz. Repodaki kopya CRF 24'tür (45 MB).
-Teslim edilen ana kopya CRF 17'dir (111 MB). Bu v3'tür: girişten sonraki bütün video tek reçeteyle yeniden üretildi.
+`yalova_armutlu_8_7_gercekci.mp4` — 1920×1080, 24 fps, 85,3 sn, sessiz. Repodaki kopya CRF 24'tür (45 MB).
+Teslim edilen ana kopya CRF 17'dir (112 MB). Bu v3.1'dir: girişten sonraki bütün video tek reçeteyle yeniden üretildi;
+son klip bir önceki klibin bitmiş görüntüsünden zincirleme devam ettirildi.
 
 > **Görsel çalışmadır.** Kamera yolu ve bütün yapıların yeri, Blender modelinden birebir gelir. Kling yalnızca
 > yüzeyleri gerçekçileştirdi. Birkaç yerde küçük yorumlar ekledi: ağaç türleri, sokak ağaçları, panoramada
-> kendi bloğun balkonu, sondaki kıyının karşısında kasaba. Komşu evler ve kıyı düzeni temsilidir.
+> kendi bloğun balkonu. Komşu evler ve kıyı düzeni temsilidir.
 
 | Süre | Sahne | Etiket |
 |---|---|---|
@@ -13,8 +14,8 @@ Teslim edilen ana kopya CRF 17'dir (111 MB). Bu v3'tür: girişten sonraki büt�
 | 16,4–42,7 sn | Sol sıranın köşelerinden, en üst kat hizasında arkadan öne yavaş kayma | EN ÜST KAT · 15 → 1. BLOK |
 | 42,8–53,7 sn | En öndeki 1. bloğun balkonundan panorama | EN ÜST KAT · PANORAMA |
 | 53,8–57,9 sn | Hızlı dönüş, yaya hizasına iniş | — |
-| 57,9–81,0 sn | Yaya hizasında sahile yürüyüş | YAYA HİZASI |
-| 81,0–85,5 sn | ERDEM İNŞAAT kapanış kartı | |
+| 57,9–80,8 sn | Yaya hizasında sahile yürüyüş | YAYA HİZASI |
+| 80,8–85,3 sn | ERDEM İNŞAAT kapanış kartı | |
 
 Blok numaraları denizden başlar. Sol (7104) sıra arkadan öne 15, 13, …, 3, 1; sağ (7105) sıra 14, 12, …, 2.
 Sağ altta mini vaziyet planı yer alır: etkin blok turuncu, kamera noktası ve bakış konisi canlı.
@@ -40,16 +41,28 @@ halinde aynı reçeteyle yeniden üretildi:
    - Renk eşleme kanal başına kazanç ve ofsettir; 2 sn içinde söner.
    - Her klibe aynı hafif zamansal gürültü giderme uygulanır (`hqdn3d=0:0:3:3`).
    - v2'deki bölüm bazlı ton ve görünüm düzeltmeleri (`bakis.py`, gama) artık kullanılmıyor.
-5. **Son:** M5 klibinde kamera 1944. karede (81,0 sn) durur. Kling bundan sonra kamerayı kendi başına öne atıp
-   görüntüyü bulanıklaştırıyor (netlik 6,8 → 2,8). Bu yüzden video 1944. karede biter, kapanış kartı buradan girer
-   (`plan.SON`).
+5. **Son klip, zincirleme (v3.1):** İlk M5, M4'ten farklı bir sokak sonu çiziyordu: 1:08'de palmiyeli deniz
+   manzarası puslu bir tepe kasabasına dönüşüyordu. Çapa fotoğrafındaki iki araba da kutu gibi yer tutucu kalmıştı,
+   Kling onları aynen taşıdı. Son ~4 sn'de deniz, karşısında kasaba olan bir koya dönüşüyordu. M5z bu sorunları
+   şöyle çözüyor:
+   - **Girdi:** `python3 parca_zincir.py sonuc_m4.mp4 1276 1604 1620 8 1940 m_5z.mp4`. Girdi M4'ün bitmiş son
+     16 karesiyle başlar, 8 karede tonlanmış Blender karelerine harmanlanır. Blender karelerinin rengi bağ noktasında
+     M4'e eşlenir ve eşleme 4 sn'de söner.
+   - **Çapa:** Nano Banana ile düzeltilmiş 1800 çapası (`cipa_1800z`): gerçek sedanlar, açık deniz, ufukta gemi.
+   - **Sonuç:** Kling bitmiş kareleri neredeyse aynen korudu (M4'le korelasyon 0,99, renk farkı 2–3 seviye). Geçiş
+     bu kısımda, 1604–1620 arasında yapılır. 1:08'deki görüntü tek parça; arabalar gerçek; son sahne açık deniz ve
+     gemi. Kamera sona kadar Blender'ı izler.
+   - **Bitiş:** Kamera 1940. karede (80,8 sn) durur; video burada biter, kapanış kartı buradan girer (`plan.SON`).
 
 Bütün iş ve medya kimlikleri `v3/isler.json` dosyasında.
 
 ### Ölçümler (tam video, `v3/olc_final.py`, `v3/kipirti.py`)
 
 - **Geçişler:** İçerik benzerliği 0,86–0,99. Geçiş pencerelerinde kareler arası en büyük parlaklık farkı 2,6,
-  netlik farkı 1,4 (0–255 ölçeğinde); gözle görülmez.
+  netlik farkı 1,4 (0–255 ölçeğinde). Bu ölçüm sıçramayı yakalar, iki klibin aynı sahneyi farklı çizmesini yakalamaz:
+  27 ve 41. saniyedeki geçişlerde komşu klipler farklı içerik çiziyor (palmiye ve arabalar ekleniyor, ev
+  kayboluyor). Bunlar ancak zincirleme yeniden üretimle düzelir. 1:08 geçişi zincirleme yapıldı (en büyük kare
+  farkı 0,75, netlik farkı 0,22).
 - **Karıncalanma:** Hareket telafili ince doku kıpırtısının doku enerjisine oranı ölçüldü.
 
   | Bölüm | Oran |
@@ -64,8 +77,9 @@ Bütün iş ve medya kimlikleri `v3/isler.json` dosyasında.
 
 ### Bilinen sınırlar
 
+- **M1→M2 (27 sn) ve M2→M3 (41 sn):** Komşu klipler aynı kareyi farklı çiziyor; geçişte içerik değişimi görülüyor.
+  Düzeltmek için M1 ve M3 zincirleme yeniden üretilmeli (~56 kredi).
 - **M3:** Batı panoramasında sağa blok benzeri bir yapı eklemiş.
-- **M5:** Kıyı, son ~4 sn'de karşısında kasaba olan bir koya dönüşüyor ve ufuktaki gemi kayboluyor.
 
 ## İlk üretim akışı (v1/v2, `araclar/`)
 
@@ -93,6 +107,8 @@ Higgsfield:
 | v1/v2: Nano Banana Pro 2K çapa, 5 adet | 10 |
 | v3: Kling Omni Edit pro, N1 15 sn + M1–M5 5 × 15 sn, × 2 | 180 |
 | v3: Nano Banana Pro 2K stil çapası, 10 deneme | 20 |
-| **Toplam** | **412** |
+| v3.1: Kling Omni Edit pro, M5z 14 sn × 2 | 28 |
+| v3.1: Nano Banana Pro 2K çapa düzeltmesi | 2 |
+| **Toplam** | **442** |
 
 Blender render'ı kredisiz.
