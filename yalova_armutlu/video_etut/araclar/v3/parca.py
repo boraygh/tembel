@@ -4,16 +4,16 @@
 #       klip K, başı klip K-1'in bitmiş (Kling) kareleriyle: GECIS + GECIS_UZ'a kadar komşu, ZINCIR_HARMAN karede
 #       Blender'a harman; Blender karelerinin rengi bağ noktasında komşuya eşlenir ve SONUM karede söner (ani bir
 #       parlaklık düşüşünü Kling ışık değişimi sanıp çıktıya taşıyabilir).
-# Kareler: KARELER ortam değişkeni ya da ../kareler_hq.
+# Kareler: KARELER ortam değişkeni ya da video_etut/kareler_hq.
 import os, subprocess, sys
 import numpy as np
 from PIL import Image
 D = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, D)
-sys.path.insert(0, os.path.join(D, "..", "..", "..", "video_8_7", "araclar", "v3"))
+sys.path.append(os.path.join(D, "..", "..", "..", "video_8_7", "araclar", "v3"))   # yalnız on_duzelt; plan buradaki
 import on_duzelt
 import plan
-KL = os.environ.get("KARELER", os.path.join(D, "..", "kareler_hq"))
+KL = os.environ.get("KARELER", os.path.join(D, "..", "..", "kareler_hq"))
 W, H = 1920, 1080
 SONUM = 96
 
