@@ -46,12 +46,17 @@ K3L = dict(tur="genel", daire=3, brut=3 * 60.0,
            kule=(-3.7, 4.4, 2.2, 5.4), giris=("x", 4.88, 1, 3.40))
 
 
+def kuleler(t):
+    """Çatı kuleleri: tek dikdörtgen ya da dikdörtgen listesi (birden çok çekirdekli bloklar)."""
+    k = t["kule"]
+    return [k] if isinstance(k[0], (int, float)) else list(k)
+
+
 def _ayna(t):
     a = dict(t)
     for k in ("govde", "balkon"):
         a[k] = [(-x1, -x0, y0, y1) for x0, x1, y0, y1 in t[k]]
-    x0, x1, y0, y1 = t["kule"]
-    a["kule"] = (-x1, -x0, y0, y1)
+    a["kule"] = [(-x1, -x0, y0, y1) for x0, x1, y0, y1 in kuleler(t)]
     e, w, n, c = t["giris"]
     a["giris"] = (e, -w, -n, c)
     return a
@@ -179,7 +184,7 @@ def blok_tipi_genel(M, coll, ad, t):
     Zc = Z0 + KAT * KAT_H
     Zt = Zc - DOSEME_T
     zk = Z0 + KAT_H
-    rnd = random.Random(G["TOHUM"] + len(ad) * 7 + int(t["kule"][0] * 10))
+    rnd = random.Random(G["TOHUM"] + len(ad) * 7 + int(kuleler(t)[0][0] * 10))
     F, yuv = dis_kontur(t)
     govde = birlesim(t["govde"])
     balkon = t["balkon"]
@@ -189,10 +194,10 @@ def blok_tipi_genel(M, coll, ad, t):
         z = Z0 + i * KAT_H
         g.prizma(kontur_ofset(F, yuv, SILME, R_KOSE), z - DOSEME_T, z, M["silme"], ust=M["tas"], alt=M["ahsap"])
     g.prizma(kontur_ofset(F, yuv, SILME + 0.15, R_KOSE), Zt, Zc + 0.25, M["silme"], ust=M["cati"], alt=M["ahsap"])
-    x0, x1, y0, y1 = t["kule"]
-    g.kutu(x0, x1, y0, y1, Zc + 0.25, Zc + 2.9, M["traverten"], alt=False)
-    g.kutu(x0 - 0.15, x1 + 0.15, y0 - 0.15, y1 + 0.15, Zc + 2.9, Zc + 3.1, M["silme"], alt=M["ahsap"])
-    g.kutu(x0 + 0.8, x0 + 1.9, y1 - 0.02, y1 + 0.03, Zc + 0.29, Zc + 2.45, M["antrasit"])
+    for x0, x1, y0, y1 in kuleler(t):                 # merdiven / asansör kuleleri
+        g.kutu(x0, x1, y0, y1, Zc + 0.25, Zc + 2.9, M["traverten"], alt=False)
+        g.kutu(x0 - 0.15, x1 + 0.15, y0 - 0.15, y1 + 0.15, Zc + 2.9, Zc + 3.1, M["silme"], alt=M["ahsap"])
+        g.kutu(x0 + 0.8, x0 + 1.9, y1 - 0.02, y1 + 0.03, Zc + 0.29, Zc + 2.45, M["antrasit"])
 
     # balkonlar: korkuluk hattı kat silmesinin 7 cm içinden, balkonun dış kenarları boyunca
     ray = kontur_ofset(F, yuv, SILME - 0.07, R_KOSE)

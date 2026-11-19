@@ -1,7 +1,8 @@
 # T_P-6 vaziyet planına göre kredisiz Blender önizlemesi: köşe (K2, sunumdaki açı), ortadan (O1) ve plan
 # kontrolü için tepeden ortografik görünüş (UST). Mimari 16blok.py'deki gibi; bloklar tp6_plan.py'den.
 # Kullanım: blender -b --factory-startup -P tp6_onizleme.py -- --klasor DIR [--sadece K2,O1,UST] [--ornek N]
-import sys, os, runpy, gc, math
+#           [--plan etut_plan] (blok planı modülü; varsayılan tp6_plan)
+import sys, os, runpy, gc, math, importlib
 import bpy
 from mathutils import Vector
 BURASI = os.path.dirname(os.path.abspath(__file__))
@@ -9,8 +10,9 @@ arg = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 OUT = arg[arg.index("--klasor") + 1] if "--klasor" in arg else BURASI
 ORNEK = int(arg[arg.index("--ornek") + 1]) if "--ornek" in arg else 64
 SADECE = arg[arg.index("--sadece") + 1].split(",") if "--sadece" in arg else ["K2", "O1", "UST"]
+PLAN = arg[arg.index("--plan") + 1] if "--plan" in arg else "tp6_plan"
 sys.path.insert(0, os.path.join(BURASI, ".."))
-import tp6_plan
+plan = importlib.import_module(PLAN)
 
 # ortadan_kose_6x7.py ile aynı kameralar
 T0 = Vector((22.4, -46.0, 0.0))
@@ -22,7 +24,7 @@ KAMERA = {"K2": (tuple(K2), (22.4, -46.0, 0.0), 42.0, (1920, 1080)),
 
 sys.argv = [sys.argv[0], "--"]
 ns = runpy.run_path(os.path.join(BURASI, "..", "yalova_armutlu_16blok.py"), run_name="tp6")
-tp6_plan.uygula(ns)
+plan.uygula(ns)
 gc.disable()
 sc, sc2 = ns["kur"]()
 gc.enable()
@@ -49,6 +51,6 @@ for ad in SADECE:
     sc.camera = cam
     sc.render.resolution_x, sc.render.resolution_y = coz
     sc.cycles.samples = ORNEK if ad != "UST" else max(16, ORNEK // 2)
-    sc.render.filepath = os.path.join(OUT, f"tp6_{ad}.png")
+    sc.render.filepath = os.path.join(OUT, f"{PLAN.replace('_plan', '')}_{ad}.png")
     bpy.ops.render.render(write_still=True, scene=sc.name)
     print("önizleme", ad, flush=True)
