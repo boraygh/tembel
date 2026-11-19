@@ -2,7 +2,8 @@
 # Revizyon kareleri: ortadan kuşbakışı (iki sıra arasındaki eksen) ve köşe açısı (görsel 14/23 yönü, biraz yüksek).
 # Kullanım: blender -b --factory-startup -P ortadan_kose_6x7.py -- --onizle | --sec AD [--ornek N] | --sec AD --maske
 #           [--sol N --sag N] (7104 / 7105 blok adedi, varsayılan 6 / 7)  [--klasor DIR] (çıktı klasörü)
-#           [--tp6] (blok yerleşimi T_P-6 vaziyet planından, tp6_plan.py)
+#           [--tp6] (blok yerleşimi T_P-6 vaziyet planından, tp6_plan.py)  [--plan MODUL] (ör. etut_plan)
+#           Y1-Y5: müşteri etüdünün yakın çekim adayları (--plan etut_plan ile)
 import sys, os, json, runpy, gc, math
 import bpy
 from mathutils import Vector
@@ -30,13 +31,22 @@ ADAY = {   # ad: (kamera, hedef, lens)
     "K1": ((138.0, -221.0, 70.0), (22.4, -46.0, 0.0), 42.0),   # önceki köşe açısı (görsel 23/24)
     "K2": (kose(28.0), (22.4, -46.0, 0.0), 42.0),              # aynı yön ve mesafe, 28° (iki sıra ayrışır)
     "O3": ((-1.0, -278.0, 142.0), (-1.0, -60.0, 0.0), 38.0),   # ortadan, denizin üstünden: altta kumsal ve deniz
+    # müşteri etüdü yakın çekimleri (6 kat)
+    "Y1": ((8.0, -112.0, 11.0), (-21.0, -73.0, 8.0), 32.0),     # kıyı bloğu: denize bakan balkon cephesi, GD'dan
+    "Y2": ((-40.0, -110.0, 9.0), (-22.0, -73.0, 9.0), 30.0),    # kıyı bloğu, GB'dan (güneş arkada)
+    "Y3": ((-1.6, -64.0, 1.7), (-1.6, 10.0, 7.5), 24.0),        # sokakta yaya hizası, kuzeye
+    "Y4": ((6.0, -44.0, 32.0), (-13.0, -15.0, 9.0), 35.0),      # 7104 büyük blok, köşe balkonları
+    "Y5": ((-4.0, -40.0, 30.0), (17.0, -14.0, 9.0), 35.0),      # 7105 büyük blok, köşe balkonları
+    "Y6": ((-1.6, -96.0, 1.7), (-5.0, -40.0, 8.0), 24.0),       # sokağın sahil ağzı, yaya hizası, kuzeye
+    "Y7": ((-30.0, -97.0, 1.7), (-19.0, -72.0, 9.0), 24.0),     # kıyı bloğunun önü, yaya hizası
+    "Y8": ((-6.0, -34.0, 22.0), (16.0, -13.0, 11.0), 32.0),     # 7105 büyük blok, daha alçak ve yakın
 }
 sys.argv = [sys.argv[0], "--"] + DIZILIM
 ns = runpy.run_path(os.path.join(BURASI, "..", "yalova_armutlu_16blok.py"), run_name="orta")
-if "--tp6" in arg:
+if "--tp6" in arg or "--plan" in arg:
+    import importlib
     sys.path.insert(0, os.path.join(BURASI, ".."))
-    import tp6_plan
-    tp6_plan.uygula(ns)
+    importlib.import_module(arg[arg.index("--plan") + 1] if "--plan" in arg else "tp6_plan").uygula(ns)
 gc.disable()
 sc, sc2 = ns["kur"]()
 gc.enable()

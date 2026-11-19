@@ -15,9 +15,10 @@ SOL, SAG = (int(v) for v in os.environ.get("SIRA", "6,7").split(","))   # 7104 /
 
 
 def bloklar():
-    if os.environ.get("TP6"):                     # T_P-6: blok merkezleri tp6_plan.py'den
+    if os.environ.get("TP6") or os.environ.get("PLAN"):   # blok merkezleri plan modülünden (TP6=1: tp6_plan)
+        import importlib
         sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
-        from tp6_plan import BLOKLAR
+        BLOKLAR = importlib.import_module(os.environ.get("PLAN") or "tp6_plan").BLOKLAR
         say = {}
         out = []
         for pid, tip, u, v in BLOKLAR:
