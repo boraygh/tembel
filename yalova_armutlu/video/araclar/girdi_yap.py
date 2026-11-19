@@ -34,6 +34,8 @@ def maske_oku(yol):
 
 def izin_bolgesi(kiyi_json, W, H):
     h = sorted(p for p in json.load(open(kiyi_json)) if -600 < p[0] < W + 600)
+    if len(h) < 2:                        # kıyı kadrajda değil (yakın çekim, deniz arkada): her yer yumuşatılabilir
+        return np.ones((H, W), np.float32)
     ycut = np.interp(np.arange(W), [p[0] for p in h], [p[1] for p in h])
     return (np.arange(H)[:, None] < ycut[None, :]).astype(np.float32)
 

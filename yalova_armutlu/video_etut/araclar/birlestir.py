@@ -135,6 +135,7 @@ def rozet():
 
 
 ROZET = rozet()
+BASLIK = "6 + 5 BLOK  ·  DENİZ MANZARASI"                     # 7104: 6 blok, 7105: 5 blok
 UST = {"yaklasma": "EN ÜST KAT", "kayma": "EN ÜST KAT", "panorama": "EN ÜST KAT  ·  PANORAMA", "yuruyus": "YAYA HİZASI"}
 
 
@@ -164,7 +165,7 @@ def main(cikti, kapanis=None):
         if t < 5.0:                                                  # açılış başlığı
             al = min(1.0, max(0.0, (t - 0.6) / 0.5)) * min(1.0, max(0.0, (4.6 - t) / 0.5))
             if al > 0:
-                im.alpha_composite(etiket("8 + 7 BLOK  ·  DENİZ MANZARASI", "YALOVA ARMUTLU", al))
+                im.alpha_composite(etiket(BASLIK, "YALOVA ARMUTLU", al))
         elif bolum in UST and (blok is not None or bolum == "yuruyus"):
             ad = (UST[bolum], f"{blok}. BLOK" if blok is not None else "")
             if ad != son_etiket:
