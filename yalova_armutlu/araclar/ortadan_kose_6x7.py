@@ -2,6 +2,7 @@
 # Revizyon kareleri: ortadan kuşbakışı (iki sıra arasındaki eksen) ve köşe açısı (görsel 14/23 yönü, biraz yüksek).
 # Kullanım: blender -b --factory-startup -P ortadan_kose_6x7.py -- --onizle | --sec AD [--ornek N] | --sec AD --maske
 #           [--sol N --sag N] (7104 / 7105 blok adedi, varsayılan 6 / 7)  [--klasor DIR] (çıktı klasörü)
+#           [--tp6] (blok yerleşimi T_P-6 vaziyet planından, tp6_plan.py)
 import sys, os, json, runpy, gc, math
 import bpy
 from mathutils import Vector
@@ -32,6 +33,10 @@ ADAY = {   # ad: (kamera, hedef, lens)
 }
 sys.argv = [sys.argv[0], "--"] + DIZILIM
 ns = runpy.run_path(os.path.join(BURASI, "..", "yalova_armutlu_16blok.py"), run_name="orta")
+if "--tp6" in arg:
+    sys.path.insert(0, os.path.join(BURASI, ".."))
+    import tp6_plan
+    tp6_plan.uygula(ns)
 gc.disable()
 sc, sc2 = ns["kur"]()
 gc.enable()

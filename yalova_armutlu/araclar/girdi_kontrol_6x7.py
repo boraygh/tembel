@@ -15,6 +15,15 @@ SOL, SAG = (int(v) for v in os.environ.get("SIRA", "6,7").split(","))   # 7104 /
 
 
 def bloklar():
+    if os.environ.get("TP6"):                     # T_P-6: blok merkezleri tp6_plan.py'den
+        sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+        from tp6_plan import BLOKLAR
+        say = {}
+        out = []
+        for pid, tip, u, v in BLOKLAR:
+            k = say[pid] = say.get(pid, -1) + 1
+            out.append(("S" if pid == "7104" else "Ğ", k, u, v))
+        return out
     out = []
     for ad, (u0, v0), (u1, v1), n in (("S", (-22.36, 64.30), (-20.86, -71.76), SOL), ("Ğ", (18.39, 63.37), (19.83, -54.54), SAG)):
         for k in range(n):
