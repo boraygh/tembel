@@ -40,6 +40,9 @@ ADAY = {   # ad: (kamera, hedef, lens)
     "Y6": ((-1.6, -96.0, 1.7), (-5.0, -40.0, 8.0), 24.0),       # sokağın sahil ağzı, yaya hizası, kuzeye
     "Y7": ((-30.0, -97.0, 1.7), (-19.0, -72.0, 9.0), 24.0),     # kıyı bloğunun önü, yaya hizası
     "Y8": ((-6.0, -34.0, 22.0), (16.0, -13.0, 11.0), 32.0),     # 7105 büyük blok, daha alçak ve yakın
+    "Y9": ((0.5, 44.0, 16.0), (-0.5, -60.0, 5.0), 28.0),        # kuzey ucundan sokak boyunca denize, 16 m
+    "Y10": ((47.0, -88.0, 12.0), (21.0, -54.0, 9.0), 30.0),     # 7105 kıyı bloğu, GD'dan (sahil tarafı)
+    "Y11": ((-3.0, -50.0, 14.0), (17.0, -14.0, 10.0), 28.0),    # 7105 büyük blok, sokaktan çapraz, alçak
 }
 sys.argv = [sys.argv[0], "--"] + DIZILIM
 ns = runpy.run_path(os.path.join(BURASI, "..", "yalova_armutlu_16blok.py"), run_name="orta")
