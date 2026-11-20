@@ -25,6 +25,15 @@ def kose(egim):
     c = T0 + YON * D3 * math.cos(math.radians(egim)) + Vector((0, 0, D3 * math.sin(math.radians(egim))))
     return tuple(c)
 
+KO_HEDEF = (-1.0, -62.0, 0.0)                          # iki parselin ortası, kıyıya yakın: altta kumsal ve deniz
+
+
+def yorunge(yon, egim, d, h=KO_HEDEF):
+    """Hedefin yon (pusula, 0 = kuzey, 90 = doğu) tarafında, egim derece yükseklikte, d m uzakta kamera."""
+    y, e = math.radians(yon), math.radians(egim)
+    return (h[0] + d * math.sin(y) * math.cos(e), h[1] + d * math.cos(y) * math.cos(e), h[2] + d * math.sin(e))
+
+
 ADAY = {   # ad: (kamera, hedef, lens)
     "O1": ((-1.0, -199.0, 147.0), (-1.0, -24.0, 0.0), 35.0),   # ortadan, 40° eğim
     "O2": ((-1.0, -195.0, 117.0), (-1.0, -28.0, 0.0), 32.0),   # ortadan, 35° eğim, biraz daha geniş
@@ -43,6 +52,10 @@ ADAY = {   # ad: (kamera, hedef, lens)
     "Y9": ((0.5, 44.0, 16.0), (-0.5, -60.0, 5.0), 28.0),        # kuzey ucundan sokak boyunca denize, 16 m
     "Y10": ((47.0, -88.0, 12.0), (21.0, -54.0, 9.0), 30.0),     # 7105 kıyı bloğu, GD'dan (sahil tarafı)
     "Y11": ((-3.0, -50.0, 14.0), (17.0, -14.0, 10.0), 28.0),    # 7105 büyük blok, sokaktan çapraz, alçak
+    # köşe fotoğrafının (38) daha yüksek açılı üç yönü: site ortasına bakan, aynı lens; sağ = GD, orta = G, sol = GB
+    "KSAG": (yorunge(146.6, 36.0, 240.0), KO_HEDEF, 42.0),
+    "KORTA": (yorunge(180.0, 36.0, 240.0), KO_HEDEF, 42.0),
+    "KSOL": (yorunge(213.4, 36.0, 240.0), KO_HEDEF, 42.0),
 }
 sys.argv = [sys.argv[0], "--"] + DIZILIM
 ns = runpy.run_path(os.path.join(BURASI, "..", "yalova_armutlu_16blok.py"), run_name="orta")
