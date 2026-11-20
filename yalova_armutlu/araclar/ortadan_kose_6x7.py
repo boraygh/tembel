@@ -56,6 +56,9 @@ ADAY = {   # ad: (kamera, hedef, lens)
     "KSAG": (yorunge(146.6, 36.0, 240.0), KO_HEDEF, 42.0),
     "KORTA": (yorunge(180.0, 36.0, 240.0), KO_HEDEF, 42.0),
     "KSOL": (yorunge(213.4, 36.0, 240.0), KO_HEDEF, 42.0),
+    # orta ve sol, yakın: bloklar + arka otopark kadraja sığacak en kısa mesafe (%3,5 pay), hedef projenin ortası
+    "KORTA2": (yorunge(180.0, 36.0, 203.0, (-2.5, -23.5, 0.0)), (-2.5, -23.5, 0.0), 42.0),
+    "KSOL2": (yorunge(213.4, 36.0, 226.0, (-9.0, -24.0, 0.0)), (-9.0, -24.0, 0.0), 42.0),
 }
 sys.argv = [sys.argv[0], "--"] + DIZILIM
 ns = runpy.run_path(os.path.join(BURASI, "..", "yalova_armutlu_16blok.py"), run_name="orta")
