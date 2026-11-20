@@ -17,7 +17,7 @@
   "1300": "10b60483-f65d-4686-b829-2c54dd03cf8f (yine kadraj kaydı, kullanılmadı)",
   "1300_red": "c3609508-5c2b-4441-a1ab-f4ad92125457 (kadraj kaydı, kullanılmadı)",
   "1600": "0d856871-137d-4ffc-bf4b-b7bb61c86ec6",
-  "1350": "05cd34e3-0dbb-4d49-a51a-134d51679fb4"
+  "1350": "05cd34e3-0dbb-4d49-a51a-134d51679fb4 (hafif yakınlaştırılmış, görünüm referansı olarak kullanılıyor)"
  },
  "girdi_video": {
   "1": "0486948d-97ed-4aab-adae-60dfc3634465",
@@ -29,7 +29,8 @@
   "1": "738229b7-9a09-485d-a747-16ceaea56fd3",
   "2": "7cbfe8da-adf8-4fec-bb6a-7a901c4857b5",
   "3": "a0f51860-19cb-4f3a-94fd-9e69f03fb0ae",
-  "4": "44d15a08-35a4-48be-aaea-df51cc5f43f1"
+  "4": "4719cec9-292d-490d-b7cd-8826d854e00e",
+  "4_red": "44d15a08-35a4-48be-aaea-df51cc5f43f1 (bloklar üstünde ~1118'den sonra dokusuz kaldı)"
  },
  "yakin_foto": {
   "Y2": "164b19a1-50e5-43ce-b749-9f25b63bd623",
@@ -48,5 +49,6 @@
   "3": "52240dd6-0857-48d9-aa93-4f5282b989e4",
   "4": "2f9da0de-a900-409b-9293-9601e45c7c2b"
  },
- "not_cipa": "5. klip çapası 1300 yerine 1350: NB 1300 karesini iki denemede de kırpıp yakınlaştırdı"
+ "not_cipa": "5. klip çapası 1300 yerine 1350: NB 1300 karesini iki denemede de kırpıp yakınlaştırdı",
+ "not_klip4": "4. klip yeniden: 5. referans olarak bloklara yukarıdan bakan çapa (10b60483) ve istemde çatı tarifi eklendi"
 }
