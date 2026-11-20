@@ -132,13 +132,13 @@ def main(cikti, kapanis=None):
             al = min(1.0, max(0.0, (t - 0.6) / 0.5)) * min(1.0, max(0.0, (4.6 - t) / 0.5))
             if al > 0:
                 im.alpha_composite(B.etiket(B.BASLIK, "YALOVA ARMUTLU", al))
-        elif bolum in B.UST and (blok is not None or bolum == "yuruyus"):
-            ad = (B.UST[bolum], f"{blok}. BLOK" if blok is not None else "")
+        elif B.etiket_metni(q):
+            ad = B.etiket_metni(q)
             if ad != son_etiket:
                 son_etiket, degisim = ad, t
             im.alpha_composite(B.etiket(ad[0], ad[1], min(1.0, (t - degisim) / 0.25 + 0.25)))
         if t > 1.0:
-            p = B.panel(blok, q["x"], q["y"], q["h"])
+            p = B.panel("otopark" if bolum == "otopark" else blok, q["x"], q["y"], q["h"])
             if t < 1.6:
                 p.putalpha(p.getchannel("A").point(lambda v, f=(t - 1.0) / 0.6: int(v * f)))
             im.alpha_composite(p, (int(W - 30 * B.OLC - B.PW), int(H - 30 * B.OLC - B.PH)))

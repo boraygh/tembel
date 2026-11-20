@@ -7,25 +7,25 @@
 # Kling Omni Edit süreyi tam saniyeye indirdiği için klip uzunlukları 24'ün katı (en çok 15 sn = 360 kare).
 # Geçişler kameranın yavaşladığı / durduğu karelerde (rota.py hızları):
 #   240  yaklaşma, uzakta, dönüş ~2°/sn          576  kaymada 7. blok durağı, 3,6 m/sn
-#   888  panorama başı (dönüş 36°/sn, öteleme yok) 1224 dönüşten sonra kamera durur (0,4 m/sn)
-#   1464 yürüyüş, 5. blok etiketi değişirken
-# Kamera 1696'da durur; video 1704'te biter, kapanış kartı buradan girer.
-KLIP = [(0, 264), (240, 600), (576, 912), (888, 1248), (1224, 1488), (1464, 1728)]
-GECIS = [240, 576, 888, 1224, 1464]   # klip k+1'e geçişin başladığı kare; GECIS_UZ kare sürer
+#   888  panorama başı (dönüş 36°/sn, öteleme yok) 1176 ortadan yukarıda geri çekilip durduğu an (1 m/sn)
+#   1464 otoparka giderken dönüş yönü değişir      1728 otoparkın üstünde dönüş biter, kamera durur
+# Kamera 2054'te sahilin üstünde durur; video 2064'te biter, kapanış kartı buradan girer.
+KLIP = [(0, 264), (240, 600), (576, 912), (888, 1200), (1176, 1488), (1464, 1752), (1728, 2088)]
+GECIS = [240, 576, 888, 1176, 1464, 1728]   # klip k+1'e geçişin başladığı kare; GECIS_UZ kare sürer
 GECIS_UZ = 16
 ZINCIR_HARMAN = 8                     # zincirde komşu kareleri GECIS + GECIS_UZ'a kadar, sonra 8 karede Blender'a harman
-SON = 1704
-SANIYE = [(b - a) // 24 for a, b in KLIP]          # 11 + 15 + 14 + 15 + 11 + 11 = 77 sn -> 154 kredi (2 kr/sn)
+SON = 2064
+SANIYE = [(b - a) // 24 for a, b in KLIP]          # 11 + 15 + 14 + 13 + 13 + 12 + 15 = 93 sn -> 186 kredi (2 kr/sn)
 
 # 8 + 7 videosunun stil karesi (giriş klibi sonuc_1, yerel kare 150): görünüm birebir aynı kalsın diye aynısı.
 STIL_MEDIA = "d55e35af-4a00-4848-a630-aefaef36e173"
-CIPA_KARE = [150, 456, 744, 1000, 1300, 1600]      # her klibin içerik çapası (Blender karesinin NB düzenlemesi)
+CIPA_KARE = [150, 456, 744, 1040, 1300, 1600, 1900]      # her klibin içerik çapası (Blender karesinin NB düzenlemesi)
 
 ISTEM = ("Transform this rough, untextured 3D previsualisation into real footage filmed in Armutlu, Yalova, Turkey, "
          "with exactly the same look as the reference photographs: the same warm golden late-afternoon light with "
          "soft atmospheric haze, the same colours, contrast, softness and lens. Keep exactly the same camera path, "
          "speed, framing and timing, and the same layout: the same apartment blocks in the same places with the same "
-         "number of floors and balconies, the same streets, coast, pier, ship and trees; do not add, remove, merge or "
+         "number of floors and balconies, the same streets, open-air car parks, coast, pier, ship and trees; do not add, remove, merge or "
          "move anything. Re-render every surface as it looks in real footage: the new six-storey apartment blocks "
          "with real honed travertine stone cladding, very dark brown-anthracite floor slab bands wrapping the "
          "rounded-corner balconies, frameless glass balustrades with slim bronze handrails, real glass with "

@@ -3,10 +3,13 @@
 #   1 yaklaşma   denizden gelen drone iki parselin arasındaki yoldan geçip sol sıranın en arkadaki bloğunun
 #                köşesine varır, denize döner
 #   2 kayma      en üst kat köşelerinden (göz 17,7 m) arkadan öne ağır ağır; her balkonda yavaşlar
-#   3 panorama   kıyı bloğunun denize bakan balkon köşesinde doğudan batıya tarama
-#   4 dönüş      hızla A'ya geri, yaya hizasına iner
-#   5 yürüyüş    yaya hizasında (göz 1,7 m) biraz daha hızlı, iki parselin arasındaki yoldan sahile
+#   3 panorama   kıyı bloğunun denize bakan balkon köşesinde doğudan batıya tarama (ilk 8,2 sn önceki sürümle aynı)
+#   4 yükseliş   yaya hizasına inmeden: bloktan uzaklaşıp ortadaki yolun üstüne, 40 m'ye; bütün siteyi yukarıdan görür
+#   5 genişlik   ortadan ileri, ~33 m: önce sola 5. ve 7. blok, sonra sağa 6. blok (1+1, katta 8 daire)
+#   6 otopark    arkaya: iki parselin kuzey ucundaki otoparkların üstüne, yere bakarak yerinde 180° döner
+#   7 deniz      arkadan denize doğru siteyi baştan sona geçip sahilin üstünde durur
 # kareler() her kare için dict(x, y, z, h, p, bolum, blok) döner. h: pusula yönü (0 = kuzey, 90 = doğu), p: eğim (°).
+# blok: vurgulanan blok numarası, numara demeti ya da None.
 import json, math, os, sys
 
 D = os.path.dirname(os.path.abspath(__file__))
@@ -32,26 +35,8 @@ NO_SAG = [2 * (len(SAG) - i) for i in range(len(SAG))]         # sağ sıra, en 
 BLOK_V = [v for _, _, _, v in SOL]                              # sol sıra blok merkezleri (y)
 BLOK_YD = [(lambda k: (k[3] - k[2]) / 2)(etut_plan.T.kapsam(etut_plan.TIPLER[t])) for _, t, _, _ in SOL]
 H_KAYMA, P_KAYMA = 177.0, -7.0
-YURU_X, GOZ_YAYA = -3.4, 1.7
-YURU_Y0, YURU_Y1 = 36.0, -90.0                                  # kuzey ucu boş: yürüyüş ilk bloğun önünden
-
-
-def zemin(y):
-    """Yürüyüş hattında zemin yüksekliği (Blender'ın ışın taramasından, yoksa 0,3 m)."""
-    yol = os.path.join(D, "zemin.json")
-    if not hasattr(zemin, "tablo"):
-        zemin.tablo = json.load(open(yol)) if os.path.exists(yol) else None
-    t = zemin.tablo
-    if not t:
-        return 0.3
-    ys, zs = t["y"], t["z"]
-    if y >= ys[0]:
-        return zs[0]
-    for i in range(1, len(ys)):
-        if y >= ys[i]:
-            f = (y - ys[i - 1]) / (ys[i] - ys[i - 1])
-            return zs[i - 1] + (zs[i] - zs[i - 1]) * f
-    return zs[-1]
+YURU_X = -3.4      # önceki sürümün yürüyüş hattı: bu hattaki sokak araçları / ağaçları kaldırılmış kalır (yeniden
+                   # kullanılan kayma ve panorama kareleri yeni karelerle aynı sahneden olsun)
 
 
 def yumusak(x):
@@ -59,8 +44,9 @@ def yumusak(x):
     return x * x * x * (x * (6 * x - 15) + 10)
 
 
-def hermite(noktalar):
-    """[(t, deger_listesi)] -> f(t): zamana göre teğetli kübik Hermite (C1), uçlarda hız sıfır."""
+def hermite(noktalar, tegetler=None):
+    """[(t, deger_listesi)] -> f(t): zamana göre teğetli kübik Hermite (C1), uçlarda hız sıfır.
+    tegetler: {anahtar no: [teğet ya da None (otomatik)]} -- dönüş noktalarında sıfır hız, ek yerinde süreklilik."""
     n = len(noktalar)
     T = [p[0] for p in noktalar]
     P = [p[1] for p in noktalar]
@@ -70,6 +56,9 @@ def hermite(noktalar):
             m.append([0.0] * len(P[i]))
         else:
             m.append([(P[i + 1][k] - P[i - 1][k]) / (T[i + 1] - T[i - 1]) for k in range(len(P[i]))])
+        for k, v in enumerate((tegetler or {}).get(i, [])):
+            if v is not None:
+                m[i][k] = v
 
     def f(t):
         t = min(max(t, T[0]), T[-1])
@@ -132,51 +121,52 @@ def kareler():
         return x, y, DURAK[0][2], H_KAYMA, P_KAYMA, blok
     ekle(int(T2 * FPS) + 1, kayma, "kayma")
 
-    # ---- 3 panorama: H'de doğudan batıya ----
+    # ---- 3 panorama: H'de doğudan batıya (ilk 8,2 sn önceki sürümle kare kare aynı; batıda kalkışa devreder) ----
     Hd = DURAK[-1]
     pan = hermite([(0.0, [H_KAYMA, P_KAYMA]), (0.5, [H_KAYMA, P_KAYMA]), (3.0, [112.0, -5.0]),
                    (8.2, [238.0, -5.0]), (10.6, [H_KAYMA, P_KAYMA]), (11.0, [H_KAYMA, P_KAYMA])])
-    ekle(int(11.0 * FPS), lambda t: (Hd[0], Hd[1], Hd[2], *pan(t), HARF[-1]), "panorama")
+    TP = 8.2
+    npan = int(TP * FPS) + 1                                   # t <= 8,2 sn olan kareler
+    ekle(npan, lambda t: (Hd[0], Hd[1], Hd[2], *pan(t), HARF[-1]), "panorama")
+    h_tg = (H_KAYMA - 112.0) / (10.6 - 3.0)                   # eski eğrinin 8,2 sn'deki teğetleri
+    p_tg = (P_KAYMA + 5.0) / (10.6 - 3.0)
 
-    # ---- 4 dönüş: hızla A'ya, sonunda yaya hizasına iner ----
-    zy0 = zemin(YURU_Y0) + GOZ_YAYA
-    T4 = 4.2
+    # ---- 4–7: yaya hizasına inmeden yukarıdan: ortadan kalkış, 1+1 büyük bloklar, arkada otopark, denize dönüş ----
+    Kx = [(0.0, [Hd[0], Hd[1], Hd[2], 238.0, -5.0]),
+          (2.3, [-3.6, -84.5, 29.0, 276.0, -13.0]),            # bloktan uzaklaşıp yükselirken sağa döner
+          (5.0, [-0.3, -96.0, 40.0, 360.0, -28.0]),            # ortadan, yukarıdan bütün site (geri çekilip durur)
+          (8.8, [-0.6, -70.0, 33.0, 333.0, -24.0]),            # 5. ve 7. blok (1+1, katta 8 daire)
+          (12.6, [-2.5, -46.0, 34.0, 395.0, -28.0]),           # 6. blok (1+1, katta 8 daire)
+          (17.0, [-0.3, 20.0, 46.0, 360.0, -44.0]),            # arkaya: iki otopark önde
+          (21.5, [-0.3, 50.0, 50.0, 368.0, -58.0]),            # otoparkların üstünde, yere bakarak
+          (28.0, [-0.3, 64.0, 52.0, 540.0, -50.0]),            # yerinde döner, denize bakar
+          (34.8, [-0.3, -28.0, 38.0, 540.0, -22.0]),
+          (41.5, [-0.3, -92.0, 27.0, 540.0, -15.0])]           # arkadan denize, sahilin üstünde durur
+    teg = {0: [0.0, 0.0, 0.0, h_tg, p_tg],
+           2: [0.0, 0.0, None, None, None],                     # geri çekilmeden ileriye: durur
+           5: [None, None, None, 0.0, None],                    # sola bakıştan sağa dönüşe
+           6: [None, None, None, 6.0, None],                    # dönüş otoparkın üstünde yavaş başlar
+           7: [0.0, 0.0, None, 0.0, None]}                      # kuzeye süzülüşten güneye uçuşa, dönüş biter
+    f4 = hermite(Kx, teg)
+    T4 = Kx[-1][0]
 
-    def donus(t):
-        u = yumusak(t / T4)
-        x = Hd[0] + (YURU_X - Hd[0]) * u
-        y = Hd[1] + (YURU_Y0 - Hd[1]) * u
-        z = Hd[2] + (zy0 - Hd[2]) * yumusak((u - 0.5) / 0.5)
-        h = H_KAYMA + (yon(0.02, -1.0) - H_KAYMA) * u
-        p = P_KAYMA + (0.0 - P_KAYMA) * yumusak((u - 0.5) / 0.5)
-        return x, y, z, h, p, None
-    ekle(int(T4 * FPS), donus, "donus")
-    ekle(int(0.5 * FPS), lambda t: (YURU_X, YURU_Y0, zy0, yon(0.02, -1.0), 0.0, None), "yuruyus")
-
-    # ---- 5 yürüyüş: yaya hizasında A'dan sahile, ~7,5 m/s; hafif adım salınımı ----
-    Ly = YURU_Y0 - YURU_Y1
-    vmax, s, t, izler = 7.5, 0.0, 0.0, []
-    while s < Ly:
-        v = vmax * max(0.06, yumusak(t / 1.2))
-        v = min(v, max(0.2, math.sqrt(2 * 2.2 * (Ly - s))))
-        s += v * dt
-        t += dt
-        izler.append((t, min(s, Ly), v))
-    T5 = izler[-1][0]
-
-    def yuru(tt):
-        i = min(int(tt / dt), len(izler) - 1)
-        _, s, v = izler[i]
-        y = YURU_Y0 - s
-        sal = 0.018 * (v / vmax) * math.sin(2 * math.pi * 1.9 * tt)
-        blok = None
-        for j, bv in enumerate(BLOK_V):
-            if abs(y - bv) < BLOK_YD[j] + 3.0:
-                blok = HARF[j]
-        return YURU_X, y, zemin(y) + GOZ_YAYA + sal, yon(0.02, -1.0), 0.0, blok
-    ekle(int(T5 * FPS) + 1, yuru, "yuruyus")
+    def ust(t):
+        x, y, z, h, p = f4(t)
+        if 7.0 <= t < 11.0:
+            bl, bo = (5, 7), "genislik"
+        elif 11.0 <= t < 15.0:
+            bl, bo = 6, "genislik"
+        elif 15.0 <= t < 29.0:
+            bl, bo = None, "otopark"
+        else:
+            bl, bo = None, ("yukselis" if t < 15.0 else "deniz")
+        return x, y, z, h, p, (bl, bo)
+    for i in range(int(T4 * FPS) + 1):
+        t = (i + npan) / FPS - TP                              # panoramanın zamanından devam
+        x, y, z, h, p, (bl, bo) = ust(t)
+        out.append(dict(x=x, y=y, z=z, h=h % 360.0, p=p, bolum=bo, blok=bl))
     yf = out[-1]
-    ekle(int(1.6 * FPS), lambda t: (yf["x"], yf["y"], yf["z"], yf["h"], yf["p"], None), "yuruyus")
+    ekle(int(1.5 * FPS), lambda t: (yf["x"], yf["y"], yf["z"], yf["h"], yf["p"], None), "deniz")
     return out
 
 

@@ -15,6 +15,7 @@ FB = "/usr/share/fonts/opentype/inter/InterDisplay-Bold.otf"
 FM = "/usr/share/fonts/opentype/inter/InterDisplay-Medium.otf"
 BEYAZ, TURUNCU, ZEMIN, DENIZ = (237, 241, 248), (255, 122, 41), (10, 13, 18), (34, 86, 116)
 PLAN = json.load(open(os.path.join(D, "plan_etut.json")))
+KARELER = os.environ.get("KARELER", os.path.join(D, "kareler"))      # Blender kareleri (önizleme)
 sol = sorted((b for b in PLAN["bloklar"] if b["parsel"] == "7104"), key=lambda b: -b["v"])
 sag = sorted((b for b in PLAN["bloklar"] if b["parsel"] == "7105"), key=lambda b: -b["v"])
 NO = {b["ad"]: n for b, n in zip(sol, rota.HARF)} | {b["ad"]: n for b, n in zip(sag, rota.NO_SAG)}
@@ -38,6 +39,10 @@ def kontur(b):
     return [(b["u"] + x, b["v"] + y) for x, y in PLAN["kontur"][b["tip"]]]
 
 
+def vurgulu(b, etkin):
+    return NO[b["ad"]] in etkin if isinstance(etkin, tuple) else NO[b["ad"]] == etkin
+
+
 def panel_zemin(etkin):
     P = Image.new("RGBA", (PW * SS, PH * SS), (0, 0, 0, 0))
     d = ImageDraw.Draw(P, "RGBA")
@@ -50,8 +55,10 @@ def panel_zemin(etkin):
     for p in ("P7104", "P7105"):
         q = [m2p(u, v) for u, v in PLAN[p]]
         g.line(q + [q[0]], fill=BEYAZ + (110,), width=max(1, int(SS * OLC)))
+    for x0, x1, y0, y1 in PLAN.get("otopark", []):
+        g.rectangle([m2p(x0, y1), m2p(x1, y0)], fill=(120, 126, 136, 200) if etkin != "otopark" else TURUNCU + (255,))
     for b in sol + sag:
-        renk = TURUNCU + (255,) if NO[b["ad"]] == etkin else (BEYAZ + (225,) if b in sol else BEYAZ + (150,))
+        renk = TURUNCU + (255,) if vurgulu(b, etkin) else (BEYAZ + (225,) if b in sol else BEYAZ + (150,))
         g.polygon([m2p(u, v) for u, v in kontur(b)], fill=renk)
     pen = Image.new("L", P.size, 0)
     ImageDraw.Draw(pen).rounded_rectangle([PAD * SS, (PAD + BAS) * SS, (PW - PAD) * SS, (PH - PAD) * SS], 6 * SS, fill=255)
@@ -61,10 +68,10 @@ def panel_zemin(etkin):
     f = font(FB, 10.5 * OLC * SS)
     for b in sol:
         x, y = m2p(min(u for u, v in kontur(b)) - 2.5, b["v"])
-        d.text((x, y), str(NO[b["ad"]]), font=f, anchor="rm", fill=TURUNCU + (255,) if NO[b["ad"]] == etkin else BEYAZ + (200,))
+        d.text((x, y), str(NO[b["ad"]]), font=f, anchor="rm", fill=TURUNCU + (255,) if vurgulu(b, etkin) else BEYAZ + (200,))
     for b in sag:
         x, y = m2p(max(u for u, v in kontur(b)) + 2.5, b["v"])
-        d.text((x, y), str(NO[b["ad"]]), font=f, anchor="lm", fill=BEYAZ + (170,))
+        d.text((x, y), str(NO[b["ad"]]), font=f, anchor="lm", fill=TURUNCU + (255,) if vurgulu(b, etkin) else BEYAZ + (170,))
     d.text((PAD * SS, (PAD + 13 * OLC) * SS), "VAZİYET", font=font(FM, 11 * OLC * SS), anchor="ls", fill=BEYAZ + (215,))
     return P
 
@@ -136,7 +143,20 @@ def rozet():
 
 ROZET = rozet()
 BASLIK = "6 + 5 BLOK  ·  DENİZ MANZARASI"                     # 7104: 6 blok, 7105: 5 blok
-UST = {"yaklasma": "EN ÜST KAT", "kayma": "EN ÜST KAT", "panorama": "EN ÜST KAT  ·  PANORAMA", "yuruyus": "YAYA HİZASI"}
+UST = {"yaklasma": "EN ÜST KAT", "kayma": "EN ÜST KAT", "panorama": "EN ÜST KAT  ·  PANORAMA",
+       "genislik": "1+1 DAİRELER  ·  KATTA 8 DAİRE"}
+
+
+def etiket_metni(q):
+    """Karenin alt yazısı (üst satır, büyük satır) ya da None."""
+    bolum, blok = q["bolum"], q["blok"]
+    if bolum == "otopark":
+        return ("PARSELLERİN ARKASINDA", "OTOPARK")
+    if bolum not in UST or blok is None:
+        return None
+    if isinstance(blok, tuple):
+        return (UST[bolum], " VE ".join(f"{n}." for n in blok) + " BLOK")
+    return (UST[bolum], f"{blok}. BLOK")
 
 
 def main(cikti, kapanis=None):
@@ -151,7 +171,7 @@ def main(cikti, kapanis=None):
         i = min(i - i % 2, (n - 1) - (n - 1) % 2)
         if i not in onbellek:
             onbellek.clear() if len(onbellek) > 6 else None
-            onbellek[i] = np.asarray(Image.open(os.path.join(D, "kareler", f"k_{i:04d}.jpg")).convert("RGB")
+            onbellek[i] = np.asarray(Image.open(os.path.join(KARELER, f"k_{i:04d}.jpg")).convert("RGB")
                                      .resize((W, H), Image.LANCZOS), np.float32)
         return onbellek[i]
 
@@ -166,13 +186,13 @@ def main(cikti, kapanis=None):
             al = min(1.0, max(0.0, (t - 0.6) / 0.5)) * min(1.0, max(0.0, (4.6 - t) / 0.5))
             if al > 0:
                 im.alpha_composite(etiket(BASLIK, "YALOVA ARMUTLU", al))
-        elif bolum in UST and (blok is not None or bolum == "yuruyus"):
-            ad = (UST[bolum], f"{blok}. BLOK" if blok is not None else "")
+        elif etiket_metni(q):
+            ad = etiket_metni(q)
             if ad != son_etiket:
                 son_etiket, degisim = ad, t
             im.alpha_composite(etiket(ad[0], ad[1], min(1.0, (t - degisim) / 0.25 + 0.25)))
         if t > 1.0:
-            p = panel(blok, q["x"], q["y"], q["h"])
+            p = panel("otopark" if bolum == "otopark" else blok, q["x"], q["y"], q["h"])
             if t < 1.6:
                 p.putalpha(p.getchannel("A").point(lambda v, f=(t - 1.0) / 0.6: int(v * f)))
             im.alpha_composite(p, (int(W - 30 * OLC - PW), int(H - 30 * OLC - PH)))
