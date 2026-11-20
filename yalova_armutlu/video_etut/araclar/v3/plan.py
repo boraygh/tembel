@@ -19,7 +19,7 @@ SANIYE = [(b - a) // 24 for a, b in KLIP]          # 11 + 15 + 14 + 13 + 13 + 12
 
 # 8 + 7 videosunun stil karesi (giriş klibi sonuc_1, yerel kare 150): görünüm birebir aynı kalsın diye aynısı.
 STIL_MEDIA = "d55e35af-4a00-4848-a630-aefaef36e173"
-CIPA_KARE = [150, 456, 744, 1040, 1300, 1600, 1900]      # her klibin içerik çapası (Blender karesinin NB düzenlemesi)
+CIPA_KARE = [150, 456, 744, 1040, 1350, 1600, 1900]      # her klibin içerik çapası (Blender karesinin NB düzenlemesi)
 
 ISTEM = ("Transform this rough, untextured 3D previsualisation into real footage filmed in Armutlu, Yalova, Turkey, "
          "with exactly the same look as the reference photographs: the same warm golden late-afternoon light with "

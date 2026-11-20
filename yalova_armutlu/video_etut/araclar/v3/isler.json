@@ -6,26 +6,30 @@
   "744": "998a000d-9104-4b45-8bba-89c8a83281b6",
   "1040": "be1e333c-3262-497f-aaef-d56f9bb0fa83",
   "1300": "d902d9df-f4ad-42a2-8b85-82916a3800ea",
-  "1600": "f6f81553-9ecb-4ec9-a682-646f437c0983"
+  "1600": "f6f81553-9ecb-4ec9-a682-646f437c0983",
+  "1350": "315adee6-9f75-4709-9eec-d6f3b9c0eae5"
  },
  "cipa": {
   "150": "bf060ce3-bba1-487f-a68f-eba6fc8f1bf5",
   "456": "22c0f0f2-8eae-4a6c-aa05-c56c19f2ba6a",
   "744": "b54cc946-2966-4633-aaf6-391cc1508282",
   "1040": "1d85a5e6-796b-43fd-93c1-724266490908",
-  "1300": "10b60483-f65d-4686-b829-2c54dd03cf8f",
+  "1300": "10b60483-f65d-4686-b829-2c54dd03cf8f (yine kadraj kaydı, kullanılmadı)",
   "1300_red": "c3609508-5c2b-4441-a1ab-f4ad92125457 (kadraj kaydı, kullanılmadı)",
-  "1600": "0d856871-137d-4ffc-bf4b-b7bb61c86ec6"
+  "1600": "0d856871-137d-4ffc-bf4b-b7bb61c86ec6",
+  "1350": "05cd34e3-0dbb-4d49-a51a-134d51679fb4"
  },
  "girdi_video": {
   "1": "0486948d-97ed-4aab-adae-60dfc3634465",
   "2": "33c0f47a-a16c-4ca4-bb4a-b9ab403fd097",
-  "3": "7c5a4ead-5a43-41f7-b3cb-217bba47a3fd"
+  "3": "7c5a4ead-5a43-41f7-b3cb-217bba47a3fd",
+  "4": "02950740-2351-4eb2-aa62-ac24c9829f65"
  },
  "kling": {
   "1": "738229b7-9a09-485d-a747-16ceaea56fd3",
   "2": "7cbfe8da-adf8-4fec-bb6a-7a901c4857b5",
-  "3": "a0f51860-19cb-4f3a-94fd-9e69f03fb0ae"
+  "3": "a0f51860-19cb-4f3a-94fd-9e69f03fb0ae",
+  "4": "44d15a08-35a4-48be-aaea-df51cc5f43f1"
  },
  "yakin_foto": {
   "Y2": "164b19a1-50e5-43ce-b749-9f25b63bd623",
@@ -41,6 +45,8 @@
  },
  "onceki": {
   "2": "2fd028c8-84b3-4370-bf6a-64f147112c09",
-  "3": "52240dd6-0857-48d9-aa93-4f5282b989e4"
- }
+  "3": "52240dd6-0857-48d9-aa93-4f5282b989e4",
+  "4": "2f9da0de-a900-409b-9293-9601e45c7c2b"
+ },
+ "not_cipa": "5. klip çapası 1300 yerine 1350: NB 1300 karesini iki denemede de kırpıp yakınlaştırdı"
 }
