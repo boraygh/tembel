@@ -27,7 +27,8 @@
   "3": "7c5a4ead-5a43-41f7-b3cb-217bba47a3fd",
   "4": "02950740-2351-4eb2-aa62-ac24c9829f65",
   "5": "3413c274-5336-4b60-85f5-73a66ce2335e",
-  "6": "6eb1d615-8a59-441c-aecb-6ab977a746fc"
+  "6": "6eb1d615-8a59-441c-aecb-6ab977a746fc",
+  "7": "e695df08-aa17-428b-9238-fec51b9ae63a"
  },
  "kling": {
   "1": "738229b7-9a09-485d-a747-16ceaea56fd3",
@@ -37,7 +38,8 @@
   "4_red": "44d15a08-35a4-48be-aaea-df51cc5f43f1 (bloklar üstünde ~1118'den sonra dokusuz kaldı)",
   "5": "de41aded-a6f5-4b4d-bf6e-c3eff6e74850 (deniz yok, doğru; renk renk_esle.py ile 4. klibe eşlendi: kazanç [1.08 1.071 1.052] ofset [14.6 8.9 -4.6])",
   "5_red": "188326d4-4691-43d4-80a0-897c3ba6bbdd (otoparkın arkasına, karanın olduğu yere deniz ve gemi koydu)",
-  "6": "0072733f-f98a-483b-a754-f23a36401817"
+  "6": "0072733f-f98a-483b-a754-f23a36401817 (deniz yok, doğru; renk 5. klibe eşlendi: kazanç [1.056 1.064 1.156] ofset [15.5 8.4 -5.8])",
+  "7": "68be6384-9ceb-4ba2-a3e4-831ae6bc173f"
  },
  "yakin_foto": {
   "Y2": "164b19a1-50e5-43ce-b749-9f25b63bd623",
@@ -56,7 +58,8 @@
   "3": "52240dd6-0857-48d9-aa93-4f5282b989e4",
   "4": "2f9da0de-a900-409b-9293-9601e45c7c2b",
   "5": "edfe7f44-440b-46af-a344-46de7be6f43c",
-  "6": "5b16ca2f-97c2-42fb-8213-a0165cc26da7"
+  "6": "5b16ca2f-97c2-42fb-8213-a0165cc26da7",
+  "7": "05eaaa01-8d38-4d7e-ba7b-0539d44f2980"
  },
  "not_cipa": "5. klip çapası 1300 yerine 1350: NB 1300 karesini iki denemede de kırpıp yakınlaştırdı",
  "not_klip4": "4. klip yeniden: 5. referans olarak bloklara yukarıdan bakan çapa (10b60483) ve istemde çatı tarifi eklendi",
